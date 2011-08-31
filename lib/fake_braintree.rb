@@ -8,11 +8,6 @@ require 'active_support/core_ext'
 require 'fake_braintree/sinatra_app'
 require 'fake_braintree/version'
 
-Braintree::Configuration.environment = :production
-Braintree::Configuration.merchant_id = "xxx"
-Braintree::Configuration.public_key  = "xxx"
-Braintree::Configuration.private_key = "xxx"
-
 module FakeBraintree
   class << self
     @customers     = {}
@@ -22,6 +17,15 @@ module FakeBraintree
 
     @decline_all_cards = false
     attr_accessor :customers, :subscriptions, :failures, :transaction, :decline_all_cards
+  end
+
+  def self.activate!
+    Braintree::Configuration.environment = :production
+    Braintree::Configuration.merchant_id = "xxx"
+    Braintree::Configuration.public_key  = "xxx"
+    Braintree::Configuration.private_key = "xxx"
+    clear!
+    ShamRack.mount(FakeBraintree::SinatraApp, "www.braintreegateway.com", 443)
   end
 
   def self.clear!
@@ -157,5 +161,3 @@ module FakeBraintree
                             "gateway_rejection_reason"=>nil}
   end
 end
-
-ShamRack.mount(FakeBraintree::SinatraApp, "www.braintreegateway.com", 443)

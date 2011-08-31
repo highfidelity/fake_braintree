@@ -44,6 +44,10 @@ describe FakeBraintree, ".decline_all_cards!" do
 end
 
 describe "configuration variables" do
+  before do
+    FakeBraintree.activate!
+  end
+
   it "sets the environment configuration" do
     Braintree::Configuration.environment.should == :production
   end
