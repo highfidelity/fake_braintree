@@ -7,11 +7,7 @@ Dir[File.join(File.dirname(__FILE__), "support/**/*.rb")].each {|f| require f}
 Dir.mkdir('tmp') unless Dir.exist?('tmp')
 File.new('tmp/braintree_log', 'w').close
 
-Braintree::Configuration.logger      = Logger.new("tmp/log")
-Braintree::Configuration.environment = :production
-Braintree::Configuration.merchant_id = "xxx"
-Braintree::Configuration.public_key  = "xxx"
-Braintree::Configuration.private_key = "xxx"
+Braintree::Configuration.logger = Logger.new("tmp/log")
 
 RSpec.configure do |config|
   config.mock_with :mocha

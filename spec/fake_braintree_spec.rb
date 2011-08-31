@@ -42,3 +42,15 @@ describe FakeBraintree, ".decline_all_cards!" do
     result.should be_success
   end
 end
+
+describe "configuration variables" do
+  it "sets the environment configuration" do
+    Braintree::Configuration.environment.should == :production
+  end
+
+  it "sets some fake API credentials" do
+    Braintree::Configuration.merchant_id.should == "xxx"
+    Braintree::Configuration.public_key.should == "xxx"
+    Braintree::Configuration.private_key.should == "xxx"
+  end
+end

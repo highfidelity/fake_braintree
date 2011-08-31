@@ -8,6 +8,11 @@ require 'active_support/core_ext'
 require 'fake_braintree/sinatra_app'
 require 'fake_braintree/version'
 
+Braintree::Configuration.environment = :production
+Braintree::Configuration.merchant_id = "xxx"
+Braintree::Configuration.public_key  = "xxx"
+Braintree::Configuration.private_key = "xxx"
+
 module FakeBraintree
   class << self
     @customers     = {}
