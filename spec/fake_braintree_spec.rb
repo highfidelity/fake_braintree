@@ -43,6 +43,12 @@ describe FakeBraintree, ".decline_all_cards!" do
   end
 end
 
+describe FakeBraintree, ".log_file_path" do
+  it "is tmp/log" do
+    FakeBraintree.log_file_path.should == 'tmp/log'
+  end
+end
+
 describe "configuration variables" do
   subject { Braintree::Configuration }
 
@@ -56,10 +62,25 @@ describe "configuration variables" do
     subject.private_key.should == "xxx"
   end
 
-  its(:logger) { should be_a Logger }
+  it "creates a log file" do
+    File.exist?(FakeBraintree.log_file_path).should == true
+  end
 
-  it "does not log to STDOUT" do
-    STDOUT.expects(:write).with("Logger test\n").never
+  it "logs to the correct path" do
     subject.logger.info('Logger test')
+    File.readlines(FakeBraintree.log_file_path).last.should == "Logger test\n"
+  end
+end
+
+describe FakeBraintree, ".clear_log!" do
+  it "clears the log file" do
+    %w(one two).each { |string| Braintree::Configuration.logger.info(string) }
+    subject.clear_log!
+    File.read(FakeBraintree.log_file_path).should == ""
+  end
+
+  it "is called by clear!" do
+    FakeBraintree.expects(:clear_log!)
+    FakeBraintree.clear!
   end
 end

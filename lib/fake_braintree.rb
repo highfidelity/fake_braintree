@@ -4,8 +4,6 @@ require 'sham_rack'
 require 'fake_braintree/sinatra_app'
 require 'fake_braintree/version'
 
-Braintree::Configuration.logger = Logger.new("tmp/log")
-
 module FakeBraintree
   class << self
     @customers     = {}
@@ -26,12 +24,21 @@ module FakeBraintree
     ShamRack.mount(FakeBraintree::SinatraApp, "www.braintreegateway.com", 443)
   end
 
+  def self.log_file_path
+    'tmp/log'
+  end
+
   def self.clear!
     self.customers         = {}
     self.subscriptions     = {}
     self.failures          = {}
     self.transaction       = {}
     self.decline_all_cards = false
+    clear_log!
+  end
+
+  def self.clear_log!
+    File.new(log_file_path, 'w').close
   end
 
   def self.failure?(card_number)
@@ -161,3 +168,4 @@ module FakeBraintree
 end
 
 FakeBraintree.activate!
+Braintree::Configuration.logger = Logger.new(FakeBraintree.log_file_path)
