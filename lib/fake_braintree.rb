@@ -8,6 +8,8 @@ require 'active_support/core_ext'
 require 'fake_braintree/sinatra_app'
 require 'fake_braintree/version'
 
+Braintree::Configuration.logger = Logger.new("tmp/log")
+
 module FakeBraintree
   class << self
     @customers     = {}

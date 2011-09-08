@@ -48,13 +48,22 @@ describe "configuration variables" do
     FakeBraintree.activate!
   end
 
-  it "sets the environment configuration" do
-    Braintree::Configuration.environment.should == :production
+  subject { Braintree::Configuration }
+
+  it "sets the environment to production" do
+    subject.environment.should == :production
   end
 
   it "sets some fake API credentials" do
-    Braintree::Configuration.merchant_id.should == "xxx"
-    Braintree::Configuration.public_key.should == "xxx"
-    Braintree::Configuration.private_key.should == "xxx"
+    subject.merchant_id.should == "xxx"
+    subject.public_key.should == "xxx"
+    subject.private_key.should == "xxx"
+  end
+
+  its(:logger) { should be_a Logger }
+
+  it "does not log to STDOUT" do
+    STDOUT.expects(:write).with("Logger test\n").never
+    subject.logger.info('Logger test')
   end
 end
