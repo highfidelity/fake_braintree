@@ -1,9 +1,5 @@
 require 'braintree'
-require 'digest/md5'
 require 'sham_rack'
-require 'sinatra'
-require 'active_support'
-require 'active_support/core_ext'
 
 require 'fake_braintree/sinatra_app'
 require 'fake_braintree/version'
@@ -163,3 +159,5 @@ module FakeBraintree
                             "gateway_rejection_reason"=>nil}
   end
 end
+
+FakeBraintree.activate!

@@ -7,8 +7,6 @@ Dir[File.join(File.dirname(__FILE__), "support/**/*.rb")].each {|f| require f}
 Dir.mkdir('tmp') unless Dir.exist?('tmp')
 File.new('tmp/braintree_log', 'w').close
 
-FakeBraintree.activate!
-
 RSpec.configure do |config|
   config.mock_with :mocha
 

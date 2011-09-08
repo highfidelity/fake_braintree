@@ -1,3 +1,8 @@
+require 'digest/md5'
+require 'sinatra'
+require 'active_support'
+require 'active_support/core_ext'
+
 module FakeBraintree
   class SinatraApp < Sinatra::Base
     set :show_exceptions, false
