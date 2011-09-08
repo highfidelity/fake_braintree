@@ -1,3 +1,4 @@
+require 'fileutils'
 require 'braintree'
 require 'sham_rack'
 
@@ -38,6 +39,7 @@ module FakeBraintree
   end
 
   def self.clear_log!
+    FileUtils.mkdir_p(File.dirname(log_file_path))
     File.new(log_file_path, 'w').close
   end
 
