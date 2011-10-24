@@ -90,14 +90,19 @@ module FakeBraintree
       subscription["add_ons"]           = []
       subscription["discounts"]         = []
       subscription["next_billing_date"] = 1.month.from_now
-      subscription["status"] = Braintree::Subscription::Status::Active
+      subscription["status"]            = Braintree::Subscription::Status::Active
       FakeBraintree.subscriptions[subscription["id"]] = subscription
       gzipped_response(201, subscription.to_xml(:root => 'subscription'))
     end
 
+    # Braintree::Subscription.find
     get "/merchants/:merchant_id/subscriptions/:id" do
       subscription = FakeBraintree.subscriptions[params[:id]]
-      gzipped_response(200, subscription.to_xml(:root => 'subscription'))
+      if subscription
+        gzipped_response(200, subscription.to_xml(:root => 'subscription'))
+      else
+        gzipped_response(404, {})
+      end
     end
 
     put "/merchants/:merchant_id/subscriptions/:id" do
