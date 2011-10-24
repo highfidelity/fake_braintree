@@ -65,7 +65,7 @@ module FakeBraintree
     let(:expiration_date)      { "04/2016" }
     let(:payment_method_token) { braintree_credit_card_token(cc_number, expiration_date) }
     let(:subscription_result)  { Braintree::Subscription.create(:payment_method_token => payment_method_token,
-                                                                :plan_id => plan_id) }
+                                                                :plan_id => 'my-plan-id') }
 
     it "can find a created subscription" do
       Braintree::Subscription.find(subscription_result.subscription.id).should be
@@ -73,6 +73,54 @@ module FakeBraintree
 
     it "raises a Braintree:NotFoundError when it cannot find a subscription" do
       expect { Braintree::Subscription.find('abc123') }.to raise_error(Braintree::NotFoundError, /abc123/)
+    end
+  end
+
+  describe SinatraApp, "Braintree::Customer.create" do
+    let(:cc_number)       { %w(4111 1111 1111 1111).join }
+    let(:expiration_date) { "04/2016" }
+    after { FakeBraintree.verify_all_cards = false }
+
+    it "successfully creates a customer" do
+      result = Braintree::Customer.create(
+        :credit_card => {
+          :number          => cc_number,
+          :expiration_date => expiration_date
+        })
+
+      result.should be_success
+    end
+
+    it "verifies the card number when passed :verify_card => true" do
+      Braintree::Customer.create(
+        :credit_card => {
+          :number          => cc_number,
+          :expiration_date => expiration_date,
+          :options         => { :verify_card => true }
+        }).should be_success
+
+      Braintree::Customer.create(
+        :credit_card => {
+          :number          => '123456',
+          :expiration_date => expiration_date,
+          :options         => { :verify_card => true }
+        }).should_not be_success
+    end
+
+    it "verifies the card number when FakeBraintree.verify_all_cards == true" do
+      FakeBraintree.verify_all_cards!
+
+      Braintree::Customer.create(
+        :credit_card => {
+          :number          => cc_number,
+          :expiration_date => expiration_date
+        }).should be_success
+
+      Braintree::Customer.create(
+        :credit_card => {
+          :number          => '123456',
+          :expiration_date => expiration_date
+        }).should_not be_success
     end
   end
 end

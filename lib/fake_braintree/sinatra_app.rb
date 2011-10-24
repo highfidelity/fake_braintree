@@ -22,6 +22,18 @@ module FakeBraintree
       def md5(content)
         Digest::MD5.hexdigest(content)
       end
+
+      def verify_credit_card?(customer_hash)
+        return true if FakeBraintree.verify_all_cards
+
+        customer_hash["credit_card"].key?("options") &&
+          customer_hash["credit_card"]["options"].is_a?(Hash) &&
+          customer_hash["credit_card"]["options"]["verify_card"] == true
+      end
+
+      def has_invalid_credit_card?(customer_hash)
+        ! FakeBraintree::VALID_CREDIT_CARDS.include?(customer_hash["credit_card"]["number"])
+      end
     end
 
     # Braintree::Customer.create
@@ -30,23 +42,27 @@ module FakeBraintree
       if FakeBraintree.failure?(customer["credit_card"]["number"])
         gzipped_response(422, FakeBraintree.failure_response(customer["credit_card"]["number"]).to_xml(:root => 'api_error_response'))
       else
-        customer["id"] ||= md5("#{params[:merchant_id]}#{Time.now.to_f}")
-        customer["merchant-id"] = params[:merchant_id]
-        if customer["credit_card"] && customer["credit_card"].is_a?(Hash)
-          customer["credit_card"].delete("__content__")
-          if !customer["credit_card"].empty?
-            customer["credit_card"]["last_4"]           = customer["credit_card"].delete("number")[-4..-1]
-            customer["credit_card"]["token"]            = md5("#{customer['merchant_id']}#{customer['id']}#{Time.now.to_f}")
-            expiration_date = customer["credit_card"].delete("expiration_date")
-            customer["credit_card"]["expiration_month"] = expiration_date.split('/')[0]
-            customer["credit_card"]["expiration_year"]  = expiration_date.split('/')[1]
+        if verify_credit_card?(customer) && has_invalid_credit_card?(customer)
+          gzipped_response(422, FakeBraintree.failure_response(customer["credit_card"]["number"]).to_xml(:root => 'api_error_response'))
+        else
+          customer["id"] ||= md5("#{params[:merchant_id]}#{Time.now.to_f}")
+          customer["merchant-id"] = params[:merchant_id]
+          if customer["credit_card"] && customer["credit_card"].is_a?(Hash)
+            customer["credit_card"].delete("__content__")
+            if !customer["credit_card"].empty?
+              customer["credit_card"]["last_4"]           = customer["credit_card"].delete("number")[-4..-1]
+              customer["credit_card"]["token"]            = md5("#{customer['merchant_id']}#{customer['id']}#{Time.now.to_f}")
+              expiration_date = customer["credit_card"].delete("expiration_date")
+              customer["credit_card"]["expiration_month"] = expiration_date.split('/')[0]
+              customer["credit_card"]["expiration_year"]  = expiration_date.split('/')[1]
 
-            credit_card = customer.delete("credit_card")
-            customer["credit_cards"] = [credit_card]
+              credit_card = customer.delete("credit_card")
+              customer["credit_cards"] = [credit_card]
+            end
           end
+          FakeBraintree.customers[customer["id"]] = customer
+          gzipped_response(201, customer.to_xml(:root => 'customer'))
         end
-        FakeBraintree.customers[customer["id"]] = customer
-        gzipped_response(201, customer.to_xml(:root => 'customer'))
       end
     end
 

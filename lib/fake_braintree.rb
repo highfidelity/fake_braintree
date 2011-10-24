@@ -3,6 +3,7 @@ require 'braintree'
 require 'sham_rack'
 
 require 'fake_braintree/sinatra_app'
+require 'fake_braintree/valid_credit_cards'
 require 'fake_braintree/version'
 
 module FakeBraintree
@@ -13,7 +14,8 @@ module FakeBraintree
     @transaction   = {}
 
     @decline_all_cards = false
-    attr_accessor :customers, :subscriptions, :failures, :transaction, :decline_all_cards
+    @verify_all_cards  = false
+    attr_accessor :customers, :subscriptions, :failures, :transaction, :decline_all_cards, :verify_all_cards
   end
 
   def self.activate!
@@ -48,7 +50,7 @@ module FakeBraintree
   end
 
   def self.failure_response(card_number)
-    failure = self.failures[card_number]
+    failure = self.failures[card_number] || {}
     failure["errors"] ||= { "errors" => [] }
 
     { "message"      => failure["message"],
@@ -76,6 +78,10 @@ module FakeBraintree
 
   def self.decline_all_cards?
     self.decline_all_cards
+  end
+
+  def self.verify_all_cards!
+    self.verify_all_cards = true
   end
 
   def self.credit_card_from_token(token)
