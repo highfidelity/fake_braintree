@@ -85,10 +85,10 @@ module FakeBraintree
     post "/merchants/:merchant_id/subscriptions" do
       "<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n<subscription>\n  <plan-id type=\"integer\">2</plan-id>\n  <payment-method-token>b22x</payment-method-token>\n</subscription>\n"
       subscription = Hash.from_xml(request.body).delete("subscription")
-      subscription["id"] ||= md5("#{subscription["payment_method_token"]}#{Time.now.to_f}")
-      subscription["transactions"] = []
-      subscription["add_ons"] = []
-      subscription["discounts"] = []
+      subscription["id"]                ||= md5("#{subscription["payment_method_token"]}#{Time.now.to_f}")[0,6]
+      subscription["transactions"]      = []
+      subscription["add_ons"]           = []
+      subscription["discounts"]         = []
       subscription["next_billing_date"] = 1.month.from_now
       subscription["status"] = Braintree::Subscription::Status::Active
       FakeBraintree.subscriptions[subscription["id"]] = subscription
