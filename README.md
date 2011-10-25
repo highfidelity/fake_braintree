@@ -19,10 +19,15 @@ Example, in spec\_helper.rb:
 
 ## Verifying credit cards
 
-To verify every credit card you try to use, call
-`FakeBraintree.verify_all_cards!`. This will stay "on" until you set
-`FakeBraintree.verify_all_cards = false`.  Calling FakeBraintree.clear! _will
-not_ change it. It does very basic verification: it only matches the credit card
-number against these:
+To verify every credit card you try to use, call:
+
+    FakeBraintree.verify_all_cards!
+
+This will stay "on" until you set
+
+    FakeBraintree.verify_all_cards = false
+
+Calling FakeBraintree.clear! _will not_ change this setting. It does very basic
+verification: it only matches the credit card number against these:
 http://www.braintreepayments.com/docs/ruby/reference/sandbox and rejects them if
 they aren't one of the listed numbers.
