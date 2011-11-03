@@ -3,7 +3,7 @@ module FakeBraintree
     include Helpers
 
     def initialize(request, merchant_id)
-      @customer_hash = Hash.from_xml(request.body).delete("customer")
+      @request_hash = Hash.from_xml(request.body).delete("customer")
       @merchant_id   = merchant_id
     end
 
@@ -12,11 +12,11 @@ module FakeBraintree
     end
 
     def failure_response
-      gzipped_response(422, FakeBraintree.failure_response(@customer_hash["credit_card"]["number"]).to_xml(:root => 'api_error_response'))
+      gzipped_response(422, FakeBraintree.failure_response(@request_hash["credit_card"]["number"]).to_xml(:root => 'api_error_response'))
     end
 
     def customer_hash
-      hash = @customer_hash.dup
+      hash = @request_hash.dup
       hash["id"] ||= md5("#{@merchant_id}#{Time.now.to_f}")
       hash["merchant-id"] = @merchant_id
       if hash["credit_card"] && hash["credit_card"].is_a?(Hash)
@@ -39,11 +39,23 @@ module FakeBraintree
     private
 
     def credit_card_is_failure?
-      FakeBraintree.failure?(@customer_hash["credit_card"]["number"])
+      FakeBraintree.failure?(@request_hash["credit_card"]["number"])
     end
 
     def invalid_credit_card?
-      verify_credit_card?(@customer_hash) && has_invalid_credit_card?(@customer_hash)
+      verify_credit_card?(@request_hash) && has_invalid_credit_card?(@request_hash)
+    end
+
+    def verify_credit_card?(customer_hash)
+      return true if FakeBraintree.verify_all_cards
+
+      @request_hash["credit_card"].key?("options") &&
+        @request_hash["credit_card"]["options"].is_a?(Hash) &&
+        @request_hash["credit_card"]["options"]["verify_card"] == true
+    end
+
+    def has_invalid_credit_card?(customer_hash)
+      ! FakeBraintree::VALID_CREDIT_CARDS.include?(@request_hash["credit_card"]["number"])
     end
   end
 end
