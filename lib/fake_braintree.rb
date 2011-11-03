@@ -2,6 +2,9 @@ require 'fileutils'
 require 'braintree'
 require 'sham_rack'
 
+require 'fake_braintree/helpers'
+require 'fake_braintree/customer'
+
 require 'fake_braintree/sinatra_app'
 require 'fake_braintree/valid_credit_cards'
 require 'fake_braintree/version'

@@ -1,7 +1,4 @@
-require 'digest/md5'
-require 'sinatra'
-require 'active_support'
-require 'active_support/core_ext'
+require 'sinatra/base'
 
 module FakeBraintree
   class SinatraApp < Sinatra::Base
@@ -38,31 +35,13 @@ module FakeBraintree
 
     # Braintree::Customer.create
     post "/merchants/:merchant_id/customers" do
-      customer = Hash.from_xml(request.body).delete("customer")
-      if FakeBraintree.failure?(customer["credit_card"]["number"])
-        gzipped_response(422, FakeBraintree.failure_response(customer["credit_card"]["number"]).to_xml(:root => 'api_error_response'))
+      customer = Customer.new(request, params[:merchant_id])
+      if customer.invalid?
+        customer.failure_response
       else
-        if verify_credit_card?(customer) && has_invalid_credit_card?(customer)
-          gzipped_response(422, FakeBraintree.failure_response(customer["credit_card"]["number"]).to_xml(:root => 'api_error_response'))
-        else
-          customer["id"] ||= md5("#{params[:merchant_id]}#{Time.now.to_f}")
-          customer["merchant-id"] = params[:merchant_id]
-          if customer["credit_card"] && customer["credit_card"].is_a?(Hash)
-            customer["credit_card"].delete("__content__")
-            if !customer["credit_card"].empty?
-              customer["credit_card"]["last_4"]           = customer["credit_card"].delete("number")[-4..-1]
-              customer["credit_card"]["token"]            = md5("#{customer['merchant_id']}#{customer['id']}#{Time.now.to_f}")
-              expiration_date = customer["credit_card"].delete("expiration_date")
-              customer["credit_card"]["expiration_month"] = expiration_date.split('/')[0]
-              customer["credit_card"]["expiration_year"]  = expiration_date.split('/')[1]
-
-              credit_card = customer.delete("credit_card")
-              customer["credit_cards"] = [credit_card]
-            end
-          end
-          FakeBraintree.customers[customer["id"]] = customer
-          gzipped_response(201, customer.to_xml(:root => 'customer'))
-        end
+        customer_hash = customer.customer_hash
+        FakeBraintree.customers[customer_hash["id"]] = customer_hash
+        gzipped_response(201, customer_hash.to_xml(:root => 'customer'))
       end
     end
 
