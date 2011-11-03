@@ -17,13 +17,13 @@ module FakeBraintree
 
     def customer_hash
       hash = @request_hash.dup
-      hash["id"] ||= md5("#{@merchant_id}#{Time.now.to_f}")
+      hash["id"] ||= create_id
       hash["merchant-id"] = @merchant_id
       if hash["credit_card"] && hash["credit_card"].is_a?(Hash)
         hash["credit_card"].delete("__content__")
         if !hash["credit_card"].empty?
           hash["credit_card"]["last_4"]           = hash["credit_card"].delete("number")[-4..-1]
-          hash["credit_card"]["token"]            = md5("#{hash['merchant_id']}#{hash['id']}#{Time.now.to_f}")
+          hash["credit_card"]["token"]            = md5("#{hash['merchant_id']}#{hash['id']}")
           expiration_date = hash["credit_card"].delete("expiration_date")
           hash["credit_card"]["expiration_month"] = expiration_date.split('/')[0]
           hash["credit_card"]["expiration_year"]  = expiration_date.split('/')[1]
@@ -37,6 +37,10 @@ module FakeBraintree
     end
 
     private
+
+    def create_id
+      md5("#{@merchant_id}#{Time.now.to_f}")
+    end
 
     def credit_card_is_failure?
       FakeBraintree.failure?(@request_hash["credit_card"]["number"])

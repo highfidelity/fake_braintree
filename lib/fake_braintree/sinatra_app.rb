@@ -60,7 +60,7 @@ module FakeBraintree
     end
 
     delete "/merchants/:merchant_id/customers/:id" do
-      FakeBraintree.customers[params["id"]] = nil
+      FakeBraintree.customers[params[:id]] = nil
       gzipped_response(200, "")
     end
 
@@ -111,7 +111,6 @@ module FakeBraintree
 
     # Braintree::Transaction.search
     post "/merchants/:merchant_id/transactions/advanced_search" do
-      # "<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n<search>\n  <ids type=\"array\">\n    <item>49sbx6</item>\n  </ids>\n  <created-at>\n    <min type=\"datetime\">2011-01-10T14:14:26Z</min>\n  </created-at>\n</search>\n"
       gzipped_response(200, FakeBraintree.generated_transaction.to_xml)
     end
 
