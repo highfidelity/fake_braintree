@@ -4,7 +4,7 @@ module FakeBraintree
 
     def initialize(request, merchant_id)
       @request_hash = Hash.from_xml(request.body).delete("customer")
-      @merchant_id   = merchant_id
+      @merchant_id  = merchant_id
     end
 
     def invalid?
