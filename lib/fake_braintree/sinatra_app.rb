@@ -21,37 +21,6 @@ module FakeBraintree
       end
     end
 
-    get "/merchants/:merchant_id/customers/:id" do
-      customer = FakeBraintree.customers[params[:id]]
-      gzipped_response(200, customer.to_xml(:root => 'customer'))
-    end
-
-    put "/merchants/:merchant_id/customers/:id" do
-      customer = Hash.from_xml(request.body).delete("customer")
-      if FakeBraintree.failure?(customer["credit_card"]["number"])
-        gzipped_response(422, FakeBraintree.failure_response(customer["credit_card"]["number"]).to_xml(:root => 'api_error_response'))
-      else
-        customer["id"]          = params[:id]
-        customer["merchant-id"] = params[:merchant_id]
-        if customer["credit_card"] && customer["credit_card"].is_a?(Hash)
-          customer["credit_card"].delete("__content__")
-          if !customer["credit_card"].empty?
-            customer["credit_card"]["last_4"] = customer["credit_card"].delete("number")[-4..-1]
-            customer["credit_card"]["token"]  = md5("#{customer['merchant_id']}#{customer['id']}#{Time.now.to_f}")
-            credit_card = customer.delete("credit_card")
-            customer["credit_cards"] = [credit_card]
-          end
-        end
-        FakeBraintree.customers[params["id"]] = customer
-        gzipped_response(200, customer.to_xml(:root => 'customer'))
-      end
-    end
-
-    delete "/merchants/:merchant_id/customers/:id" do
-      FakeBraintree.customers[params[:id]] = nil
-      gzipped_response(200, "")
-    end
-
     # Braintree::Subscription.create
     post "/merchants/:merchant_id/subscriptions" do
       response_hash = Subscription.new(request).response_hash
@@ -70,32 +39,7 @@ module FakeBraintree
       end
     end
 
-    put "/merchants/:merchant_id/subscriptions/:id" do
-      subscription = Hash.from_xml(request.body).delete("subscription")
-      subscription["transactions"] = []
-      subscription["add_ons"]      = []
-      subscription["discounts"]    = []
-      FakeBraintree.subscriptions[params["id"]] = subscription
-      gzipped_response(200, subscription.to_xml(:root => 'subscription'))
-    end
-
-    # Braintree::Transaction.search
-    post "/merchants/:merchant_id/transactions/advanced_search_ids" do
-      # "<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n<search>\n  <created-at>\n    <min type=\"datetime\">2011-01-10T14:14:26Z</min>\n  </created-at>\n</search>\n"
-      gzipped_response(200,
-                       ['<search-results>',
-                        '  <page-size type="integer">50</page-size>',
-                        '  <ids type="array">',
-                        '          <item>49sbx6</item>',
-                        '      </ids>',
-                        "</search-results>\n"].join("\n"))
-    end
-
-    # Braintree::Transaction.search
-    post "/merchants/:merchant_id/transactions/advanced_search" do
-      gzipped_response(200, FakeBraintree.generated_transaction.to_xml)
-    end
-
+    # Braintree::CreditCard.find
     get "/merchants/:merchant_id/payment_methods/:credit_card_token" do
       credit_card = FakeBraintree.credit_card_from_token(params[:credit_card_token])
       gzipped_response(200, credit_card.to_xml(:root => "credit_card"))
