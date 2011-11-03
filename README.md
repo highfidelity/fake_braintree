@@ -1,7 +1,6 @@
 # fake\_braintree, a Braintree fake
 
-Currently in alpha. Needs complete test coverage, then more functionality can
-be added.
+Currently in alpha.
 
 ## Quick start
 Call `FakeBraintree.activate!` to make it go. `FakeBraintree.clear!` will clear
