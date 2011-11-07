@@ -1,3 +1,6 @@
+# 0.0.5
+* Add support for Braintree::Customer.find
+
 # 0.0.4
 * Allow for very basic card verification
 
