@@ -43,7 +43,8 @@ module FakeBraintree
     end
 
     def credit_card_is_failure?
-      FakeBraintree.failure?(@request_hash["credit_card"]["number"])
+      @request_hash.key?('credit_card') &&
+        FakeBraintree.failure?(@request_hash["credit_card"]["number"])
     end
 
     def invalid_credit_card?
@@ -53,7 +54,8 @@ module FakeBraintree
     def verify_credit_card?(customer_hash)
       return true if FakeBraintree.verify_all_cards
 
-      @request_hash["credit_card"].key?("options") &&
+      @request_hash.key?("credit_card") &&
+        @request_hash["credit_card"].key?("options") &&
         @request_hash["credit_card"]["options"].is_a?(Hash) &&
         @request_hash["credit_card"]["options"]["verify_card"] == true
     end

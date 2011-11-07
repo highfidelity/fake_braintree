@@ -1,6 +1,6 @@
 require 'spec_helper'
 
-describe FakeBraintree::SinatraApp, "Braintree::Customer.create" do
+describe "Braintree::Customer.create" do
   let(:cc_number)       { %w(4111 1111 1111 1111).join }
   let(:expiration_date) { "04/2016" }
   after { FakeBraintree.verify_all_cards = false }
@@ -69,5 +69,24 @@ describe FakeBraintree::SinatraApp, "Braintree::Customer.create" do
         :expiration_date => expiration_date
       ).should_not be_success
     end
+  end
+end
+
+describe "Braintree::Customer.find" do
+  let(:cc_number)       { %w(4111 1111 1111 1111).join }
+  let(:expiration_date) { "04/2016" }
+
+  def create_customer(options)
+    Braintree::Customer.create(:credit_card => options)
+  end
+
+  it "successfully finds a customer" do
+    result = Braintree::Customer.create(:first_name => "Bob", :last_name => "Smith")
+
+    Braintree::Customer.find(result.customer.id).first_name.should == "Bob"
+  end
+
+  it "raises an error for a nonexistent customer" do
+    lambda { Braintree::Customer.find("foo") }.should raise_error(Braintree::NotFoundError)
   end
 end

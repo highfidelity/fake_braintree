@@ -21,6 +21,16 @@ module FakeBraintree
       end
     end
 
+    # Braintree::Customer.find
+    get "/merchants/:merchant_id/customers/:id" do
+      customer = FakeBraintree.customers[params[:id]]
+      if customer
+        gzipped_response(200, customer.to_xml(:root => 'customer'))
+      else
+        gzipped_response(404, {})
+      end
+    end
+
     # Braintree::Subscription.create
     post "/merchants/:merchant_id/subscriptions" do
       response_hash = Subscription.new(request).response_hash
