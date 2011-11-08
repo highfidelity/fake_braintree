@@ -2,6 +2,7 @@
 # in spec/support/ and its subdirectories.
 require 'rspec'
 require 'fake_braintree'
+require 'timecop'
 Dir[File.join(File.dirname(__FILE__), "support/**/*.rb")].each {|f| require f}
 
 Dir.mkdir('tmp') unless Dir.exist?('tmp')
