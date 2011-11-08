@@ -9,13 +9,13 @@ Currently in alpha (i.e. it does not support every Braintree call).
 
 ## Supported API methods
 
-* Braintree::Customer.create
-* Braintree::Customer.find
-* Braintree::Subscription.create
-* Braintree::Subscription.find
-* Braintree::CreditCard.find
-* Braintree::CreditCard.sale
-* Braintree::Transaction.sale
+* `Braintree::Customer.create`
+* `Braintree::Customer.find`
+* `Braintree::Subscription.create`
+* `Braintree::Subscription.find`
+* `Braintree::CreditCard.find`
+* `Braintree::CreditCard.sale`
+* `Braintree::Transaction.sale`
 
 ## Quick start
 Call `FakeBraintree.activate!` to make it go. `FakeBraintree.clear!` will clear
