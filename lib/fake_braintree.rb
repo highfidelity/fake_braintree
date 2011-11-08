@@ -1,6 +1,7 @@
 require 'fileutils'
 require 'braintree'
-require 'sham_rack'
+require 'capybara'
+require 'capybara/server'
 
 require 'fake_braintree/helpers'
 require 'fake_braintree/customer'
@@ -23,12 +24,9 @@ module FakeBraintree
   end
 
   def self.activate!
-    Braintree::Configuration.environment = :production
-    Braintree::Configuration.merchant_id = "xxx"
-    Braintree::Configuration.public_key  = "xxx"
-    Braintree::Configuration.private_key = "xxx"
+    set_configuration
     clear!
-    ShamRack.mount(FakeBraintree::SinatraApp, "www.braintreegateway.com", 443)
+    boot_server
   end
 
   def self.log_file_path
@@ -95,6 +93,22 @@ module FakeBraintree
       card = customer["credit_cards"].detect {|card| card["token"] == token }
       return card if card
     end
+  end
+
+  private
+
+  def self.set_configuration
+    Braintree::Configuration.environment = :development
+    Braintree::Configuration.merchant_id = "xxx"
+    Braintree::Configuration.public_key  = "xxx"
+    Braintree::Configuration.private_key = "xxx"
+  end
+
+  def self.boot_server
+    Capybara.server_port = 3000
+    server = Capybara::Server.new(FakeBraintree::SinatraApp)
+    server.boot
+    ENV['GATEWAY_PORT'] = server.port.to_s
   end
 end
 

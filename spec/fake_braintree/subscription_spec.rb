@@ -31,10 +31,12 @@ describe FakeBraintree::SinatraApp do
     end
 
     it "sets the next billing date to 1 month from now in UTC" do
-      result = Braintree::Subscription.create(:payment_method_token => payment_method_token,
-                                              :plan_id => plan_id)
+      Timecop.freeze do
+        result = Braintree::Subscription.create(:payment_method_token => payment_method_token,
+                                                :plan_id => plan_id)
 
-      result.subscription.next_billing_date.to_i.should == 1.month.from_now.utc.to_i
+        result.subscription.next_billing_date.to_i.should == 1.month.from_now.utc.to_i
+      end
     end
   end
 

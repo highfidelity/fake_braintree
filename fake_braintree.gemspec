@@ -16,7 +16,7 @@ Gem::Specification.new do |s|
   s.executables   = `git ls-files -- bin/*`.split("\n").map{ |f| File.basename(f) }
   s.require_paths = ["lib"]
 
-  s.add_dependency 'sham_rack'
+  s.add_dependency 'capybara'
   s.add_dependency 'activesupport'
   s.add_dependency 'i18n'
   s.add_dependency 'sinatra'
@@ -24,4 +24,5 @@ Gem::Specification.new do |s|
 
   s.add_development_dependency 'rspec', '~> 2.6.0'
   s.add_development_dependency 'mocha', '~> 0.9.12'
+  s.add_development_dependency 'timecop', '~> 0.3.5'
 end
