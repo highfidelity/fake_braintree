@@ -1,6 +1,21 @@
 # fake\_braintree, a Braintree fake
 
-Currently in alpha.
+This library is a way to test Braintree code without hitting Braintree's servers.
+It uses [sham_rack](https://github.com/mdub/sham_rack) to intercept all of the
+calls from Braintree's Ruby library and returns XML that the Braintree library
+can parse. The whole point is not to hit the Braintree API.
+
+Currently in alpha (i.e. it does not support every Braintree call).
+
+## Supported API methods
+
+* Braintree::Customer.create
+* Braintree::Customer.find
+* Braintree::Subscription.create
+* Braintree::Subscription.find
+* Braintree::CreditCard.find
+* Braintree::CreditCard.sale
+* Braintree::Transaction.sale
 
 ## Quick start
 Call `FakeBraintree.activate!` to make it go. `FakeBraintree.clear!` will clear
