@@ -52,8 +52,8 @@ end
 describe "configuration variables" do
   subject { Braintree::Configuration }
 
-  it "sets the environment to production" do
-    subject.environment.should == :production
+  it "sets the environment to development" do
+    subject.environment.should == :development
   end
 
   it "sets some fake API credentials" do
