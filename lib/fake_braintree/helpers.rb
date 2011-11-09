@@ -15,5 +15,9 @@ module FakeBraintree
     def md5(content)
       Digest::MD5.hexdigest(content)
     end
+
+    def create_id
+      md5("#{@merchant_id}#{Time.now.to_f}")
+    end
   end
 end
