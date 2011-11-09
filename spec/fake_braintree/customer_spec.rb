@@ -1,7 +1,6 @@
 require 'spec_helper'
 
 describe "Braintree::Customer.create" do
-  let(:cc_number)       { %w(4111 1111 1111 1111).join }
   let(:expiration_date) { "04/2016" }
   after { FakeBraintree.verify_all_cards = false }
 
@@ -10,14 +9,14 @@ describe "Braintree::Customer.create" do
   end
 
   it "successfully creates a customer" do
-    result = create_customer_with_credit_card(:number => cc_number,
+    result = create_customer_with_credit_card(:number => TEST_CC_NUMBER,
                                               :expiration_date => expiration_date)
     result.should be_success
   end
 
   it "records the billing address" do
     result = create_customer_with_credit_card(
-      :number => cc_number,
+      :number => TEST_CC_NUMBER,
       :expiration_date => expiration_date,
       :billing_address => {
         :street_address => "1 E Main St",
@@ -38,7 +37,7 @@ describe "Braintree::Customer.create" do
   context "when passed :verify_card => true" do
     it "accepts valid cards" do
       create_customer_with_credit_card(
-        :number          => cc_number,
+        :number          => TEST_CC_NUMBER,
         :expiration_date => expiration_date,
         :options         => { :verify_card => true }
       ).should be_success
@@ -58,7 +57,7 @@ describe "Braintree::Customer.create" do
 
     it "accepts valid cards" do
       create_customer_with_credit_card(
-        :number          => cc_number,
+        :number          => TEST_CC_NUMBER,
         :expiration_date => expiration_date
       ).should be_success
     end
@@ -73,7 +72,6 @@ describe "Braintree::Customer.create" do
 end
 
 describe "Braintree::Customer.find" do
-  let(:cc_number)       { %w(4111 1111 1111 1111).join }
   let(:expiration_date) { "04/2016" }
 
   def create_customer(options)

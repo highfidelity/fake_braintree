@@ -1,16 +1,15 @@
 require 'spec_helper'
 
 describe FakeBraintree, ".credit_card_from_token" do
-  let(:cc_number)         { %w(4111 1111 1111 9876).join }
   let(:cc_number_2)       { %w(4111 1111 1111 2222).join }
   let(:expiration_date)   { "04/2016" }
   let(:expiration_date_2) { "05/2019" }
-  let(:token)             { braintree_credit_card_token(cc_number, expiration_date) }
+  let(:token)             { braintree_credit_card_token(TEST_CC_NUMBER, expiration_date) }
   let(:token_2)           { braintree_credit_card_token(cc_number_2, expiration_date_2) }
 
   it "looks up the credit card based on a CC token" do
     credit_card = FakeBraintree.credit_card_from_token(token)
-    credit_card["last_4"].should == "9876"
+    credit_card["last_4"].should == TEST_CC_NUMBER[-4,4]
     credit_card["expiration_year"].should == "2016"
     credit_card["expiration_month"].should == "04"
 
@@ -22,9 +21,8 @@ describe FakeBraintree, ".credit_card_from_token" do
 end
 
 describe FakeBraintree, ".decline_all_cards!" do
-  let(:cc_number)       { %w(4111 1111 1111 9876).join }
   let(:expiration_date) { "04/2016" }
-  let(:token)           { braintree_credit_card_token(cc_number, expiration_date) }
+  let(:token)           { braintree_credit_card_token(TEST_CC_NUMBER, expiration_date) }
   let(:amount)          { 10.00 }
 
   before do
