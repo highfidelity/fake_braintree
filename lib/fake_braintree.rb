@@ -6,6 +6,7 @@ require 'capybara/server'
 require 'fake_braintree/helpers'
 require 'fake_braintree/customer'
 require 'fake_braintree/subscription'
+require 'fake_braintree/redirect'
 
 require 'fake_braintree/sinatra_app'
 require 'fake_braintree/valid_credit_cards'
@@ -17,10 +18,11 @@ module FakeBraintree
     @subscriptions = {}
     @failures      = {}
     @transaction   = {}
+    @redirects     = {}
 
     @decline_all_cards = false
     @verify_all_cards  = false
-    attr_accessor :customers, :subscriptions, :failures, :transaction, :decline_all_cards, :verify_all_cards
+    attr_accessor :customers, :subscriptions, :failures, :transaction, :decline_all_cards, :verify_all_cards, :redirects
   end
 
   def self.activate!
@@ -38,6 +40,7 @@ module FakeBraintree
     self.subscriptions     = {}
     self.failures          = {}
     self.transaction       = {}
+    self.redirects         = {}
     self.decline_all_cards = false
     clear_log!
   end
@@ -105,7 +108,6 @@ module FakeBraintree
   end
 
   def self.boot_server
-    Capybara.server_port = 3000
     server = Capybara::Server.new(FakeBraintree::SinatraApp)
     server.boot
     ENV['GATEWAY_PORT'] = server.port.to_s

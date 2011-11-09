@@ -11,14 +11,8 @@ module FakeBraintree
 
     # Braintree::Customer.create
     post "/merchants/:merchant_id/customers" do
-      customer = Customer.new(request, params[:merchant_id])
-      if customer.invalid?
-        customer.failure_response
-      else
-        customer_hash = customer.customer_hash
-        FakeBraintree.customers[customer_hash["id"]] = customer_hash
-        gzipped_response(201, customer_hash.to_xml(:root => 'customer'))
-      end
+      customer_hash = Hash.from_xml(request.body).delete("customer")
+      Customer.new(customer_hash, params[:merchant_id]).create
     end
 
     # Braintree::Customer.find
@@ -76,6 +70,23 @@ module FakeBraintree
       else
         gzipped_response(404, {})
       end
+    end
+
+    # Braintree::TransparentRedirect.url
+    post "/merchants/:merchant_id/transparent_redirect_requests" do
+      if params[:tr_data]
+        redirect = Redirect.new(params, params[:merchant_id])
+        FakeBraintree.redirects[redirect.id] = redirect
+        redirect to(redirect.url), 303
+      else
+        [422, { "Content-Type" => "text/html" }, ["Invalid submission"]]
+      end
+    end
+
+    # Braintree::TransparentRedirect.confirm
+    post "/merchants/:merchant_id/transparent_redirect_requests/:id/confirm" do
+      redirect = FakeBraintree.redirects[params[:id]]
+      redirect.confirm
     end
   end
 end
