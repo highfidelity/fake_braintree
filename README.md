@@ -17,7 +17,7 @@ Currently in alpha (i.e. it does not support every Braintree call).
 * `Braintree::CreditCard.sale`
 * `Braintree::Transaction.sale`
 * `Braintree::TransparentRedirect.url`
-* `Braintree::TransparentRedirect.confirm` (only for creating customers0
+* `Braintree::TransparentRedirect.confirm` (only for creating customers)
 
 ## Quick start
 Call `FakeBraintree.activate!` to make it go. `FakeBraintree.clear!` will clear
