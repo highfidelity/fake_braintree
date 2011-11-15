@@ -30,9 +30,10 @@ module FakeBraintree
         if !hash["credit_card"].empty?
           hash["credit_card"]["last_4"]           = hash["credit_card"].delete("number")[-4..-1]
           hash["credit_card"]["token"]            = md5("#{hash['merchant_id']}#{hash['id']}")
-          expiration_date = hash["credit_card"].delete("expiration_date")
-          hash["credit_card"]["expiration_month"] = expiration_date.split('/')[0]
-          hash["credit_card"]["expiration_year"]  = expiration_date.split('/')[1]
+          if expiration_date = hash["credit_card"].delete("expiration_date")
+            hash["credit_card"]["expiration_month"] = expiration_date.split('/')[0]
+            hash["credit_card"]["expiration_year"]  = expiration_date.split('/')[1]
+          end
 
           credit_card = hash.delete("credit_card")
           hash["credit_cards"] = [credit_card]
