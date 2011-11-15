@@ -12,6 +12,7 @@ module FakeBraintree
       response_hash["transactions"]         = []
       response_hash["add_ons"]              = []
       response_hash["discounts"]            = []
+      response_hash["plan_id"]              = @subscription_hash["plan_id"]
       response_hash["next_billing_date"]    = 1.month.from_now
       response_hash["payment_method_token"] = @subscription_hash["payment_method_token"]
       response_hash["status"]               = Braintree::Subscription::Status::Active

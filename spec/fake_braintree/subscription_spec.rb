@@ -44,20 +44,19 @@ describe FakeBraintree::SinatraApp do
     let(:cc_number)            { %w(4111 1111 1111 9876).join }
     let(:expiration_date)      { "04/2016" }
     let(:payment_method_token) { braintree_credit_card_token(cc_number, expiration_date) }
+    let(:plan_id)              { 'my-plan-id' }
     let(:subscription_result)  { Braintree::Subscription.create(:payment_method_token => payment_method_token,
-                                                                :plan_id => 'my-plan-id') }
+                                                                :plan_id => plan_id) }
 
     it "can find a created subscription" do
-      Braintree::Subscription.find(subscription_result.subscription.id).should be
+      subscription = Braintree::Subscription.find(subscription_result.subscription.id)
+      subscription.should_not be_nil
+      subscription.payment_method_token.should == payment_method_token
+      subscription.plan_id.should == plan_id
     end
 
     it "raises a Braintree:NotFoundError when it cannot find a subscription" do
       expect { Braintree::Subscription.find('abc123') }.to raise_error(Braintree::NotFoundError, /abc123/)
-    end
-
-    it "can find the associated customer" do
-      subscription = Braintree::Subscription.find(subscription_result.subscription.id)
-      subscription.payment_method_token.should == payment_method_token
     end
   end
 end
