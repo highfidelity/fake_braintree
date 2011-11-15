@@ -54,5 +54,10 @@ describe FakeBraintree::SinatraApp do
     it "raises a Braintree:NotFoundError when it cannot find a subscription" do
       expect { Braintree::Subscription.find('abc123') }.to raise_error(Braintree::NotFoundError, /abc123/)
     end
+
+    it "can find the associated customer" do
+      subscription = Braintree::Subscription.find(subscription_result.subscription.id)
+      subscription.payment_method_token.should == payment_method_token
+    end
   end
 end
