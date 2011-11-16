@@ -27,10 +27,8 @@ describe FakeBraintree::SinatraApp do
     end
 
     it "can find >1 transaction" do
-      result_one = Braintree::Transaction.find(create_transaction.id)
-      result_two = Braintree::Transaction.find(create_transaction.id)
-      result_one.should be
-      result_two.should be
+      Braintree::Transaction.find(create_transaction.id).should be
+      Braintree::Transaction.find(create_transaction.id).should be
     end
 
     it "raises an error when the transaction does not exist" do
