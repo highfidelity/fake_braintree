@@ -6,6 +6,15 @@ describe FakeBraintree::SinatraApp do
       result = Braintree::Transaction.sale(:payment_method_token => cc_token, :amount => 10.00)
       result.should be_success
     end
+
+    context "when all cards are declined" do
+      before { FakeBraintree.decline_all_cards! }
+
+      it "fails" do
+        result = Braintree::Transaction.sale(:payment_method_token => cc_token, :amount => 10.00)
+        result.should_not be_success
+      end
+    end
   end
 end
 
@@ -22,6 +31,10 @@ describe FakeBraintree::SinatraApp do
       result_two = Braintree::Transaction.find(create_transaction.id)
       result_one.should be
       result_two.should be
+    end
+
+    it "raises an error when the transaction does not exist" do
+      expect { Braintree::Transaction.find('foobar') }.to raise_error(Braintree::NotFoundError)
     end
 
     def create_transaction
