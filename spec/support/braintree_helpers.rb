@@ -12,4 +12,8 @@ module BraintreeHelpers
   def braintree_credit_card_token(cc_number, expiration_date)
     create_braintree_customer(cc_number, expiration_date).credit_cards[0].token
   end
+
+  def cc_token
+    braintree_credit_card_token(TEST_CC_NUMBER, '04/2016')
+  end
 end

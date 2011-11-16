@@ -18,12 +18,12 @@ module FakeBraintree
     @customers     = {}
     @subscriptions = {}
     @failures      = {}
-    @transaction   = {}
+    @transactions  = {}
     @redirects     = {}
 
     @decline_all_cards = false
     @verify_all_cards  = false
-    attr_accessor :customers, :subscriptions, :failures, :transaction, :decline_all_cards, :verify_all_cards, :redirects
+    attr_accessor :customers, :subscriptions, :failures, :transactions, :decline_all_cards, :verify_all_cards, :redirects
   end
 
   def self.activate!
@@ -40,7 +40,7 @@ module FakeBraintree
     self.customers         = {}
     self.subscriptions     = {}
     self.failures          = {}
-    self.transaction       = {}
+    self.transactions      = {}
     self.redirects         = {}
     self.decline_all_cards = false
     clear_log!

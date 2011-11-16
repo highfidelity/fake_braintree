@@ -58,15 +58,16 @@ module FakeBraintree
         transaction          = Hash.from_xml(request.body)["transaction"]
         transaction_id       = md5("#{params[:merchant_id]}#{Time.now.to_f}")
         transaction_response = {"id" => transaction_id, "amount" => transaction["amount"]}
-        FakeBraintree.transaction.replace(transaction_response)
+        FakeBraintree.transactions[transaction_id] = transaction_response
         gzipped_response(200, transaction_response.to_xml(:root => "transaction"))
       end
     end
 
     # Braintree::Transaction.find
     get "/merchants/:merchant_id/transactions/:transaction_id" do
-      if FakeBraintree.transaction["id"] == params[:transaction_id]
-        gzipped_response(200, FakeBraintree.transaction.to_xml(:root => "transaction"))
+      transaction = FakeBraintree.transactions[params[:transaction_id]]
+      if transaction
+        gzipped_response(200, transaction.to_xml(:root => "transaction"))
       else
         gzipped_response(404, {})
       end
