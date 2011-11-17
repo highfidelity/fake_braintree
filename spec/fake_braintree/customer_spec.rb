@@ -1,32 +1,23 @@
 require 'spec_helper'
 
 describe "Braintree::Customer.create" do
-  let(:expiration_month) { "04" }
-  let(:expiration_year)  { "2016" }
-  let(:expiration_date)  { [expiration_month, expiration_year].join("/") }
   after { FakeBraintree.verify_all_cards = false }
 
-  def create_customer_with_credit_card(options)
-    Braintree::Customer.create(:credit_card => options)
-  end
-
   it "successfully creates a customer" do
-    result = create_customer_with_credit_card(:number => TEST_CC_NUMBER,
-                                              :expiration_date => expiration_date)
+    result = Braintree::Customer.create(:credit_card => { :number => TEST_CC_NUMBER,
+                                                          :expiration_date => expiration_date })
     result.should be_success
   end
 
   it "creates a customer using an expiration month and year" do
-    result = create_customer_with_credit_card(:number => TEST_CC_NUMBER,
-                                              :expiration_month => expiration_month,
-                                              :expiration_year => expiration_year)
+    result = Braintree::Customer.create(:credit_card => { :number => TEST_CC_NUMBER,
+                                                          :expiration_month => expiration_month,
+                                                          :expiration_year => expiration_year })
     result.should be_success
   end
 
   it "records the billing address" do
-    result = create_customer_with_credit_card(
-      :number => TEST_CC_NUMBER,
-      :expiration_date => expiration_date,
+    result = create_customer(
       :billing_address => {
         :street_address => "1 E Main St",
         :extended_address => "Suite 3",
@@ -45,19 +36,11 @@ describe "Braintree::Customer.create" do
 
   context "when passed :verify_card => true" do
     it "accepts valid cards" do
-      create_customer_with_credit_card(
-        :number          => TEST_CC_NUMBER,
-        :expiration_date => expiration_date,
-        :options         => { :verify_card => true }
-      ).should be_success
+      create_customer(:options => { :verify_card => true }).should be_success
     end
 
     it "rejects invalid cards" do
-      create_customer_with_credit_card(
-        :number          => '123456',
-        :expiration_date => expiration_date,
-        :options         => { :verify_card => true }
-      ).should_not be_success
+      create_customer_with_invalid_card(:options => { :verify_card => true }).should_not be_success
     end
   end
 
@@ -65,19 +48,29 @@ describe "Braintree::Customer.create" do
     before { FakeBraintree.verify_all_cards! }
 
     it "accepts valid cards" do
-      create_customer_with_credit_card(
-        :number          => TEST_CC_NUMBER,
-        :expiration_date => expiration_date
-      ).should be_success
+      create_customer.should be_success
     end
 
     it "rejects invalid cards" do
-      create_customer_with_credit_card(
-        :number          => '123456',
-        :expiration_date => expiration_date
-      ).should_not be_success
+      create_customer_with_invalid_card.should_not be_success
     end
   end
+
+  def create_customer(options = {})
+    options[:number] ||= TEST_CC_NUMBER
+    options[:expiration_date] ||= expiration_date
+    Braintree::Customer.create(:credit_card => options)
+  end
+
+  def create_customer_with_invalid_card(options = {})
+    options[:number] = '123456'
+    options[:expiration_date] ||= expiration_date
+    create_customer(options)
+  end
+
+  let(:expiration_month) { "04" }
+  let(:expiration_year)  { "2016" }
+  let(:expiration_date)  { [expiration_month, expiration_year].join("/") }
 end
 
 describe "Braintree::Customer.find" do
