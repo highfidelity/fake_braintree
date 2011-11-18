@@ -33,7 +33,7 @@ describe FakeBraintree, ".decline_all_cards!" do
   end
 
   def create_sale
-    Braintree::CreditCard.sale(cc_token, amount: 10.00)
+    Braintree::CreditCard.sale(cc_token, :amount => 10.00)
   end
 end
 

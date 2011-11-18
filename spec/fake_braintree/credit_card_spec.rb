@@ -17,7 +17,7 @@ describe FakeBraintree::SinatraApp do
 
   context "Braintree::CreditCard.sale" do
     it "successfully creates a sale" do
-      result = Braintree::CreditCard.sale(cc_token, amount: 10.00)
+      result = Braintree::CreditCard.sale(cc_token, :amount => 10.00)
       result.should be_success
       Braintree::Transaction.find(result.transaction.id).should be
     end
