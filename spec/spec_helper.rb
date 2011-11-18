@@ -19,7 +19,10 @@ Spork.prefork do
     config.include BraintreeHelpers
     config.include CustomerHelpers
 
-    config.before { FakeBraintree.clear! }
+    config.before do
+      FakeBraintree.clear!
+      FakeBraintree.verify_all_cards = false
+    end
   end
 end
 
