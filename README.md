@@ -70,3 +70,10 @@ This will decline all cards until you call
 
 This behavior is different from `FakeBraintree.verify_all_cards`, which will
 stay on even when `clear!` is called.
+
+Note that after `decline_all_cards!` is set, Braintree will still create
+customers, but will not be able to charge them (so charging for e.g. a subscription
+will fail). Setting `verify_all_cards!`, on the other hand, will prevent
+creation of customers with bad credit cards - Braintree won't even get to trying
+to charge them.
+
