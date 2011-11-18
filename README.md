@@ -51,9 +51,9 @@ they aren't one of the listed numbers.
 ## Declining credit cards
 
 To decline every card you try, call:
-    
+
     FakeBraintree.decline_all_cards!
-    
+
 This will decline all cards until you call
 
     FakeBraintree.clear!
