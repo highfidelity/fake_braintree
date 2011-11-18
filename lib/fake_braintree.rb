@@ -55,7 +55,7 @@ module FakeBraintree
     self.failures.include?(card_number)
   end
 
-  def self.failure_response(card_number)
+  def self.failure_response(card_number = nil)
     failure = self.failures[card_number] || {}
     failure["errors"] ||= { "errors" => [] }
 

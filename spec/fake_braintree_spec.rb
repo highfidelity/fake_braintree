@@ -99,3 +99,9 @@ describe FakeBraintree, "VALID_CREDIT_CARDS" do
       )
   end
 end
+
+describe FakeBraintree, ".failure_response" do
+  it "can be called with no arguments" do
+    expect { FakeBraintree.failure_response }.not_to raise_error
+  end
+end
