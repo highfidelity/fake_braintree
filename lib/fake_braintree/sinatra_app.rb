@@ -12,7 +12,8 @@ module FakeBraintree
     # Braintree::Customer.create
     post "/merchants/:merchant_id/customers" do
       customer_hash = Hash.from_xml(request.body).delete("customer")
-      Customer.new(customer_hash, params[:merchant_id]).create
+      options = {:merchant_id => params[:merchant_id]}
+      Customer.new(customer_hash, options).create
     end
 
     # Braintree::Customer.find
@@ -23,6 +24,13 @@ module FakeBraintree
       else
         gzipped_response(404, {})
       end
+    end
+
+    # Braintree::Customer.update
+    put "/merchants/:merchant_id/customers/:id" do
+      customer_hash = Hash.from_xml(request.body).delete("customer")
+      options = {:id => params[:id], :merchant_id => params[:merchant_id]}
+      Customer.new(customer_hash, options).update
     end
 
     # Braintree::Subscription.create

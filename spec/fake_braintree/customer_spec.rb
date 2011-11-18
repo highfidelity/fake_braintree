@@ -74,3 +74,17 @@ describe "Braintree::Customer.find" do
     lambda { Braintree::Customer.find("foo") }.should raise_error(Braintree::NotFoundError)
   end
 end
+
+describe "Braintree::Customer.update" do
+  it "successfully updates a customer" do
+    customer_id = create_customer.customer.id
+    result = Braintree::Customer.update(customer_id, :first_name => "Jerry")
+
+    result.should be_success
+    Braintree::Customer.find(customer_id).first_name.should == "Jerry"
+  end
+
+  it "raises an error for a nonexistent customer" do
+    lambda { Braintree::Customer.update("foo", {:first_name => "Bob"}) }.should raise_error(Braintree::NotFoundError)
+  end
+end

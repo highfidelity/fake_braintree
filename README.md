@@ -9,13 +9,23 @@ Currently in alpha (i.e. it does not support every Braintree call).
 
 ## Supported API methods
 
-* `Braintree::Customer.create`
+### Customer
 * `Braintree::Customer.find`
-* `Braintree::Subscription.create`
+* `Braintree::Customer.create`
+* `Braintree::Customer.update`
+
+### Subscription
 * `Braintree::Subscription.find`
+* `Braintree::Subscription.create`
+
+### CreditCard
 * `Braintree::CreditCard.find`
 * `Braintree::CreditCard.sale`
+
+### Transaction
 * `Braintree::Transaction.sale`
+
+### TransparentRedirect
 * `Braintree::TransparentRedirect.url`
 * `Braintree::TransparentRedirect.confirm` (only for creating customers)
 

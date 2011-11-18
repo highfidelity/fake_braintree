@@ -2,9 +2,9 @@ module FakeBraintree
   class Customer
     include Helpers
 
-    def initialize(customer_hash, merchant_id)
-      @customer_hash = customer_hash
-      @merchant_id  = merchant_id
+    def initialize(customer_hash, options)
+      @customer_hash = customer_hash.merge("merchant_id" => options[:merchant_id],
+                                           "id" => options[:id])
     end
 
     def create
@@ -17,10 +17,18 @@ module FakeBraintree
       end
     end
 
+    def update
+      if existing_customer_hash
+        hash = update_existing_customer!
+        gzipped_response(200, hash.to_xml(:root => 'customer'))
+      else
+        failure_response(404)
+      end
+    end
+
     def customer_hash
       hash = @customer_hash.dup
       hash["id"] ||= create_id
-      hash["merchant-id"] = @merchant_id
 
       if hash["credit_card"] && hash["credit_card"].is_a?(Hash)
         if !hash["credit_card"].empty?
@@ -49,6 +57,14 @@ module FakeBraintree
       end
     end
 
+    def existing_customer_hash
+      FakeBraintree.customers[customer_hash["id"]]
+    end
+
+    def update_existing_customer!
+      existing_customer_hash.merge!(customer_hash)
+    end
+
     def credit_card_token(hash)
       md5("#{hash['merchant_id']}#{hash['id']}")
     end
@@ -57,8 +73,8 @@ module FakeBraintree
       hash["credit_card"].delete("number")[-4..-1]
     end
 
-    def failure_response
-      gzipped_response(422, FakeBraintree.failure_response(@customer_hash["credit_card"]["number"]).to_xml(:root => 'api_error_response'))
+    def failure_response(code = 422)
+      gzipped_response(code, FakeBraintree.failure_response(credit_card_number).to_xml(:root => 'api_error_response'))
     end
 
     def credit_card_is_failure?
@@ -89,6 +105,10 @@ module FakeBraintree
       @customer_hash.key?("credit_card") &&
         @customer_hash["credit_card"].is_a?(Hash) &&
         @customer_hash["credit_card"].key?("number")
+    end
+
+    def credit_card_number
+      has_credit_card_number? && @customer_hash["credit_card"]["number"]
     end
   end
 end
