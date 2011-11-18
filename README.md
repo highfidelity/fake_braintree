@@ -67,3 +67,6 @@ To decline every card you try, call:
 This will decline all cards until you call
 
     FakeBraintree.clear!
+
+This behavior is different from FakeBraintree.verify\_all\_cards, which will
+stay on even when `clear!` is called.
