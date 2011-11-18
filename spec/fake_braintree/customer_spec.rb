@@ -9,6 +9,11 @@ describe "Braintree::Customer.create" do
     result.should be_success
   end
 
+  it "can handle an empty credit card hash" do
+    result = Braintree::Customer.create(:credit_card => {})
+    result.should be_success
+  end
+
   it "creates a customer using an expiration month and year" do
     result = Braintree::Customer.create(:credit_card => { :number => TEST_CC_NUMBER,
                                                           :expiration_month => expiration_month,

@@ -74,6 +74,7 @@ module FakeBraintree
       return true if FakeBraintree.verify_all_cards
 
       @customer_hash.key?("credit_card") &&
+        @customer_hash["credit_card"].is_a?(Hash) &&
         @customer_hash["credit_card"].key?("options") &&
         @customer_hash["credit_card"]["options"].is_a?(Hash) &&
         @customer_hash["credit_card"]["options"]["verify_card"] == true
