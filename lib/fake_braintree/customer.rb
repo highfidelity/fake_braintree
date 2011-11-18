@@ -58,7 +58,7 @@ module FakeBraintree
     end
 
     def existing_customer_hash
-      FakeBraintree.customers[customer_hash["id"]]
+      @customer_hash['id'] && FakeBraintree.customers[@customer_hash["id"]]
     end
 
     def update_existing_customer!
