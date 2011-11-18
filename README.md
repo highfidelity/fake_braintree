@@ -68,5 +68,5 @@ This will decline all cards until you call
 
     FakeBraintree.clear!
 
-This behavior is different from FakeBraintree.verify\_all\_cards, which will
+This behavior is different from `FakeBraintree.verify_all_cards`, which will
 stay on even when `clear!` is called.
