@@ -24,12 +24,12 @@ describe "Braintree::Subscription.create" do
     first_result.subscription.id.should_not == second_result.subscription.id
   end
 
-  it "sets the next billing date to 1 month from now in UTC" do
+  it "sets the next billing date to a string of 1.month.from_now in UTC" do
     Timecop.freeze do
       result = Braintree::Subscription.create(:payment_method_token => cc_token,
                                               :plan_id => plan_id)
 
-      result.subscription.next_billing_date.to_i.should == 1.month.from_now.utc.to_i
+      result.subscription.next_billing_date.should == 1.month.from_now.utc.strftime('%Y-%m-%d')
     end
   end
 
