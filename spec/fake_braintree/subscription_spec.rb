@@ -5,17 +5,13 @@ describe "Braintree::Subscription.create" do
   let(:expiration_date)        { "04/2016" }
 
   it "successfully creates a subscription" do
-    result = Braintree::Subscription.create(:payment_method_token => cc_token,
-                                            :plan_id => plan_id)
-    result.should be_success
+    create_subscription.should be_success
   end
 
   it "assigns a Braintree-esque ID to the subscription" do
-    result = Braintree::Subscription.create(:payment_method_token => cc_token,
-                                            :plan_id => plan_id)
-
-    result.subscription.id.should =~ /^[a-z0-9]{6}$/
+    create_subscription.subscription.id.should =~ /^[a-z0-9]{6}$/
   end
+
 
   it "assigns unique IDs to each subscription" do
     cc_token_1 = cc_token
@@ -36,10 +32,14 @@ describe "Braintree::Subscription.create" do
       result.subscription.next_billing_date.to_i.should == 1.month.from_now.utc.to_i
     end
   end
+
+  def create_subscription
+    Braintree::Subscription.create(:payment_method_token => cc_token,
+                                   :plan_id => plan_id)
+  end
 end
 
 describe "Braintree::Subscription.find" do
-
   it "can find a created subscription" do
     subscription = Braintree::Subscription.find(subscription_id)
     subscription.should_not be_nil
