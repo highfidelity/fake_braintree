@@ -17,6 +17,7 @@ Spork.prefork do
     config.mock_with :mocha
 
     config.include BraintreeHelpers
+    config.include CustomerHelpers
 
     config.before { FakeBraintree.clear! }
   end

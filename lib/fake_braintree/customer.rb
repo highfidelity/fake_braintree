@@ -81,7 +81,14 @@ module FakeBraintree
     end
 
     def has_invalid_credit_card?(customer_hash)
-      ! FakeBraintree::VALID_CREDIT_CARDS.include?(@customer_hash["credit_card"]["number"])
+      has_credit_card_number? &&
+        ! FakeBraintree::VALID_CREDIT_CARDS.include?(@customer_hash["credit_card"]["number"])
+    end
+
+    def has_credit_card_number?
+      @customer_hash.key?("credit_card") &&
+        @customer_hash["credit_card"].is_a?(Hash) &&
+        @customer_hash["credit_card"].key?("number")
     end
   end
 end
