@@ -28,4 +28,5 @@ Gem::Specification.new do |s|
   s.add_development_dependency 'timecop', '~> 0.3.5'
   s.add_development_dependency 'spork', '~> 0.9.0.rc9'
   s.add_development_dependency 'bundler', '>= 1.0.14'
+  s.add_development_dependency 'rake'
 end
