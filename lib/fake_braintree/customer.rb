@@ -7,10 +7,6 @@ module FakeBraintree
       @merchant_id  = merchant_id
     end
 
-    def invalid?
-      credit_card_is_failure? || invalid_credit_card?
-    end
-
     def create
       if invalid?
         failure_response
@@ -41,6 +37,10 @@ module FakeBraintree
     end
 
     private
+
+    def invalid?
+      credit_card_is_failure? || invalid_credit_card?
+    end
 
     def split_expiration_date_into_month_and_year!(hash)
       if expiration_date = hash["credit_card"].delete("expiration_date")
