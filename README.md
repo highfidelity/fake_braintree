@@ -1,8 +1,8 @@
 # fake\_braintree, a Braintree fake
 
 This library is a way to test Braintree code without hitting Braintree's servers.
-It uses [sham_rack](https://github.com/mdub/sham_rack) to intercept all of the
-calls from Braintree's Ruby library and returns XML that the Braintree library
+It uses [Capybara::Server](https://github.com/jnicklas/capybara/blob/master/lib/capybara/server.rb)
+to intercept all of the calls from Braintree's Ruby library and returns XML that the Braintree library
 can parse. The whole point is not to hit the Braintree API.
 
 Currently in alpha (i.e. it does not support every Braintree call).
