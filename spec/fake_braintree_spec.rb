@@ -107,11 +107,16 @@ describe FakeBraintree, ".failure_response" do
 end
 
 describe FakeBraintree, ".generate_transaction" do
-  it "returns a hash with a status_history key" do
-    FakeBraintree.generate_transaction(:amount => '20').should have_key('status_history')
+  it "includes the subscription id" do
+    transaction = FakeBraintree.generate_transaction(:subscription_id => 'foobar')
+    transaction['subscription_id'].should == 'foobar'
   end
 
   context "status_history" do
+    it "returns a hash with a status_history key" do
+      FakeBraintree.generate_transaction(:amount => '20').should have_key('status_history')
+    end
+
     it "has a timestamp of Time.now" do
       Timecop.freeze do
         transaction = FakeBraintree.generate_transaction(:status => Braintree::Transaction::Status::Failed,
@@ -129,11 +134,6 @@ describe FakeBraintree, ".generate_transaction" do
       status = Braintree::Transaction::Status::Failed
       transaction = FakeBraintree.generate_transaction(:status => status)
       transaction['status_history'][0]['status'].should == status
-    end
-
-    it "includes the subscription id" do
-      transaction = FakeBraintree.generate_transaction(:subscription_id => 'foobar')
-      transaction['subscription_id'].should == 'foobar'
     end
   end
 end
