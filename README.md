@@ -13,6 +13,7 @@ Currently in alpha (i.e. it does not support every Braintree call).
 * `Braintree::Customer.find`
 * `Braintree::Customer.create`
 * `Braintree::Customer.update`
+* `Braintree::Customer.delete`
 
 ### Subscription
 * `Braintree::Subscription.find`

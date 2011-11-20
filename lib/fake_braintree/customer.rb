@@ -26,6 +26,11 @@ module FakeBraintree
       end
     end
 
+    def delete
+      FakeBraintree.customers[existing_customer_id] = nil
+      gzipped_response(200, '')
+    end
+
     def customer_hash
       hash = @customer_hash.dup
       hash["id"] ||= create_id
@@ -58,7 +63,7 @@ module FakeBraintree
     end
 
     def existing_customer_hash
-      @customer_hash['id'] && FakeBraintree.customers[@customer_hash["id"]]
+      existing_customer_id && FakeBraintree.customers[existing_customer_id]
     end
 
     def update_existing_customer!
@@ -109,6 +114,10 @@ module FakeBraintree
 
     def credit_card_number
       has_credit_card_number? && @customer_hash["credit_card"]["number"]
+    end
+
+    def existing_customer_id
+      @customer_hash['id']
     end
   end
 end

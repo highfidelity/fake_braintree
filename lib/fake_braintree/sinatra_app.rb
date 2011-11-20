@@ -33,6 +33,13 @@ module FakeBraintree
       Customer.new(customer_hash, options).update
     end
 
+    # Braintree::Customer.delete
+    delete "/merchants/:merchant_id/customers/:id" do
+      customer_hash = {}
+      options = {:id => params[:id], :merchant_id => params[:merchant_id]}
+      Customer.new(customer_hash, options).delete
+    end
+
     # Braintree::Subscription.create
     post "/merchants/:merchant_id/subscriptions" do
       subscription_hash = Hash.from_xml(request.body).delete("subscription")

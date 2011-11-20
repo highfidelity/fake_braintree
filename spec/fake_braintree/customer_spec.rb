@@ -88,3 +88,13 @@ describe "Braintree::Customer.update" do
     lambda { Braintree::Customer.update("foo", {:first_name => "Bob"}) }.should raise_error(Braintree::NotFoundError)
   end
 end
+
+describe "Braintree::Customer.delete" do
+  it "successfully deletes a customer" do
+    customer_id = create_customer.customer.id
+    result = Braintree::Customer.delete(customer_id)
+
+    result.should be_success
+    expect { Braintree::Customer.find(customer_id) }.to raise_error(Braintree::NotFoundError)
+  end
+end
