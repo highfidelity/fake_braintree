@@ -78,3 +78,32 @@ will fail). Setting `verify_all_cards!`, on the other hand, will prevent
 creation of customers with bad credit cards - Braintree won't even get to trying
 to charge them.
 
+## Generating transactions
+
+You can generate a transaction using `FakeBraintree.generate_transaction`. This
+is for use in testing, e.g.
+`before { user.transaction = FakeBraintree.generate_transaction }`.
+
+It takes the following options:
+
+* `:subscription_id`: the ID of the subscription associated with the transaction.
+* `:amount`: the amount of the transaction
+* `:status`: the status of the transaction, e.g. `Braintree::Transaction::Status::Failed`
+
+Any or all of these can be nil, and in fact are nil by default.
+
+Full example:
+
+    transaction = FakeBraintree.generate_transaction(:amount => '20.00',
+                                                     :status => Braintree::Transaction::Status::Settled,
+                                                     :subscription_id => 'foobar')
+    p transaction
+    # {
+    #   "status_history" =>
+    #     [{
+    #       "timestamp" => 2011-11-20 12:57:25 -0500,
+    #       "amount"    => "20.00",
+    #       "status"    => "settled"
+    #     }],
+    #   "subscription_id" => "foobar"
+    # }
