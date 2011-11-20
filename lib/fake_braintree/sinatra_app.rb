@@ -35,10 +35,9 @@ module FakeBraintree
 
     # Braintree::Subscription.create
     post "/merchants/:merchant_id/subscriptions" do
-      response_hash = Subscription.new(request).response_hash
-
-      FakeBraintree.subscriptions[response_hash["id"]] = response_hash
-      gzipped_response(201, response_hash.to_xml(:root => 'subscription'))
+      subscription_hash = Hash.from_xml(request.body).delete("subscription")
+      options = {:merchant_id => params[:merchant_id]}
+      Subscription.new(subscription_hash, options).create
     end
 
     # Braintree::Subscription.find
