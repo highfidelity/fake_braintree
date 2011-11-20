@@ -90,7 +90,8 @@ It takes the following options:
 * `:amount`: the amount of the transaction
 * `:status`: the status of the transaction, e.g. `Braintree::Transaction::Status::Failed`
 
-Any or all of these can be nil, and in fact are nil by default.
+Any or all of these can be nil, and in fact are nil by default. You can also
+call it with no arguments.
 
 Full example:
 

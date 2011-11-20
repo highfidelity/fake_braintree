@@ -99,7 +99,7 @@ module FakeBraintree
     end
   end
 
-  def self.generate_transaction(options)
+  def self.generate_transaction(options = {})
     history_item = { 'timestamp'       => Time.now,
                      'amount'          => options[:amount],
                      'status'          => options[:status] }

@@ -112,6 +112,10 @@ describe FakeBraintree, ".generate_transaction" do
     transaction['subscription_id'].should == 'foobar'
   end
 
+  it "allows no arguments" do
+    expect { FakeBraintree.generate_transaction }.not_to raise_error
+  end
+
   context "status_history" do
     it "returns a hash with a status_history key" do
       FakeBraintree.generate_transaction(:amount => '20').should have_key('status_history')
