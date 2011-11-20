@@ -5,13 +5,13 @@ describe "Braintree::Subscription.create" do
   let(:expiration_date)        { "04/2016" }
 
   it "successfully creates a subscription" do
-    create_subscription.should be_success
+    Braintree::Subscription.create(:payment_method_token => cc_token,
+                                   :plan_id => 'my_plan_id').should be_success
   end
 
   it "assigns a Braintree-esque ID to the subscription" do
     create_subscription.subscription.id.should =~ /^[a-z0-9]{6}$/
   end
-
 
   it "assigns unique IDs to each subscription" do
     cc_token_1 = cc_token
