@@ -17,7 +17,7 @@ module FakeBraintree
     end
 
     def confirm
-      Customer.new(@params["customer"], @merchant_id).create
+      Customer.new(@params["customer"], {:merchant_id => @merchant_id}).create
     end
 
     private
