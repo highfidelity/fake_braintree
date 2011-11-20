@@ -52,3 +52,13 @@ describe "Braintree::Subscription.find" do
   let(:subscription_id) { Braintree::Subscription.create(:payment_method_token => payment_method_token,
                                                          :plan_id => plan_id).subscription.id }
 end
+
+describe "Braintree::Subscription.update" do
+  it "can update a subscription" do
+    Braintree::Subscription.update(subscription_id, :plan_id => 'a_new_plan')
+    Braintree::Subscription.find(subscription_id).plan_id.should == 'a_new_plan'
+  end
+
+  let(:subscription_id) { subscription.subscription.id }
+  let(:subscription)    { create_subscription }
+end

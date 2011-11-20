@@ -17,6 +17,7 @@ Currently in alpha (i.e. it does not support every Braintree call).
 ### Subscription
 * `Braintree::Subscription.find`
 * `Braintree::Subscription.create`
+* `Braintree::Subscription.update`
 
 ### CreditCard
 * `Braintree::CreditCard.find`

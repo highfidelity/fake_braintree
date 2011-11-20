@@ -13,6 +13,13 @@ module FakeBraintree
       gzipped_response(201, hash.to_xml(:root => 'subscription'))
     end
 
+    def update
+      if existing_subscription_hash
+        hash = update_existing_subscription!
+        gzipped_response(200, hash.to_xml(:root => 'subscription'))
+      end
+    end
+
     def subscription_hash
       subscription_hash = @subscription_hash.dup
       subscription_hash["id"]                   ||= subscription_id
@@ -28,6 +35,15 @@ module FakeBraintree
     end
 
     private
+
+    def existing_subscription_hash
+      @subscription_hash['id'] && FakeBraintree.subscriptions[@subscription_hash["id"]]
+    end
+
+    def update_existing_subscription!
+      new_hash = existing_subscription_hash.merge(subscription_hash)
+      FakeBraintree.subscriptions[@subscription_hash['id']] = new_hash
+    end
 
     def braintree_formatted_date(date)
       date.strftime('%Y-%m-%d')

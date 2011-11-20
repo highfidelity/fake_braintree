@@ -50,6 +50,13 @@ module FakeBraintree
       end
     end
 
+    # Braintree::Subscription.update
+    put "/merchants/:merchant_id/subscriptions/:id" do
+      subscription_hash = Hash.from_xml(request.body).delete("subscription")
+      options = {:id => params[:id], :merchant_id => params[:merchant_id]}
+      Subscription.new(subscription_hash, options).update
+    end
+
     # Braintree::CreditCard.find
     get "/merchants/:merchant_id/payment_methods/:credit_card_token" do
       credit_card = FakeBraintree.credit_card_from_token(params[:credit_card_token])
