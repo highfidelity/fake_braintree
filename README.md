@@ -33,12 +33,14 @@ Currently in alpha (i.e. it does not support every Braintree call).
 * `Braintree::TransparentRedirect.confirm` (only for creating customers)
 
 ## Quick start
-Call `FakeBraintree.activate!` to make it go. `FakeBraintree.clear!` will clear
-all data, which you probably want to do before each test.
+Just require the library and you're good to go:
 
-Example, in spec\_helper.rb:
+    require 'fake_braintree'
 
-    FakeBraintree.activate!
+`FakeBraintree.clear!` will clear all data, which you almost certainly want to
+do before each test.
+
+Full example, in spec\_helper.rb:
 
     RSpec.configure do |c|
       c.before do
