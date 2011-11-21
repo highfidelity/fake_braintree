@@ -1,4 +1,5 @@
-# fake\_braintree, a Braintree fake
+# fake\_braintree, a Braintree fake [![Build Status](https://secure.travis-ci.org/thoughtbot/fake_braintree.png)](http://travis-ci.org/thoughtbot/fake_braintree)
+
 
 This library is a way to test Braintree code without hitting Braintree's servers.
 It uses [Capybara::Server](https://github.com/jnicklas/capybara/blob/master/lib/capybara/server.rb)
