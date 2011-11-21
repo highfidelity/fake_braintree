@@ -40,12 +40,24 @@ Just require the library and you're good to go:
 `FakeBraintree.clear!` will clear all data, which you almost certainly want to
 do before each test.
 
-Full example, in spec\_helper.rb:
+Full example:
+
+    # spec_helper.rb
+    require 'fake_braintree'
 
     RSpec.configure do |c|
       c.before do
         FakeBraintree.clear!
       end
+    end
+
+If you're using Cucumber, add this too:
+
+    # env.rb
+    require 'fake_braintree'
+
+    Before do
+      FakeBraintree.clear!
     end
 
 ## Verifying credit cards
