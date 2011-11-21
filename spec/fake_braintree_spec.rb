@@ -112,6 +112,19 @@ describe FakeBraintree, ".generate_transaction" do
     transaction['subscription_id'].should == 'foobar'
   end
 
+  it "allows setting created_at" do
+    time = Time.now
+    transaction = FakeBraintree.generate_transaction(:created_at => time)
+    transaction['created_at'].should == time
+  end
+
+  it "sets created_at to Time.now by default" do
+    Timecop.freeze do
+      transaction = FakeBraintree.generate_transaction
+      transaction['created_at'].should == Time.now
+    end
+  end
+
   it "allows no arguments" do
     expect { FakeBraintree.generate_transaction }.not_to raise_error
   end

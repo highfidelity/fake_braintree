@@ -103,8 +103,10 @@ module FakeBraintree
     history_item = { 'timestamp'       => Time.now,
                      'amount'          => options[:amount],
                      'status'          => options[:status] }
+    created_at = options[:created_at] || Time.now
     {'status_history'  => [history_item],
-     'subscription_id' => options[:subscription_id] }
+     'subscription_id' => options[:subscription_id],
+     'created_at'      => created_at }
   end
 
   private

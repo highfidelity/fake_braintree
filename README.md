@@ -88,6 +88,7 @@ is for use in testing, e.g.
 It takes the following options:
 
 * `:subscription_id`: the ID of the subscription associated with the transaction.
+* `:created_at`: when the transaction was created (defaults to `Time.now`)
 * `:amount`: the amount of the transaction
 * `:status`: the status of the transaction, e.g. `Braintree::Transaction::Status::Failed`
 
@@ -98,14 +99,16 @@ Full example:
 
     transaction = FakeBraintree.generate_transaction(:amount => '20.00',
                                                      :status => Braintree::Transaction::Status::Settled,
-                                                     :subscription_id => 'foobar')
+                                                     :subscription_id => 'foobar',
+                                                     :created_at => Time.now + 60)
     p transaction
     # {
     #   "status_history" =>
     #     [{
-    #       "timestamp" => 2011-11-20 12:57:25 -0500,
-    #       "amount"    => "20.00",
-    #       "status"    => "settled"
+    #       "timestamp"  => 2011-11-20 12:57:25 -0500,
+    #       "amount"     => "20.00",
+    #       "status"     => "settled",
+    #       "created_at" => 2011-11-20 12:58:25 -0500
     #     }],
     #   "subscription_id" => "foobar"
     # }
