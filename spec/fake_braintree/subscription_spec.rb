@@ -37,6 +37,10 @@ end
 
 describe "Braintree::Subscription.find" do
   it "can find a created subscription" do
+    payment_method_token = cc_token
+    plan_id = "abc123"
+    subscription_id =
+      create_subscription(:payment_method_token => payment_method_token, :plan_id => plan_id).subscription.id
     subscription = Braintree::Subscription.find(subscription_id)
     subscription.should_not be_nil
     subscription.payment_method_token.should == payment_method_token
@@ -44,13 +48,18 @@ describe "Braintree::Subscription.find" do
   end
 
   it "raises a Braintree:NotFoundError when it cannot find a subscription" do
+    create_subscription
     expect { Braintree::Subscription.find('abc123') }.to raise_error(Braintree::NotFoundError, /abc123/)
   end
 
-  let(:payment_method_token) { cc_token }
-  let(:plan_id)              { 'my-plan-id' }
-  let(:subscription_id) { Braintree::Subscription.create(:payment_method_token => payment_method_token,
-                                                         :plan_id => plan_id).subscription.id }
+  it "returns add-ons added with the subscription" do
+    add_on_id = "def456"
+    subscription_id = create_subscription(:add_ons => { :add => [{ :inherited_from_id => add_on_id }] }).subscription.id
+    subscription = Braintree::Subscription.find(subscription_id)
+    add_ons = subscription.add_ons
+    add_ons.size.should == 1
+    add_ons.first.id.should == add_on_id
+  end
 end
 
 describe "Braintree::Subscription.update" do
