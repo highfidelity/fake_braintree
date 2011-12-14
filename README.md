@@ -12,7 +12,7 @@ Currently in alpha (i.e. it does not support every Braintree call).
 
 ### Customer
 * `Braintree::Customer.find`
-* `Braintree::Customer.create`
+* `Braintree::Customer.create` (including adding add-ons and discounts)
 * `Braintree::Customer.update`
 * `Braintree::Customer.delete`
 

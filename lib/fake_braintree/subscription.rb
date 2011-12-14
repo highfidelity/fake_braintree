@@ -25,7 +25,7 @@ module FakeBraintree
       subscription_hash["id"]                   ||= subscription_id
       subscription_hash["transactions"]         = []
       subscription_hash["add_ons"]              = added_add_ons
-      subscription_hash["discounts"]            = []
+      subscription_hash["discounts"]            = added_discounts
       subscription_hash["plan_id"]              = @subscription_hash["plan_id"]
       subscription_hash["next_billing_date"]    = braintree_formatted_date(1.month.from_now)
       subscription_hash["payment_method_token"] = @subscription_hash["payment_method_token"]
@@ -56,6 +56,14 @@ module FakeBraintree
     def added_add_ons
       if @subscription_hash["add_ons"] && @subscription_hash["add_ons"]["add"]
         @subscription_hash["add_ons"]["add"].map { |add_on| { "id" => add_on["inherited_from_id"] } }
+      else
+        []
+      end
+    end
+
+    def added_discounts
+      if @subscription_hash["discounts"] && @subscription_hash["discounts"]["add"]
+        @subscription_hash["discounts"]["add"].map { |discount| { "id" => discount["inherited_from_id"] } }
       else
         []
       end

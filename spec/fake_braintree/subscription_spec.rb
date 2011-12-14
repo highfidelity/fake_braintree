@@ -60,6 +60,15 @@ describe "Braintree::Subscription.find" do
     add_ons.size.should == 1
     add_ons.first.id.should == add_on_id
   end
+
+  it "returns discounts added with the subscription" do
+    discount_id = "def456"
+    subscription_id = create_subscription(:discounts => { :add => [{ :inherited_from_id => discount_id, :amount => BigDecimal.new("15.00") }]}).subscription.id
+    subscription = Braintree::Subscription.find(subscription_id)
+    discounts = subscription.discounts
+    discounts.size.should == 1
+    discounts.first.id.should == discount_id
+  end
 end
 
 describe "Braintree::Subscription.update" do
