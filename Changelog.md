@@ -1,3 +1,10 @@
+# 0.0.6
+* Flesh out the README
+* Add support for transparent redirect
+* Add basic support for adding add-ons
+* Add basic support for adding discounts
+* Lots of internal refactorings
+
 # 0.0.5
 * Add support for Braintree::Customer.find
 
