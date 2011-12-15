@@ -3,6 +3,9 @@
 * Add support for transparent redirect
 * Add basic support for adding add-ons
 * Add basic support for adding discounts
+* Add support for Braintree::Customer.update
+* Add support for Braintree::Customer.delete
+* Add support for Braintree::Subscription.delete
 * Lots of internal refactorings
 
 # 0.0.5
