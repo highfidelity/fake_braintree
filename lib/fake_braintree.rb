@@ -15,9 +15,11 @@ require 'fake_braintree/version'
 
 module FakeBraintree
   mattr_accessor :registry, :verify_all_cards, :decline_all_cards
-  verify_all_cards = false
 
   def self.activate!
+    self.registry         = Registry.new
+    self.verify_all_cards = false
+
     set_configuration
     clear!
     Server.new.boot
@@ -28,7 +30,7 @@ module FakeBraintree
   end
 
   def self.clear!
-    self.registry          = Registry.new
+    self.registry.clear!
     self.decline_all_cards = false
     clear_log!
   end
