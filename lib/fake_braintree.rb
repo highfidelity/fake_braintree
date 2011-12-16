@@ -41,11 +41,11 @@ module FakeBraintree
   end
 
   def self.failure?(card_number)
-    self.registry.failure?(card_number)
+    registry.failure?(card_number)
   end
 
   def self.failure_response(card_number = nil)
-    failure = self.registry.failures[card_number] || {}
+    failure = registry.failures[card_number] || {}
     failure["errors"] ||= { "errors" => [] }
 
     { "message"      => failure["message"],
@@ -72,7 +72,7 @@ module FakeBraintree
   end
 
   def self.decline_all_cards?
-    self.decline_all_cards
+    decline_all_cards
   end
 
   def self.verify_all_cards!
