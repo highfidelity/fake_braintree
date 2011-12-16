@@ -2,8 +2,8 @@
 * FakeBraintree.{customers, transactions, failures, subscriptions, redirects}
   are now accessed via FakeBraintree.registry. For example,
   FakeBraintree.customers is now FakeBraintree.registry.customers
-
 * FakeBraintree.credit_card_from_token is now FakeBraintree.registry.credit_card_from_token
+* The server code (it intercepts calls to Braintree) now lives in FakeBraintree::Server
 
 # 0.0.6
 * Flesh out the README
