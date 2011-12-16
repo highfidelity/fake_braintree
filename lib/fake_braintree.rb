@@ -1,8 +1,5 @@
 require 'fileutils'
 require 'braintree'
-require 'capybara'
-require 'capybara/server'
-require 'rack/handler/mongrel'
 require 'active_support/core_ext/module/attribute_accessors'
 
 require 'fake_braintree/helpers'
@@ -11,6 +8,7 @@ require 'fake_braintree/subscription'
 require 'fake_braintree/redirect'
 
 require 'fake_braintree/registry'
+require 'fake_braintree/server'
 require 'fake_braintree/sinatra_app'
 require 'fake_braintree/valid_credit_cards'
 require 'fake_braintree/version'
@@ -22,7 +20,7 @@ module FakeBraintree
   def self.activate!
     set_configuration
     clear!
-    boot_server
+    Server.new.boot
   end
 
   def self.log_file_path
@@ -102,23 +100,6 @@ module FakeBraintree
     Braintree::Configuration.private_key = "xxx"
   end
 
-  def self.boot_server
-    with_mongrel_runner do
-      server = Capybara::Server.new(FakeBraintree::SinatraApp)
-      server.boot
-      ENV['GATEWAY_PORT'] = server.port.to_s
-    end
-  end
-
-  def self.with_mongrel_runner
-    default_server_process = Capybara.server
-    Capybara.server do |app, port|
-      Rack::Handler::Mongrel.run(app, :Port => port)
-    end
-    yield
-  ensure
-    Capybara.server(&default_server_process)
-  end
 end
 
 FakeBraintree.activate!
