@@ -26,22 +26,24 @@ end
 describe Braintree::Configuration do
   subject { Braintree::Configuration }
 
-  it "sets the environment to :development" do
+  it "is running in the development environment" do
     subject.environment.should == :development
   end
 
-  it "sets some fake API credentials" do
+  it "has some fake API credentials" do
     subject.merchant_id.should == "xxx"
     subject.public_key.should == "xxx"
     subject.private_key.should == "xxx"
   end
+end
 
+describe FakeBraintree do
   it "creates a log file" do
     File.exist?(FakeBraintree.log_file_path).should == true
   end
 
   it "logs to the correct path" do
-    subject.logger.info('Logger test')
+    Braintree::Configuration.logger.info('Logger test')
     File.readlines(FakeBraintree.log_file_path).last.should == "Logger test\n"
   end
 end
