@@ -77,10 +77,6 @@ module FakeBraintree
     self.verify_all_cards = true
   end
 
-  def self.credit_card_from_token(token)
-    registry.credit_card_from_token(token)
-  end
-
   def self.generate_transaction(options = {})
     history_item = { 'timestamp'       => Time.now,
                      'amount'          => options[:amount],
