@@ -3,6 +3,7 @@ require 'braintree'
 require 'capybara'
 require 'capybara/server'
 require 'rack/handler/mongrel'
+require 'active_support/core_ext/module/attribute_accessors'
 
 require 'fake_braintree/helpers'
 require 'fake_braintree/customer'
@@ -14,17 +15,8 @@ require 'fake_braintree/valid_credit_cards'
 require 'fake_braintree/version'
 
 module FakeBraintree
-  class << self
-    @customers     = {}
-    @subscriptions = {}
-    @failures      = {}
-    @transactions  = {}
-    @redirects     = {}
-
-    @decline_all_cards = false
-    @verify_all_cards  = false
-    attr_accessor :customers, :subscriptions, :failures, :transactions, :decline_all_cards, :verify_all_cards, :redirects
-  end
+  mattr_accessor :customers, :subscriptions, :failures, :transactions, :verify_all_cards, :decline_all_cards, :redirects
+  verify_all_cards = false
 
   def self.activate!
     set_configuration
