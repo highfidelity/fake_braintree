@@ -20,6 +20,12 @@ describe FakeBraintree, ".credit_card_from_token" do
   let(:token_2)           { braintree_credit_card_token(cc_number_2, expiration_date_2) }
 end
 
+describe FakeBraintree, ".transactions" do
+  it "is exposed" do
+    FakeBraintree.transactions.should == {}
+  end
+end
+
 describe FakeBraintree, ".decline_all_cards!" do
   before { FakeBraintree.decline_all_cards! }
 
@@ -46,7 +52,7 @@ end
 describe Braintree::Configuration do
   subject { Braintree::Configuration }
 
-  it "sets the environment to development" do
+  it "sets the environment to :development" do
     subject.environment.should == :development
   end
 
