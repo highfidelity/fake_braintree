@@ -66,7 +66,7 @@ module FakeBraintree
 
     # Braintree::CreditCard.find
     get "/merchants/:merchant_id/payment_methods/:credit_card_token" do
-      credit_card = FakeBraintree.credit_card_from_token(params[:credit_card_token])
+      credit_card = FakeBraintree.registry.credit_card_from_token(params[:credit_card_token])
       gzipped_response(200, credit_card.to_xml(:root => "credit_card"))
     end
 

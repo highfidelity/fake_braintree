@@ -1,16 +1,5 @@
 require 'spec_helper'
 
-describe FakeBraintree, ".credit_card_from_token" do
-  it "delegates to the Registry" do
-    registry = FakeBraintree::Registry.new
-    registry.stubs(:credit_card_from_token => nil)
-    FakeBraintree.registry = registry
-    FakeBraintree.credit_card_from_token("abc123")
-
-    registry.should have_received(:credit_card_from_token).with("abc123").once
-  end
-end
-
 describe FakeBraintree, ".decline_all_cards!" do
   before { FakeBraintree.decline_all_cards! }
 
