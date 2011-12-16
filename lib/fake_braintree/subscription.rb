@@ -9,7 +9,7 @@ module FakeBraintree
 
     def create
       hash = subscription_hash
-      FakeBraintree.subscriptions[hash["id"]] = hash
+      FakeBraintree.registry.subscriptions[hash["id"]] = hash
       gzipped_response(201, hash.to_xml(:root => 'subscription'))
     end
 
@@ -37,12 +37,12 @@ module FakeBraintree
     private
 
     def existing_subscription_hash
-      @subscription_hash['id'] && FakeBraintree.subscriptions[@subscription_hash["id"]]
+      @subscription_hash['id'] && FakeBraintree.registry.subscriptions[@subscription_hash["id"]]
     end
 
     def update_existing_subscription!
       new_hash = existing_subscription_hash.merge(subscription_hash)
-      FakeBraintree.subscriptions[@subscription_hash['id']] = new_hash
+      FakeBraintree.registry.subscriptions[@subscription_hash['id']] = new_hash
     end
 
     def braintree_formatted_date(date)

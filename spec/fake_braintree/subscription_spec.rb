@@ -24,8 +24,8 @@ describe "Braintree::Subscription.create" do
     first_result.subscription.id.should_not == second_result.subscription.id
   end
 
-  it "stores created subscriptions in FakeBraintree.subscriptions" do
-    FakeBraintree.subscriptions[create_subscription.subscription.id].should_not be_nil
+  it "stores created subscriptions in FakeBraintree.registry.subscriptions" do
+    FakeBraintree.registry.subscriptions[create_subscription.subscription.id].should_not be_nil
   end
 
   it "sets the next billing date to a string of 1.month.from_now in UTC" do

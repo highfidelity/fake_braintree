@@ -10,12 +10,13 @@ require 'fake_braintree/customer'
 require 'fake_braintree/subscription'
 require 'fake_braintree/redirect'
 
+require 'fake_braintree/registry'
 require 'fake_braintree/sinatra_app'
 require 'fake_braintree/valid_credit_cards'
 require 'fake_braintree/version'
 
 module FakeBraintree
-  mattr_accessor :customers, :subscriptions, :failures, :transactions, :verify_all_cards, :decline_all_cards, :redirects
+  mattr_accessor :registry, :verify_all_cards, :decline_all_cards
   verify_all_cards = false
 
   def self.activate!
@@ -29,11 +30,7 @@ module FakeBraintree
   end
 
   def self.clear!
-    self.customers         = {}
-    self.subscriptions     = {}
-    self.failures          = {}
-    self.transactions      = {}
-    self.redirects         = {}
+    self.registry          = Registry.new
     self.decline_all_cards = false
     clear_log!
   end
@@ -44,11 +41,11 @@ module FakeBraintree
   end
 
   def self.failure?(card_number)
-    self.failures.include?(card_number)
+    self.registry.failure?(card_number)
   end
 
   def self.failure_response(card_number = nil)
-    failure = self.failures[card_number] || {}
+    failure = self.registry.failures[card_number] || {}
     failure["errors"] ||= { "errors" => [] }
 
     { "message"      => failure["message"],
@@ -83,12 +80,7 @@ module FakeBraintree
   end
 
   def self.credit_card_from_token(token)
-    self.customers.values.detect do |customer|
-      next unless customer.key?("credit_cards")
-
-      card = customer["credit_cards"].detect {|card| card["token"] == token }
-      return card if card
-    end
+    registry.credit_card_from_token(token)
   end
 
   def self.generate_transaction(options = {})

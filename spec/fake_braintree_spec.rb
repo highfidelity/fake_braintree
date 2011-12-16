@@ -1,28 +1,13 @@
 require 'spec_helper'
 
 describe FakeBraintree, ".credit_card_from_token" do
-  it "looks up the credit card based on a CC token" do
-    credit_card = FakeBraintree.credit_card_from_token(token)
-    credit_card["last_4"].should == TEST_CC_NUMBER[-4,4]
-    credit_card["expiration_year"].should == "2016"
-    credit_card["expiration_month"].should == "04"
+  it "delegates to the Registry" do
+    registry = FakeBraintree::Registry.new
+    registry.stubs(:credit_card_from_token => nil)
+    FakeBraintree.registry = registry
+    FakeBraintree.credit_card_from_token("abc123")
 
-    credit_card = FakeBraintree.credit_card_from_token(token_2)
-    credit_card["last_4"].should == "2222"
-    credit_card["expiration_year"].should == "2019"
-    credit_card["expiration_month"].should == "05"
-  end
-
-  let(:cc_number_2)       { %w(4111 1111 1111 2222).join }
-  let(:expiration_date)   { "04/2016" }
-  let(:expiration_date_2) { "05/2019" }
-  let(:token)             { braintree_credit_card_token(TEST_CC_NUMBER, expiration_date) }
-  let(:token_2)           { braintree_credit_card_token(cc_number_2, expiration_date_2) }
-end
-
-describe FakeBraintree, ".transactions" do
-  it "is exposed" do
-    FakeBraintree.transactions.should == {}
+    registry.should have_received(:credit_card_from_token).with("abc123").once
   end
 end
 

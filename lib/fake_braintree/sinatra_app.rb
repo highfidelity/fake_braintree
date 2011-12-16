@@ -18,7 +18,7 @@ module FakeBraintree
 
     # Braintree::Customer.find
     get "/merchants/:merchant_id/customers/:id" do
-      customer = FakeBraintree.customers[params[:id]]
+      customer = FakeBraintree.registry.customers[params[:id]]
       if customer
         gzipped_response(200, customer.to_xml(:root => 'customer'))
       else
@@ -49,7 +49,7 @@ module FakeBraintree
 
     # Braintree::Subscription.find
     get "/merchants/:merchant_id/subscriptions/:id" do
-      subscription = FakeBraintree.subscriptions[params[:id]]
+      subscription = FakeBraintree.registry.subscriptions[params[:id]]
       if subscription
         gzipped_response(200, subscription.to_xml(:root => 'subscription'))
       else
@@ -79,14 +79,14 @@ module FakeBraintree
         transaction          = Hash.from_xml(request.body)["transaction"]
         transaction_id       = md5("#{params[:merchant_id]}#{Time.now.to_f}")
         transaction_response = {"id" => transaction_id, "amount" => transaction["amount"]}
-        FakeBraintree.transactions[transaction_id] = transaction_response
+        FakeBraintree.registry.transactions[transaction_id] = transaction_response
         gzipped_response(200, transaction_response.to_xml(:root => "transaction"))
       end
     end
 
     # Braintree::Transaction.find
     get "/merchants/:merchant_id/transactions/:transaction_id" do
-      transaction = FakeBraintree.transactions[params[:transaction_id]]
+      transaction = FakeBraintree.registry.transactions[params[:transaction_id]]
       if transaction
         gzipped_response(200, transaction.to_xml(:root => "transaction"))
       else
@@ -98,7 +98,7 @@ module FakeBraintree
     post "/merchants/:merchant_id/transparent_redirect_requests" do
       if params[:tr_data]
         redirect = Redirect.new(params, params[:merchant_id])
-        FakeBraintree.redirects[redirect.id] = redirect
+        FakeBraintree.registry.redirects[redirect.id] = redirect
         redirect to(redirect.url), 303
       else
         [422, { "Content-Type" => "text/html" }, ["Invalid submission"]]
@@ -107,7 +107,7 @@ module FakeBraintree
 
     # Braintree::TransparentRedirect.confirm
     post "/merchants/:merchant_id/transparent_redirect_requests/:id/confirm" do
-      redirect = FakeBraintree.redirects[params[:id]]
+      redirect = FakeBraintree.registry.redirects[params[:id]]
       redirect.confirm
     end
   end

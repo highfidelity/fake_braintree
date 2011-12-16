@@ -24,7 +24,7 @@ Gem::Specification.new do |s|
   s.add_dependency 'mongrel', '~> 1.2.0.pre'
 
   s.add_development_dependency 'rspec', '~> 2.6.0'
-  s.add_development_dependency 'mocha', '~> 0.9.12'
+  s.add_development_dependency 'bourne', '~> 1.0'
   s.add_development_dependency 'timecop', '~> 0.3.5'
   s.add_development_dependency 'spork', '~> 0.9.0.rc9'
   s.add_development_dependency 'bundler', '>= 1.0.14'

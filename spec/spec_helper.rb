@@ -6,6 +6,7 @@ Spork.prefork do
   require 'rspec'
   require 'fake_braintree'
   require 'timecop'
+  require 'bourne'
   Dir[File.join(File.dirname(__FILE__), "support/**/*.rb")].each {|f| require f}
 
   Dir.mkdir('tmp') unless File.directory?('tmp')

@@ -12,7 +12,7 @@ module FakeBraintree
         failure_response
       else
         hash = customer_hash
-        FakeBraintree.customers[hash["id"]] = hash
+        FakeBraintree.registry.customers[hash["id"]] = hash
         gzipped_response(201, hash.to_xml(:root => 'customer'))
       end
     end
@@ -27,7 +27,7 @@ module FakeBraintree
     end
 
     def delete
-      FakeBraintree.customers[existing_customer_id] = nil
+      FakeBraintree.registry.customers[existing_customer_id] = nil
       gzipped_response(200, '')
     end
 
@@ -63,7 +63,7 @@ module FakeBraintree
     end
 
     def existing_customer_hash
-      existing_customer_id && FakeBraintree.customers[existing_customer_id]
+      existing_customer_id && FakeBraintree.registry.customers[existing_customer_id]
     end
 
     def update_existing_customer!
