@@ -60,6 +60,30 @@ If you're using Cucumber, add this too:
       FakeBraintree.clear!
     end
 
+## Spork
+
+To use fake\_braintree with Spork, do this:
+
+    # Gemfile
+    group :test do
+      gem 'fake_braintree', :require => false
+    end
+
+    # spec/spec_helper.rb
+    Spork.each_run do
+      require 'fake_braintree'
+      # ...other FakeBraintree configuration, for example:
+      # FakeBraintree.verify_all_cards!
+    end
+
+    # features/support/env.rb
+    Spork.each_run do
+      require 'fake_braintree'
+      # ...other FakeBraintree configuration, for example:
+      # FakeBraintree.verify_all_cards!
+    end
+
+
 ## Verifying credit cards
 
 To verify every credit card you try to use, call:
@@ -93,29 +117,6 @@ customers, but will not be able to charge them (so charging for e.g. a subscript
 will fail). Setting `verify_all_cards!`, on the other hand, will prevent
 creation of customers with bad credit cards - Braintree won't even get to trying
 to charge them.
-
-## Spork
-
-To use fake\_braintree with Spork, do this:
-
-    # Gemfile
-    group :test do
-      gem 'fake_braintree', :require => false
-    end
-
-    # spec/spec_helper.rb
-    Spork.each_run do
-      require 'fake_braintree'
-      # ...other FakeBraintree configuration, for example:
-      # FakeBraintree.verify_all_cards!
-    end
-
-    # features/support/env.rb
-    Spork.each_run do
-      require 'fake_braintree'
-      # ...other FakeBraintree configuration, for example:
-      # FakeBraintree.verify_all_cards!
-    end
 
 ## Generating transactions
 
