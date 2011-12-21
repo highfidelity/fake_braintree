@@ -16,7 +16,10 @@ class FakeBraintree::Server
   def with_webrick_runner
     default_server_process = Capybara.server
     Capybara.server do |app, port|
-      Rack::Handler::WEBrick.run(app, :Port => port)
+      # Quiet logging, matches Mongrel
+      access_log = [['/dev/null', '']]
+
+      Rack::Handler::WEBrick.run(app, :AccessLog => access_log, :Port => port)
     end
     yield
   ensure
