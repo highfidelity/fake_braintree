@@ -3,8 +3,10 @@ module FakeBraintree
     include Helpers
 
     def initialize(customer_hash, options)
-      @customer_hash = customer_hash.merge("merchant_id" => options[:merchant_id],
-                                           "id" => options[:id])
+      @customer_hash = {
+        "id" => options[:id],
+        "merchant_id" => options[:merchant_id]
+      }.merge(customer_hash)
     end
 
     def create

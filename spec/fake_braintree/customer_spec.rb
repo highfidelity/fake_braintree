@@ -14,6 +14,12 @@ describe "Braintree::Customer.create" do
     result.should be_success
   end
 
+  it "does not overwrite a passed customer id" do
+    result = Braintree::Customer.create({ "id" => '123' })
+
+    result.customer.id.should eq('123')
+  end
+
   it "creates a customer using an expiration month and year" do
     result = Braintree::Customer.create(:credit_card => { :number => TEST_CC_NUMBER,
                                                           :expiration_month => '04',
