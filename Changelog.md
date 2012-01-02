@@ -4,6 +4,8 @@
   FakeBraintree.customers is now FakeBraintree.registry.customers
 * FakeBraintree.credit_card_from_token is now FakeBraintree.registry.credit_card_from_token
 * The server code (it intercepts calls to Braintree) now lives in FakeBraintree::Server
+* Braintree::Customer.create will use the provided customer ID instead of
+  overwriting it (#15).
 
 # 0.0.6
 * Flesh out the README
