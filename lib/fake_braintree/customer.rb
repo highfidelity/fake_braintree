@@ -21,8 +21,12 @@ module FakeBraintree
 
     def update
       if existing_customer_hash
-        hash = update_existing_customer!
-        gzipped_response(200, hash.to_xml(:root => 'customer'))
+        if invalid?
+          failure_response
+        else
+          hash = update_existing_customer!
+          gzipped_response(200, hash.to_xml(:root => 'customer'))
+        end
       else
         failure_response(404)
       end
