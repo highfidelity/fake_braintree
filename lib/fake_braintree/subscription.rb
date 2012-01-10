@@ -17,6 +17,8 @@ module FakeBraintree
       if existing_subscription_hash
         hash = update_existing_subscription!
         gzipped_response(200, hash.to_xml(:root => 'subscription'))
+      else
+        gzipped_response(404, {})
       end
     end
 
@@ -29,7 +31,7 @@ module FakeBraintree
       subscription_hash["plan_id"]              = @subscription_hash["plan_id"]
       subscription_hash["next_billing_date"]    = braintree_formatted_date(1.month.from_now)
       subscription_hash["payment_method_token"] = @subscription_hash["payment_method_token"]
-      subscription_hash["status"]               = Braintree::Subscription::Status::Active
+      subscription_hash["status"]               ||= Braintree::Subscription::Status::Active
 
       subscription_hash
     end

@@ -80,3 +80,17 @@ describe "Braintree::Subscription.update" do
   let(:subscription_id) { subscription.subscription.id }
   let(:subscription)    { create_subscription }
 end
+
+describe "Braintree::Subscription.cancel" do
+  it "can cancel a subscription" do
+    Braintree::Subscription.cancel(subscription_id).should be_success
+    Braintree::Subscription.find(subscription_id).status.should == Braintree::Subscription::Status::Canceled
+  end
+
+  it "can't cancel an unknown subscription" do
+    expect { Braintree::Subscription.cancel("totally-bogus-id") }.to raise_error(Braintree::NotFoundError)
+  end
+
+  let(:subscription_id) { subscription.subscription.id }
+  let(:subscription)    { create_subscription }
+end
