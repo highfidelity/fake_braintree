@@ -69,7 +69,7 @@ module FakeBraintree
       subscription = FakeBraintree.registry.subscriptions[params[:id]]
       updates = {"status" => Braintree::Subscription::Status::Canceled}
       options = {:id => params[:id], :merchant_id => params[:merchant_id]}
-      Subscription.new(updates, options).update or gzipped_response(404, {})
+      Subscription.new(updates, options).update
     end
 
     # Braintree::CreditCard.find

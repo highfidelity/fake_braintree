@@ -17,6 +17,8 @@ module FakeBraintree
       if existing_subscription_hash
         hash = update_existing_subscription!
         gzipped_response(200, hash.to_xml(:root => 'subscription'))
+      else
+        gzipped_response(404, {})
       end
     end
 
