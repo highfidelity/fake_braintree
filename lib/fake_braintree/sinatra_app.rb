@@ -67,7 +67,7 @@ module FakeBraintree
     # Braintree::Subscription.cancel
     put "/merchants/:merchant_id/subscriptions/:id/cancel" do
       subscription = FakeBraintree.registry.subscriptions[params[:id]]
-      updates = { "status" => Braintree::Subscription::Status::Canceled }
+      updates = {"status" => Braintree::Subscription::Status::Canceled}
       options = {:id => params[:id], :merchant_id => params[:merchant_id]}
       Subscription.new(updates, options).update or gzipped_response(404, {})
     end
