@@ -6,6 +6,7 @@
 * The server code (it intercepts calls to Braintree) now lives in FakeBraintree::Server
 * Braintree::Customer.create will use the provided customer ID instead of
   overwriting it (#15).
+* Braintree::Customer.update will verify credit cards if `verify_card` is true.
 
 # 0.0.6
 * Flesh out the README

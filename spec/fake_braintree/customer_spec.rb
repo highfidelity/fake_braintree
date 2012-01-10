@@ -90,6 +90,26 @@ describe "Braintree::Customer.update" do
     Braintree::Customer.find(customer_id).first_name.should == "Jerry"
   end
 
+  it "returns a failure response when verification is requested and fails" do
+    customer_id = create_customer.customer.id
+    result = Braintree::Customer.update(customer_id, :credit_card => {
+      :number => '4000000000000000',
+      :options => { :verify_card => true }
+    })
+
+    result.should_not be_success
+  end
+
+  it "successfully updates the customer when verification is requested and succeeds" do
+    customer_id = create_customer.customer.id
+    result = Braintree::Customer.update(customer_id, :credit_card => {
+      :number => '4111111111111111',
+      :options => { :verify_card => true }
+    })
+
+    result.should be_success
+  end
+
   it "raises an error for a nonexistent customer" do
     lambda { Braintree::Customer.update("foo", {:first_name => "Bob"}) }.should raise_error(Braintree::NotFoundError)
   end
