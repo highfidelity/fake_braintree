@@ -29,7 +29,7 @@ module FakeBraintree
       subscription_hash["plan_id"]              = @subscription_hash["plan_id"]
       subscription_hash["next_billing_date"]    = braintree_formatted_date(1.month.from_now)
       subscription_hash["payment_method_token"] = @subscription_hash["payment_method_token"]
-      subscription_hash["status"]               = Braintree::Subscription::Status::Active
+      subscription_hash["status"]               ||= Braintree::Subscription::Status::Active
 
       subscription_hash
     end

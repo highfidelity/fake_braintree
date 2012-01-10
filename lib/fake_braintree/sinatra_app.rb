@@ -64,6 +64,14 @@ module FakeBraintree
       Subscription.new(subscription_hash, options).update
     end
 
+    # Braintree::Subscription.cancel
+    put "/merchants/:merchant_id/subscriptions/:id/cancel" do
+      subscription = FakeBraintree.registry.subscriptions[params[:id]]
+      updates = { "status" => Braintree::Subscription::Status::Canceled }
+      options = {:id => params[:id], :merchant_id => params[:merchant_id]}
+      Subscription.new(updates, options).update or gzipped_response(404, {})
+    end
+
     # Braintree::CreditCard.find
     get "/merchants/:merchant_id/payment_methods/:credit_card_token" do
       credit_card = FakeBraintree.registry.credit_card_from_token(params[:credit_card_token])
