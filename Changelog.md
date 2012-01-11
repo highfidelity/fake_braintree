@@ -1,4 +1,4 @@
-# 0.1.0 (not yet released)
+# 0.1.0
 * FakeBraintree.{customers, transactions, failures, subscriptions, redirects}
   are now accessed via FakeBraintree.registry. For example,
   FakeBraintree.customers is now FakeBraintree.registry.customers
