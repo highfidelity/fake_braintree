@@ -43,7 +43,7 @@ do before each test.
 
 Full example:
 
-    # spec_helper.rb
+    # spec/spec_helper.rb
     require 'fake_braintree'
 
     RSpec.configure do |c|
@@ -54,7 +54,7 @@ Full example:
 
 If you're using Cucumber, add this too:
 
-    # env.rb
+    # features/support/env.rb
     require 'fake_braintree'
 
     Before do
