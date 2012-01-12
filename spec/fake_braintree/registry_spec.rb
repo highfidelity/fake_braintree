@@ -10,37 +10,11 @@ describe FakeBraintree::Registry do
 end
 
 describe FakeBraintree::Registry, "#clear!" do
-  it "clears stored customers" do
-    registry.customers['abc123'] = "Bob"
-    registry.clear!
-    registry.customers.should be_empty
-  end
-
-  it "clears stored subscriptions" do
-    registry.subscriptions['abc123'] = "Bob"
-    registry.clear!
-    registry.subscriptions.should be_empty
-  end
-
-  it "clears stored failures" do
-    registry.failures['abc123'] = "Bob"
-    registry.clear!
-    registry.failures.should be_empty
-  end
-
-  it "clears stored transactions" do
-    registry.transactions['abc123'] = "Bob"
-    registry.clear!
-    registry.transactions.should be_empty
-  end
-
-  it "clears stored redirects" do
-    registry.redirects['abc123'] = "Bob"
-    registry.clear!
-    registry.redirects.should be_empty
-  end
-
-  let(:registry) { subject }
+  it { should clear_hash_when_cleared(:customers) }
+  it { should clear_hash_when_cleared(:subscriptions) }
+  it { should clear_hash_when_cleared(:failures) }
+  it { should clear_hash_when_cleared(:transactions) }
+  it { should clear_hash_when_cleared(:redirects) }
 end
 
 describe FakeBraintree::Registry, "#failure?" do
