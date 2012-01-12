@@ -12,7 +12,7 @@ module FakeBraintree
         updated_credit_card = update_credit_card!
         update_response_for(updated_credit_card)
       else
-        credit_card_not_found_response
+        not_found_response
       end
     end
 
@@ -40,7 +40,7 @@ module FakeBraintree
       FakeBraintree.registry.credit_cards[token]
     end
 
-    def credit_card_not_found_response
+    def not_found_response
       gzipped_response(404, FakeBraintree.failure_response.to_xml(:root => 'api_error_response'))
     end
 
