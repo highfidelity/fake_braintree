@@ -5,6 +5,6 @@ RSpec::Matchers.define :have_hash_accessor_for do |property|
   end
 
   failure_message do
-    "Expected object to have accessor for #{property}, but it did not."
+    "Expected #{object} to have accessor for #{property}, but it did not."
   end
 end
