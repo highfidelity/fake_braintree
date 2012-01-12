@@ -31,12 +31,10 @@ module FakeBraintree
     end
 
     def credit_card_exists_in_registry?
-      token = credit_card['token']
       FakeBraintree.registry.credit_cards.key?(token)
     end
 
     def credit_card_from_registry
-      token = credit_card['token']
       FakeBraintree.registry.credit_cards[token]
     end
 
@@ -70,6 +68,10 @@ module FakeBraintree
       if expiration_year
         @credit_card["expiration_year"] = expiration_year
       end
+    end
+
+    def token
+      credit_card['token']
     end
   end
 end
