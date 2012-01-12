@@ -23,7 +23,7 @@ describe "Braintree::CreditCard.sale" do
 end
 
 describe "Braintree::CreditCard.update" do
-  it "successfully creates a sale" do
+  it "successfully updates the credit card" do
     new_expiration_date = "08/2012"
     token = cc_token
 
