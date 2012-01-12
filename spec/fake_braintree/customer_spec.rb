@@ -9,6 +9,22 @@ describe "Braintree::Customer.create" do
     result.should be_success
   end
 
+  it "associates a created credit card with the customer" do
+    result = Braintree::Customer.create(:credit_card => { :number => TEST_CC_NUMBER,
+                                                          :expiration_date => '04/2016'})
+    credit_cards = Braintree::Customer.find(result.customer.id).credit_cards
+    credit_cards.size.should == 1
+    credit_cards.first.expiration_date.should == "04/2016"
+  end
+
+  it "successfully creates the customer's credit card" do
+    result = Braintree::Customer.create(:credit_card => { :number => TEST_CC_NUMBER,
+                                                          :expiration_date => '04/2016'})
+
+    cc_token = result.customer.credit_cards.first.token
+    expect { Braintree::CreditCard.find(cc_token) }.not_to raise_error(Braintree::NotFoundError)
+  end
+
   it "can handle an empty credit card hash" do
     result = Braintree::Customer.create(:credit_card => {})
     result.should be_success

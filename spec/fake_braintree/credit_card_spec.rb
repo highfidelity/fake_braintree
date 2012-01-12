@@ -21,3 +21,18 @@ describe "Braintree::CreditCard.sale" do
     Braintree::Transaction.find(result.transaction.id).should be
   end
 end
+
+describe "Braintree::CreditCard.update" do
+  it "successfully updates the credit card" do
+    new_expiration_date = "08/2012"
+    token = cc_token
+
+    result = Braintree::CreditCard.update(token, :expiration_date => new_expiration_date)
+    result.should be_success
+    Braintree::CreditCard.find(token).expiration_date.should == new_expiration_date
+  end
+
+  it "raises an error for a nonexistent credit card" do
+    lambda { Braintree::CreditCard.update("foo", {:number => TEST_CC_NUMBER}) }.should raise_error(Braintree::NotFoundError)
+  end
+end

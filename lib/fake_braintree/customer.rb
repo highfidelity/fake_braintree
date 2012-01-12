@@ -14,8 +14,9 @@ module FakeBraintree
         failure_response
       else
         hash = customer_hash
-        FakeBraintree.registry.customers[hash["id"]] = hash
-        gzipped_response(201, hash.to_xml(:root => 'customer'))
+        create_customer_with(hash)
+        create_credit_card_with(hash)
+        creation_response_for(hash)
       end
     end
 
@@ -120,6 +121,26 @@ module FakeBraintree
 
     def existing_customer_id
       @customer_hash['id']
+    end
+
+    def creation_response_for(hash)
+      gzipped_response(201, hash.to_xml(:root => 'customer'))
+    end
+
+    def create_customer_with(hash)
+      FakeBraintree.registry.customers[hash["id"]] = hash
+    end
+
+    def create_credit_card_with(hash)
+      if hash.key?("credit_cards")
+        hash["credit_cards"].each do |credit_card|
+          add_credit_card_to_registry(credit_card)
+        end
+      end
+    end
+
+    def add_credit_card_to_registry(credit_card_hash)
+      FakeBraintree.registry.credit_cards[credit_card_hash["token"]] = credit_card_hash
     end
   end
 end

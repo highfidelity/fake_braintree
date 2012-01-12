@@ -25,6 +25,7 @@ Currently in alpha (i.e. it does not support every Braintree call).
 ### CreditCard
 * `Braintree::CreditCard.find`
 * `Braintree::CreditCard.sale`
+* `Braintree::CreditCard.update`
 
 ### Transaction
 * `Braintree::Transaction.sale`
