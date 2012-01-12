@@ -26,6 +26,11 @@ describe FakeBraintree::Registry do
     registry.redirects['abc123'].should == "Bob"
   end
 
+  it "exposes a credit_cards accessor" do
+    registry.credit_cards['abc123'] = "Bob"
+    registry.credit_cards['abc123'].should == "Bob"
+  end
+
   let(:registry) { subject }
 end
 
@@ -74,17 +79,4 @@ describe FakeBraintree::Registry, "#failure?" do
   end
 
   let(:registry) { subject }
-end
-
-describe FakeBraintree::Registry, ".credit_card_from_token" do
-  it "looks up the credit card based on a CC token" do
-    number          = %w(4111 1111 1111 2222).join
-    expiration_date = "04/2016"
-    customer    = create_braintree_customer(number, expiration_date)
-    credit_card = customer.credit_cards.first
-
-    registry.credit_card_from_token(credit_card.token)["last_4"].should == "2222"
-  end
-
-  let(:registry) { FakeBraintree.registry }
 end

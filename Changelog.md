@@ -1,3 +1,6 @@
+# 0.1.1 (unreleased)
+* Braintree::Subscription.update now works
+
 # 0.1.0
 * FakeBraintree.{customers, transactions, failures, subscriptions, redirects}
   are now accessed via FakeBraintree.registry. For example,

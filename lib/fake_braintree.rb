@@ -6,6 +6,7 @@ require 'fake_braintree/helpers'
 require 'fake_braintree/customer'
 require 'fake_braintree/subscription'
 require 'fake_braintree/redirect'
+require 'fake_braintree/credit_card'
 
 require 'fake_braintree/registry'
 require 'fake_braintree/server'
