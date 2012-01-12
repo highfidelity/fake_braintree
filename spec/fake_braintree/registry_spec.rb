@@ -15,6 +15,7 @@ describe FakeBraintree::Registry, "#clear!" do
   it { should clear_hash_when_cleared(:failures) }
   it { should clear_hash_when_cleared(:transactions) }
   it { should clear_hash_when_cleared(:redirects) }
+  it { should clear_hash_when_cleared(:credit_cards) }
 end
 
 describe FakeBraintree::Registry, "#failure?" do
