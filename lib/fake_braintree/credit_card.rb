@@ -2,15 +2,15 @@ module FakeBraintree
   class CreditCard
     include Helpers
 
-    def initialize(credit_card_hash, options)
-      set_up_credit_card(credit_card_hash, options)
+    def initialize(credit_card_hash_from_params, options)
+      set_up_credit_card(credit_card_hash_from_params, options)
       set_expiration_month_and_year
     end
 
     def update
       if credit_card_exists_in_registry?
-        updated_credit_card = update_credit_card!
-        response_for_updated_card(updated_credit_card)
+        update_credit_card!
+        response_for_updated_card
       else
         response_for_card_not_found
       end
@@ -18,16 +18,12 @@ module FakeBraintree
 
     private
 
-    def credit_card
-      @credit_card.dup
-    end
-
     def update_credit_card!
-      credit_card_from_registry.merge!(credit_card)
+      @hash = credit_card_from_registry.merge!(@hash)
     end
 
-    def response_for_updated_card(credit_card)
-      gzipped_response(200, credit_card.to_xml(:root => 'credit_card'))
+    def response_for_updated_card
+      gzipped_response(200, @hash.to_xml(:root => 'credit_card'))
     end
 
     def credit_card_exists_in_registry?
@@ -43,35 +39,40 @@ module FakeBraintree
     end
 
     def expiration_month
-      if credit_card.key?("expiration_date")
-        credit_card["expiration_date"].split('/')[0]
-      end
+      expiration_date_parts[0]
     end
 
     def expiration_year
-      if credit_card.key?("expiration_date")
-        credit_card["expiration_date"].split('/')[1]
-      end
+      expiration_date_parts[1]
     end
 
-    def set_up_credit_card(credit_card_hash, options)
-      @credit_card = {
+    def set_up_credit_card(credit_card_hash_from_params, options)
+      @hash = {
         "token"       => options[:token],
         "merchant_id" => options[:merchant_id]
-      }.merge(credit_card_hash)
+      }.merge(credit_card_hash_from_params)
     end
 
     def set_expiration_month_and_year
       if expiration_month
-        @credit_card["expiration_month"] = expiration_month
+        @hash["expiration_month"] = expiration_month
       end
+
       if expiration_year
-        @credit_card["expiration_year"] = expiration_year
+        @hash["expiration_year"] = expiration_year
       end
     end
 
     def token
-      credit_card['token']
+      @hash['token']
+    end
+
+    def expiration_date_parts
+      if @hash.key?("expiration_date")
+        @hash["expiration_date"].split('/')
+      else
+        []
+      end
     end
   end
 end
