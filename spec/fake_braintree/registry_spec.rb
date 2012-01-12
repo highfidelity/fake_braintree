@@ -1,37 +1,12 @@
 require 'spec_helper'
 
 describe FakeBraintree::Registry do
-  it "exposes a customers accessor" do
-    registry.customers['abc123'] = "Bob"
-    registry.customers['abc123'].should == "Bob"
-  end
-
-  it "exposes a subscriptions accessor" do
-    registry.subscriptions['abc123'] = "Bob"
-    registry.subscriptions['abc123'].should == "Bob"
-  end
-
-  it "exposes a failures accessor" do
-    registry.failures['abc123'] = "Bob"
-    registry.failures['abc123'].should == "Bob"
-  end
-
-  it "exposes a transactions accessor" do
-    registry.transactions['abc123'] = "Bob"
-    registry.transactions['abc123'].should == "Bob"
-  end
-
-  it "exposes a redirects accessor" do
-    registry.redirects['abc123'] = "Bob"
-    registry.redirects['abc123'].should == "Bob"
-  end
-
-  it "exposes a credit_cards accessor" do
-    registry.credit_cards['abc123'] = "Bob"
-    registry.credit_cards['abc123'].should == "Bob"
-  end
-
-  let(:registry) { subject }
+  it { should have_hash_accessor_for(:customers) }
+  it { should have_hash_accessor_for(:subscriptions) }
+  it { should have_hash_accessor_for(:failures) }
+  it { should have_hash_accessor_for(:transactions) }
+  it { should have_hash_accessor_for(:redirects) }
+  it { should have_hash_accessor_for(:credit_cards) }
 end
 
 describe FakeBraintree::Registry, "#clear!" do
