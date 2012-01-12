@@ -73,7 +73,6 @@ describe FakeBraintree::Registry, "#failure?" do
     registry.failure?('abc123').should be_true
   end
 
-
   let(:registry) { subject }
 end
 
@@ -84,11 +83,8 @@ describe FakeBraintree::Registry, ".credit_card_from_token" do
     customer    = create_braintree_customer(number, expiration_date)
     credit_card = customer.credit_cards.first
 
-    # registry.customers[customer.id] = customer
-
     registry.credit_card_from_token(credit_card.token)["last_4"].should == "2222"
   end
 
-  # let(:registry) { FakeBraintree::Registry.new }
   let(:registry) { FakeBraintree.registry }
 end
