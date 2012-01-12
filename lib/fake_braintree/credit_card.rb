@@ -10,9 +10,9 @@ module FakeBraintree
     def update
       if credit_card_exists_in_registry?
         updated_credit_card = update_credit_card!
-        update_response_for(updated_credit_card)
+        response_for_updated_card(updated_credit_card)
       else
-        not_found_response
+        response_for_card_not_found
       end
     end
 
@@ -26,7 +26,7 @@ module FakeBraintree
       credit_card_from_registry.merge!(credit_card)
     end
 
-    def update_response_for(credit_card)
+    def response_for_updated_card(credit_card)
       gzipped_response(200, credit_card.to_xml(:root => 'credit_card'))
     end
 
@@ -40,7 +40,7 @@ module FakeBraintree
       FakeBraintree.registry.credit_cards[token]
     end
 
-    def not_found_response
+    def response_for_card_not_found
       gzipped_response(404, FakeBraintree.failure_response.to_xml(:root => 'api_error_response'))
     end
 
