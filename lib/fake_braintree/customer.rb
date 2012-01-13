@@ -25,7 +25,7 @@ module FakeBraintree
     def update
       if customer_exists_in_registry?
         updates = customer_hash
-        updated_customer = update_customer!(updates)
+        updated_customer = update_existing_customer(updates)
         response_for_updated_customer(updated_customer)
       else
         response_for_customer_not_found
@@ -52,7 +52,7 @@ module FakeBraintree
       FakeBraintree.registry.credit_cards[token] = new_credit_card_hash
     end
 
-    def update_customer!(updates_hash)
+    def update_existing_customer(updates_hash)
       customer_from_registry.merge!(updates_hash)
     end
 

@@ -16,7 +16,7 @@ module FakeBraintree
 
     def update
       if subscription_exists_in_registry?
-        updated_subscription = update_subscription!(subscription_hash)
+        updated_subscription = update_existing_subscription(subscription_hash)
         response_for_created_subscription(updated_subscription)
       else
         response_for_subscription_not_found
@@ -32,7 +32,7 @@ module FakeBraintree
                                 "next_billing_date" => braintree_formatted_date(1.month.from_now)})
     end
 
-    def update_subscription!(updates)
+    def update_existing_subscription(updates)
       updated_subscription = subscription_from_registry.merge(updates)
       FakeBraintree.registry.subscriptions[subscription_id] = updated_subscription
     end
