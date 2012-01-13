@@ -50,8 +50,8 @@ module FakeBraintree
       credit_card_is_failure? || invalid_credit_card?
     end
 
-    def update_customer!(hash)
-      customer_from_registry.merge!(hash)
+    def update_customer!(updates_hash)
+      customer_from_registry.merge!(updates_hash)
     end
 
     def customer_from_registry
@@ -63,7 +63,7 @@ module FakeBraintree
     end
 
     def credit_card_is_failure?
-      has_credit_card? && FakeBraintree.failure?(credit_card_hash["number"])
+      has_credit_card? && FakeBraintree.failure?(credit_card_number)
     end
 
     def invalid_credit_card?
