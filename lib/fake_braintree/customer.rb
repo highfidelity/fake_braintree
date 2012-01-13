@@ -41,24 +41,7 @@ module FakeBraintree
     def customer_hash
       hash = @customer_hash.dup
       hash["id"] ||= create_id
-
-      if hash["credit_card"].present? && hash["credit_card"].is_a?(Hash)
-        hash["credit_card"]["last_4"] = last_four(hash)
-        hash["credit_card"]["token"]  = credit_card_token(hash)
-
-        if credit_card_expiration_month
-          hash["credit_card"]["expiration_month"] = credit_card_expiration_month
-        end
-
-        if credit_card_expiration_year
-          hash["credit_card"]["expiration_year"] = credit_card_expiration_year
-        end
-
-        credit_card = hash.delete("credit_card")
-        hash["credit_cards"] = [credit_card]
-      else
-        hash["credit_cards"] = []
-      end
+      hash["credit_cards"] = generate_credit_card_hash_from(hash["credit_card"])
 
       hash
     end
@@ -132,6 +115,25 @@ module FakeBraintree
       end
     end
 
+    def generate_credit_card_hash_from(new_credit_card_hash)
+      if new_credit_card_hash.present? && new_credit_card_hash.is_a?(Hash)
+        new_credit_card_hash["last_4"] = new_credit_card_hash["number"][-4..-1]
+        new_credit_card_hash["token"]  = credit_card_token(new_credit_card_hash)
+
+        if credit_card_expiration_month
+          new_credit_card_hash["expiration_month"] = credit_card_expiration_month
+        end
+
+        if credit_card_expiration_year
+          new_credit_card_hash["expiration_year"] = credit_card_expiration_year
+        end
+
+        [new_credit_card_hash]
+      else
+        []
+      end
+    end
+
     def delete_customer_with_id(id)
       FakeBraintree.registry.customers[id] = nil
     end
@@ -172,13 +174,8 @@ module FakeBraintree
       @customer_hash["credit_card"] || {}
     end
 
-    def credit_card_token(hash)
-      md5("#{hash['merchant_id']}#{hash['id']}")
+    def credit_card_token(credit_card_hash_without_token)
+      md5("#{credit_card_hash_without_token["number"]}#{@customer_hash['merchant_id']}")
     end
-
-    def last_four(hash)
-      hash["credit_card"].delete("number")[-4..-1]
-    end
-
   end
 end
