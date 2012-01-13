@@ -7,6 +7,8 @@ module FakeBraintree
         "id"          => options[:id],
         "merchant_id" => options[:merchant_id]
       }.merge(customer_hash_from_params)
+
+      set_customer_id
     end
 
     def create
@@ -57,7 +59,6 @@ module FakeBraintree
 
     def customer_hash
       hash = @customer_hash.dup
-      hash["id"] ||= create_id(@merchant_id)
       hash["credit_cards"] = generate_credit_cards_from(hash["credit_card"])
 
       hash
@@ -76,7 +77,7 @@ module FakeBraintree
     end
 
     def invalid_credit_card?
-      verify_credit_card?(@customer_hash) && has_invalid_credit_card?(@customer_hash)
+      verify_credit_card?(customer_hash) && has_invalid_credit_card?(customer_hash)
     end
 
     def verify_credit_card?(customer_hash_for_verification)
@@ -163,7 +164,7 @@ module FakeBraintree
     end
 
     def customer_id
-      @customer_hash["id"]
+      customer_hash["id"]
     end
 
     def has_credit_card?
@@ -172,6 +173,10 @@ module FakeBraintree
 
     def credit_card_hash
       @customer_hash["credit_card"] || {}
+    end
+
+    def set_customer_id
+      @customer_hash["id"] ||= create_id(@customer_hash["merchant_id"])
     end
 
     def credit_card_token(credit_card_hash_without_token)
