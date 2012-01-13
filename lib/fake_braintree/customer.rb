@@ -180,7 +180,7 @@ module FakeBraintree
     end
 
     def credit_card_token(credit_card_hash_without_token)
-      md5("#{credit_card_hash_without_token["number"]}#{@customer_hash['merchant_id']}")
+      md5("#{credit_card_hash_without_token["number"]}#{@customer_hash["merchant_id"]}")
     end
   end
 end
