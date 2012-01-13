@@ -38,20 +38,29 @@ module FakeBraintree
 
     private
 
+    def invalid?
+      credit_card_is_failure? || invalid_credit_card?
+    end
+
+    def create_customer_with(hash)
+      FakeBraintree.registry.customers[hash["id"]] = hash
+    end
+
+    def add_credit_card_to_registry(new_credit_card_hash)
+      token = new_credit_card_hash["token"]
+      FakeBraintree.registry.credit_cards[token] = new_credit_card_hash
+    end
+
+    def update_customer!(updates_hash)
+      customer_from_registry.merge!(updates_hash)
+    end
+
     def customer_hash
       hash = @customer_hash.dup
       hash["id"] ||= create_id(@merchant_id)
       hash["credit_cards"] = generate_credit_cards_from(hash["credit_card"])
 
       hash
-    end
-
-    def invalid?
-      credit_card_is_failure? || invalid_credit_card?
-    end
-
-    def update_customer!(updates_hash)
-      customer_from_registry.merge!(updates_hash)
     end
 
     def customer_from_registry
@@ -88,15 +97,6 @@ module FakeBraintree
 
     def credit_card_number
       credit_card_hash["number"]
-    end
-
-    def create_customer_with(hash)
-      FakeBraintree.registry.customers[hash["id"]] = hash
-    end
-
-    def add_credit_card_to_registry(new_credit_card_hash)
-      token = new_credit_card_hash["token"]
-      FakeBraintree.registry.credit_cards[token] = new_credit_card_hash
     end
 
     def generate_credit_cards_from(new_credit_card_hash)
