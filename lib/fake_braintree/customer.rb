@@ -11,7 +11,7 @@ module FakeBraintree
 
     def create
       if invalid?
-        failure_response
+        response_for_invalid_card
       else
         hash = customer_hash
         create_customer_with(hash)
@@ -21,16 +21,17 @@ module FakeBraintree
     end
 
     def update
-      if existing_customer_hash
-        hash = update_existing_customer!
+      if customer_exists_in_registry?
+        updates = customer_hash
+        hash = update_customer!(updates)
         response_for_updated_customer(hash)
       else
-        failure_response(404)
+        response_for_customer_not_found
       end
     end
 
     def delete
-      delete_customer_with_id(existing_customer_id)
+      delete_customer_with_id(customer_id)
       deletion_response
     end
 
@@ -65,12 +66,16 @@ module FakeBraintree
       credit_card_is_failure? || invalid_credit_card?
     end
 
-    def existing_customer_hash
-      existing_customer_id && FakeBraintree.registry.customers[existing_customer_id]
+    def update_customer!(hash)
+      customer_from_registry.merge!(hash)
     end
 
-    def update_existing_customer!
-      existing_customer_hash.merge!(customer_hash)
+    def customer_exists_in_registry?
+      FakeBraintree.registry.customers.key?(customer_id)
+    end
+
+    def customer_from_registry
+      FakeBraintree.registry.customers[customer_id]
     end
 
     def credit_card_token(hash)
@@ -81,7 +86,7 @@ module FakeBraintree
       hash["credit_card"].delete("number")[-4..-1]
     end
 
-    def failure_response(code = 422)
+    def failure_response(code)
       gzipped_response(code, FakeBraintree.failure_response(credit_card_number).to_xml(:root => 'api_error_response'))
     end
 
@@ -117,10 +122,6 @@ module FakeBraintree
 
     def credit_card_number
       has_credit_card_number? && @customer_hash["credit_card"]["number"]
-    end
-
-    def existing_customer_id
-      @customer_hash['id']
     end
 
     def response_for_created_customer(hash)
@@ -170,6 +171,18 @@ module FakeBraintree
 
     def response_for_updated_customer(hash)
       gzipped_response(200, hash.to_xml(:root => 'customer'))
+    end
+
+    def response_for_invalid_card
+      failure_response(422)
+    end
+
+    def response_for_customer_not_found
+      failure_response(404)
+    end
+
+    def customer_id
+      @customer_hash["id"]
     end
   end
 end
