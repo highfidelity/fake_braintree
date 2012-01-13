@@ -14,7 +14,7 @@ module FakeBraintree
         response_for_invalid_card
       else
         hash         = customer_hash
-        credit_cards = hash["credit_cards"] || []
+        credit_cards = hash["credit_cards"]
         create_customer_with(hash)
         credit_cards.each { |card| add_credit_card_to_registry(card) }
         response_for_created_customer(hash)
@@ -58,6 +58,8 @@ module FakeBraintree
           credit_card = hash.delete("credit_card")
           hash["credit_cards"] = [credit_card]
         end
+      else
+        hash["credit_cards"] = []
       end
 
       hash
