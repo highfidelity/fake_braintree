@@ -57,10 +57,7 @@ module FakeBraintree
     end
 
     def customer_hash
-      hash = @customer_hash.dup
-      hash["credit_cards"] = generate_credit_cards_from(hash["credit_card"])
-
-      hash
+      @customer_hash.merge("credit_cards" => generate_credit_cards_from(@customer_hash["credit_card"]))
     end
 
     def customer_from_registry

@@ -26,14 +26,10 @@ module FakeBraintree
     private
 
     def subscription_hash
-      generated_subscription_hash = @subscription_hash.dup
-
-      generated_subscription_hash["transactions"]      = []
-      generated_subscription_hash["add_ons"]           = added_add_ons
-      generated_subscription_hash["discounts"]         = added_discounts
-      generated_subscription_hash["next_billing_date"] = braintree_formatted_date(1.month.from_now)
-
-      generated_subscription_hash
+      @subscription_hash.merge({"transactions"      => [],
+                                "add_ons"           => added_add_ons,
+                                "discounts"         => added_discounts,
+                                "next_billing_date" => braintree_formatted_date(1.month.from_now)})
     end
 
     def update_subscription!(updates)
