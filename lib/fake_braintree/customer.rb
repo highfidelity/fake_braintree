@@ -15,11 +15,10 @@ module FakeBraintree
       if invalid?
         response_for_invalid_card
       else
-        hash         = customer_hash
-        credit_cards = hash["credit_cards"]
-        create_customer_with(hash)
+        credit_cards = customer_hash["credit_cards"]
+        create_customer_with(customer_hash)
         credit_cards.each { |card| add_credit_card_to_registry(card) }
-        response_for_created_customer(hash)
+        response_for_created_customer(customer_hash)
       end
     end
 
