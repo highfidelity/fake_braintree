@@ -23,6 +23,8 @@ module FakeBraintree
       end
     end
 
+    private
+
     def subscription_hash
       generated_subscription_hash = @subscription_hash.dup
 
@@ -33,8 +35,6 @@ module FakeBraintree
 
       generated_subscription_hash
     end
-
-    private
 
     def update_subscription!(updates)
       updated_subscription = subscription_from_registry.merge(updates)
