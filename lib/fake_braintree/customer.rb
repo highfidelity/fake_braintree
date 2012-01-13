@@ -30,8 +30,8 @@ module FakeBraintree
     end
 
     def delete
-      FakeBraintree.registry.customers[existing_customer_id] = nil
-      gzipped_response(200, '')
+      delete_customer_with_id(existing_customer_id)
+      deletion_response
     end
 
     def customer_hash
@@ -158,6 +158,14 @@ module FakeBraintree
 
     def credit_card_expiration_year
       credit_card_expiration_date[1]
+    end
+
+    def deletion_response
+      gzipped_response(200, '')
+    end
+
+    def delete_customer_with_id(id)
+      FakeBraintree.registry.customers[id] = nil
     end
   end
 end
