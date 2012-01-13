@@ -5,13 +5,13 @@ module FakeBraintree
     def initialize(subscription_hash_from_params, options)
       @subscription_hash = subscription_hash_from_params.merge("merchant_id" => options[:merchant_id],
                                                                "id" => options[:id])
+      set_subscription_id
+      set_subscription_status
     end
 
     def create
-      hash = subscription_hash
-      create_subscription_with(hash)
-
-      response_for_created_subscription(hash)
+      create_subscription_with(subscription_hash)
+      response_for_created_subscription(subscription_hash)
     end
 
     def update
@@ -24,14 +24,14 @@ module FakeBraintree
     end
 
     def subscription_hash
-      @subscription_hash["id"] ||= generate_new_subscription_id
-      @subscription_hash["transactions"] = []
-      @subscription_hash["add_ons"] = added_add_ons
-      @subscription_hash["discounts"] = added_discounts
-      @subscription_hash["next_billing_date"] = braintree_formatted_date(1.month.from_now)
-      @subscription_hash["status"] ||= active_status
+      generated_subscription_hash = @subscription_hash.dup
 
-      @subscription_hash
+      generated_subscription_hash["transactions"]      = []
+      generated_subscription_hash["add_ons"]           = added_add_ons
+      generated_subscription_hash["discounts"]         = added_discounts
+      generated_subscription_hash["next_billing_date"] = braintree_formatted_date(1.month.from_now)
+
+      generated_subscription_hash
     end
 
     private
@@ -71,6 +71,14 @@ module FakeBraintree
       else
         []
       end
+    end
+
+    def set_subscription_id
+      @subscription_hash["id"] ||= generate_new_subscription_id
+    end
+
+    def set_subscription_status
+      @subscription_hash["status"] ||= active_status
     end
 
     def subscription_id
