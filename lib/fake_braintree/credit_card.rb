@@ -9,7 +9,7 @@ module FakeBraintree
 
     def update
       if credit_card_exists_in_registry?
-        update_credit_card!
+        update_existing_credit_card
         response_for_updated_card
       else
         response_for_card_not_found
@@ -18,7 +18,7 @@ module FakeBraintree
 
     private
 
-    def update_credit_card!
+    def update_existing_credit_card
       @hash = credit_card_from_registry.merge!(@hash)
     end
 

@@ -9,9 +9,15 @@ module FakeBraintree
 
     include Helpers
 
+    helpers do
+      def hash_from_request_body_with_key(request, key)
+        Hash.from_xml(request.body).delete(key)
+      end
+    end
+
     # Braintree::Customer.create
     post "/merchants/:merchant_id/customers" do
-      customer_hash = Hash.from_xml(request.body).delete("customer")
+      customer_hash = hash_from_request_body_with_key(request, "customer")
       options = {:merchant_id => params[:merchant_id]}
       Customer.new(customer_hash, options).create
     end
@@ -28,7 +34,7 @@ module FakeBraintree
 
     # Braintree::Customer.update
     put "/merchants/:merchant_id/customers/:id" do
-      customer_hash = Hash.from_xml(request.body).delete("customer")
+      customer_hash = hash_from_request_body_with_key(request, "customer")
       options = {:id => params[:id], :merchant_id => params[:merchant_id]}
       Customer.new(customer_hash, options).update
     end
@@ -42,7 +48,7 @@ module FakeBraintree
 
     # Braintree::Subscription.create
     post "/merchants/:merchant_id/subscriptions" do
-      subscription_hash = Hash.from_xml(request.body).delete("subscription")
+      subscription_hash = hash_from_request_body_with_key(request, "subscription")
       options = {:merchant_id => params[:merchant_id]}
       Subscription.new(subscription_hash, options).create
     end
@@ -59,7 +65,7 @@ module FakeBraintree
 
     # Braintree::Subscription.update
     put "/merchants/:merchant_id/subscriptions/:id" do
-      subscription_hash = Hash.from_xml(request.body).delete("subscription")
+      subscription_hash = hash_from_request_body_with_key(request, "subscription")
       options = {:id => params[:id], :merchant_id => params[:merchant_id]}
       Subscription.new(subscription_hash, options).update
     end
@@ -80,7 +86,7 @@ module FakeBraintree
     # Braintree::CreditCard.update
     put "/merchants/:merchant_id/payment_methods/:credit_card_token" do
       credit_card = FakeBraintree.registry.credit_cards[params[:credit_card_token]]
-      updates     = Hash.from_xml(request.body).delete("credit_card")
+      updates     = hash_from_request_body_with_key(request, "credit_card")
       options     = {:token => params[:credit_card_token], :merchant_id => params[:merchant_id]}
       CreditCard.new(updates, options).update
     end
@@ -91,7 +97,7 @@ module FakeBraintree
       if FakeBraintree.decline_all_cards?
         gzipped_response(422, FakeBraintree.create_failure.to_xml(:root => 'api_error_response'))
       else
-        transaction          = Hash.from_xml(request.body)["transaction"]
+        transaction          = hash_from_request_body_with_key(request, "transaction")
         transaction_id       = md5("#{params[:merchant_id]}#{Time.now.to_f}")
         transaction_response = {"id" => transaction_id, "amount" => transaction["amount"]}
         FakeBraintree.registry.transactions[transaction_id] = transaction_response

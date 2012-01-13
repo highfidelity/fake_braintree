@@ -8,7 +8,7 @@ module FakeBraintree
       hash, query = *params[:tr_data].split("|", 2)
       @transparent_data = Rack::Utils.parse_query(query)
       @merchant_id = merchant_id
-      @id = create_id
+      @id = create_id(@merchant_id)
       @params = params
     end
 
