@@ -89,7 +89,7 @@ describe FakeBraintree, ".failure_response" do
 end
 
 describe FakeBraintree, ".generate_transaction" do
-  it "includes the subscription id" do
+  it "allows setting the subscription id" do
     transaction = FakeBraintree.generate_transaction(:subscription_id => 'foobar')
     transaction['subscription_id'].should == 'foobar'
   end
@@ -120,19 +120,19 @@ describe FakeBraintree, ".generate_transaction" do
       Timecop.freeze do
         transaction = FakeBraintree.generate_transaction(:status => Braintree::Transaction::Status::Failed,
                                                          :subscription_id => 'my_subscription_id')
-        transaction['status_history'][0]['timestamp'].should == Time.now
+        transaction['status_history'].first['timestamp'].should == Time.now
       end
     end
 
     it "has the desired amount" do
       transaction = FakeBraintree.generate_transaction(:amount => '20.00')
-      transaction['status_history'][0]['amount'].should == '20.00'
+      transaction['status_history'].first['amount'].should == '20.00'
     end
 
     it "has the desired status" do
       status = Braintree::Transaction::Status::Failed
       transaction = FakeBraintree.generate_transaction(:status => status)
-      transaction['status_history'][0]['status'].should == status
+      transaction['status_history'].first['status'].should == status
     end
   end
 end
