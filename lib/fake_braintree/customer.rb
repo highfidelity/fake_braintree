@@ -16,14 +16,14 @@ module FakeBraintree
         hash = customer_hash
         create_customer_with(hash)
         create_credit_card_with(hash)
-        creation_response_for(hash)
+        response_for_created_customer(hash)
       end
     end
 
     def update
       if existing_customer_hash
         hash = update_existing_customer!
-        gzipped_response(200, hash.to_xml(:root => 'customer'))
+        response_for_updated_customer(hash)
       else
         failure_response(404)
       end
@@ -123,7 +123,7 @@ module FakeBraintree
       @customer_hash['id']
     end
 
-    def creation_response_for(hash)
+    def response_for_created_customer(hash)
       gzipped_response(201, hash.to_xml(:root => 'customer'))
     end
 
@@ -166,6 +166,10 @@ module FakeBraintree
 
     def delete_customer_with_id(id)
       FakeBraintree.registry.customers[id] = nil
+    end
+
+    def response_for_updated_customer(hash)
+      gzipped_response(200, hash.to_xml(:root => 'customer'))
     end
   end
 end
