@@ -42,7 +42,14 @@ module FakeBraintree
         if !hash["credit_card"].empty?
           hash["credit_card"]["last_4"] = last_four(hash)
           hash["credit_card"]["token"]  = credit_card_token(hash)
-          split_expiration_date_into_month_and_year!(hash)
+
+          if credit_card_expiration_month
+            hash["credit_card"]["expiration_month"] = credit_card_expiration_month
+          end
+
+          if credit_card_expiration_year
+            hash["credit_card"]["expiration_year"] = credit_card_expiration_year
+          end
 
           credit_card = hash.delete("credit_card")
           hash["credit_cards"] = [credit_card]
@@ -56,13 +63,6 @@ module FakeBraintree
 
     def invalid?
       credit_card_is_failure? || invalid_credit_card?
-    end
-
-    def split_expiration_date_into_month_and_year!(hash)
-      if expiration_date = hash["credit_card"].delete("expiration_date")
-        hash["credit_card"]["expiration_month"] = expiration_date.split('/')[0]
-        hash["credit_card"]["expiration_year"]  = expiration_date.split('/')[1]
-      end
     end
 
     def existing_customer_hash
@@ -141,6 +141,23 @@ module FakeBraintree
 
     def add_credit_card_to_registry(credit_card_hash)
       FakeBraintree.registry.credit_cards[credit_card_hash["token"]] = credit_card_hash
+    end
+
+    def credit_card_expiration_date
+      credit_card_hash = @customer_hash["credit_card"]
+      if credit_card_hash && credit_card_hash.key?("expiration_date")
+        credit_card_hash["expiration_date"].split('/')
+      else
+        []
+      end
+    end
+
+    def credit_card_expiration_month
+      credit_card_expiration_date[0]
+    end
+
+    def credit_card_expiration_year
+      credit_card_expiration_date[1]
     end
   end
 end
