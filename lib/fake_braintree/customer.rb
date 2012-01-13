@@ -35,6 +35,8 @@ module FakeBraintree
       deletion_response
     end
 
+    private
+
     def customer_hash
       hash = @customer_hash.dup
       hash["id"] ||= create_id
@@ -59,8 +61,6 @@ module FakeBraintree
 
       hash
     end
-
-    private
 
     def invalid?
       credit_card_is_failure? || invalid_credit_card?
