@@ -40,7 +40,7 @@ module FakeBraintree
 
     def customer_hash
       hash = @customer_hash.dup
-      hash["id"] ||= create_id
+      hash["id"] ||= create_id(@merchant_id)
       hash["credit_cards"] = generate_credit_cards_from(hash["credit_card"])
 
       hash
@@ -54,12 +54,12 @@ module FakeBraintree
       customer_from_registry.merge!(hash)
     end
 
-    def customer_exists_in_registry?
-      FakeBraintree.registry.customers.key?(customer_id)
-    end
-
     def customer_from_registry
       FakeBraintree.registry.customers[customer_id]
+    end
+
+    def customer_exists_in_registry?
+      FakeBraintree.registry.customers.key?(customer_id)
     end
 
     def credit_card_is_failure?
