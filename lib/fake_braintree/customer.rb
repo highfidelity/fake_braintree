@@ -41,7 +41,7 @@ module FakeBraintree
     def customer_hash
       hash = @customer_hash.dup
       hash["id"] ||= create_id
-      hash["credit_cards"] = generate_credit_card_hash_from(hash["credit_card"])
+      hash["credit_cards"] = generate_credit_cards_from(hash["credit_card"])
 
       hash
     end
@@ -99,7 +99,7 @@ module FakeBraintree
       FakeBraintree.registry.credit_cards[token] = new_credit_card_hash
     end
 
-    def generate_credit_card_hash_from(new_credit_card_hash)
+    def generate_credit_cards_from(new_credit_card_hash)
       if new_credit_card_hash.present? && new_credit_card_hash.is_a?(Hash)
         new_credit_card_hash["last_4"] = new_credit_card_hash["number"][-4..-1]
         new_credit_card_hash["token"]  = credit_card_token(new_credit_card_hash)
