@@ -13,9 +13,10 @@ module FakeBraintree
       if invalid?
         response_for_invalid_card
       else
-        hash = customer_hash
+        hash         = customer_hash
+        credit_cards = hash["credit_cards"] || []
         create_customer_with(hash)
-        create_credit_card_with(hash)
+        credit_cards.each { |card| add_credit_card_to_registry(card) }
         response_for_created_customer(hash)
       end
     end
@@ -91,37 +92,31 @@ module FakeBraintree
     end
 
     def credit_card_is_failure?
-      @customer_hash.key?('credit_card') &&
-        FakeBraintree.failure?(@customer_hash["credit_card"]["number"])
+      has_credit_card? && FakeBraintree.failure?(credit_card_hash["number"])
     end
 
     def invalid_credit_card?
       verify_credit_card?(@customer_hash) && has_invalid_credit_card?(@customer_hash)
     end
 
-    def verify_credit_card?(customer_hash)
+    def verify_credit_card?(customer_hash_for_verification)
       return true if FakeBraintree.verify_all_cards
 
-      @customer_hash.key?("credit_card") &&
-        @customer_hash["credit_card"].is_a?(Hash) &&
-        @customer_hash["credit_card"].key?("options") &&
-        @customer_hash["credit_card"]["options"].is_a?(Hash) &&
-        @customer_hash["credit_card"]["options"]["verify_card"] == true
+      credit_card_hash_for_verification = customer_hash_for_verification["credit_card"]
+      if credit_card_hash_for_verification.is_a?(Hash) &&
+          credit_card_hash_for_verification.key?("options")
+        options = credit_card_hash_for_verification["options"]
+        options["verify_card"] == true
+      end
     end
 
     def has_invalid_credit_card?(customer_hash)
-      has_credit_card_number? &&
-        ! FakeBraintree::VALID_CREDIT_CARDS.include?(@customer_hash["credit_card"]["number"])
-    end
-
-    def has_credit_card_number?
-      @customer_hash.key?("credit_card") &&
-        @customer_hash["credit_card"].is_a?(Hash) &&
-        @customer_hash["credit_card"].key?("number")
+      credit_card_number &&
+        ! FakeBraintree::VALID_CREDIT_CARDS.include?(credit_card_number)
     end
 
     def credit_card_number
-      has_credit_card_number? && @customer_hash["credit_card"]["number"]
+      credit_card_hash["number"]
     end
 
     def response_for_created_customer(hash)
@@ -132,21 +127,13 @@ module FakeBraintree
       FakeBraintree.registry.customers[hash["id"]] = hash
     end
 
-    def create_credit_card_with(hash)
-      if hash.key?("credit_cards")
-        hash["credit_cards"].each do |credit_card|
-          add_credit_card_to_registry(credit_card)
-        end
-      end
-    end
-
-    def add_credit_card_to_registry(credit_card_hash)
-      FakeBraintree.registry.credit_cards[credit_card_hash["token"]] = credit_card_hash
+    def add_credit_card_to_registry(new_credit_card_hash)
+      token = new_credit_card_hash["token"]
+      FakeBraintree.registry.credit_cards[token] = new_credit_card_hash
     end
 
     def credit_card_expiration_date
-      credit_card_hash = @customer_hash["credit_card"]
-      if credit_card_hash && credit_card_hash.key?("expiration_date")
+      if credit_card_hash.key?("expiration_date")
         credit_card_hash["expiration_date"].split('/')
       else
         []
@@ -183,6 +170,14 @@ module FakeBraintree
 
     def customer_id
       @customer_hash["id"]
+    end
+
+    def has_credit_card?
+      credit_card_hash.present?
+    end
+
+    def credit_card_hash
+      @customer_hash["credit_card"] || {}
     end
   end
 end
