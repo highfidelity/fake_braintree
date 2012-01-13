@@ -18,12 +18,11 @@ module FakeBraintree
   mattr_accessor :registry, :verify_all_cards, :decline_all_cards
 
   def self.activate!
-    self.registry         = Registry.new
+    initialize_registry
     self.verify_all_cards = false
-
     set_configuration
     clear!
-    Server.new.boot
+    boot_server
   end
 
   def self.log_file_path
@@ -60,12 +59,14 @@ module FakeBraintree
   end
 
   def self.create_failure
-    { "message"      => "Do Not Honor",
+    {
+      "message"      => "Do Not Honor",
       "verification" => { "status"                  => "processor_declined",
                           "processor_response_text" => "Do Not Honor",
                           "processor_response_code" => '2000' },
       "errors"       => { 'errors' => [] },
-      "params"       => {} }
+      "params"       => {}
+    }
   end
 
   def self.decline_all_cards!
@@ -99,6 +100,13 @@ module FakeBraintree
     Braintree::Configuration.private_key = "xxx"
   end
 
+  def self.boot_server
+    Server.new.boot
+  end
+
+  def self.initialize_registry
+    self.registry = Registry.new
+  end
 end
 
 FakeBraintree.activate!
