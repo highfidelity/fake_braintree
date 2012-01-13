@@ -2,11 +2,11 @@ module FakeBraintree
   class Customer
     include Helpers
 
-    def initialize(customer_hash, options)
+    def initialize(customer_hash_from_params, options)
       @customer_hash = {
-        "id" => options[:id],
+        "id"          => options[:id],
         "merchant_id" => options[:merchant_id]
-      }.merge(customer_hash)
+      }.merge(customer_hash_from_params)
     end
 
     def create
@@ -81,18 +81,6 @@ module FakeBraintree
       FakeBraintree.registry.customers[customer_id]
     end
 
-    def credit_card_token(hash)
-      md5("#{hash['merchant_id']}#{hash['id']}")
-    end
-
-    def last_four(hash)
-      hash["credit_card"].delete("number")[-4..-1]
-    end
-
-    def failure_response(code)
-      gzipped_response(code, FakeBraintree.failure_response(credit_card_number).to_xml(:root => 'api_error_response'))
-    end
-
     def credit_card_is_failure?
       has_credit_card? && FakeBraintree.failure?(credit_card_hash["number"])
     end
@@ -121,10 +109,6 @@ module FakeBraintree
       credit_card_hash["number"]
     end
 
-    def response_for_created_customer(hash)
-      gzipped_response(201, hash.to_xml(:root => 'customer'))
-    end
-
     def create_customer_with(hash)
       FakeBraintree.registry.customers[hash["id"]] = hash
     end
@@ -132,14 +116,6 @@ module FakeBraintree
     def add_credit_card_to_registry(new_credit_card_hash)
       token = new_credit_card_hash["token"]
       FakeBraintree.registry.credit_cards[token] = new_credit_card_hash
-    end
-
-    def credit_card_expiration_date
-      if credit_card_hash.key?("expiration_date")
-        credit_card_hash["expiration_date"].split('/')
-      else
-        []
-      end
     end
 
     def credit_card_expiration_month
@@ -150,12 +126,24 @@ module FakeBraintree
       credit_card_expiration_date[1]
     end
 
-    def deletion_response
-      gzipped_response(200, '')
+    def credit_card_expiration_date
+      if credit_card_hash.key?("expiration_date")
+        credit_card_hash["expiration_date"].split('/')
+      else
+        []
+      end
     end
 
     def delete_customer_with_id(id)
       FakeBraintree.registry.customers[id] = nil
+    end
+
+    def deletion_response
+      gzipped_response(200, '')
+    end
+
+    def response_for_created_customer(hash)
+      gzipped_response(201, hash.to_xml(:root => 'customer'))
     end
 
     def response_for_updated_customer(hash)
@@ -170,6 +158,10 @@ module FakeBraintree
       failure_response(404)
     end
 
+    def failure_response(code)
+      gzipped_response(code, FakeBraintree.failure_response(credit_card_number).to_xml(:root => 'api_error_response'))
+    end
+
     def customer_id
       @customer_hash["id"]
     end
@@ -181,5 +173,14 @@ module FakeBraintree
     def credit_card_hash
       @customer_hash["credit_card"] || {}
     end
+
+    def credit_card_token(hash)
+      md5("#{hash['merchant_id']}#{hash['id']}")
+    end
+
+    def last_four(hash)
+      hash["credit_card"].delete("number")[-4..-1]
+    end
+
   end
 end
