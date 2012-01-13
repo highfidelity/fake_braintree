@@ -42,22 +42,20 @@ module FakeBraintree
       hash = @customer_hash.dup
       hash["id"] ||= create_id
 
-      if hash["credit_card"] && hash["credit_card"].is_a?(Hash)
-        if !hash["credit_card"].empty?
-          hash["credit_card"]["last_4"] = last_four(hash)
-          hash["credit_card"]["token"]  = credit_card_token(hash)
+      if hash["credit_card"].present? && hash["credit_card"].is_a?(Hash)
+        hash["credit_card"]["last_4"] = last_four(hash)
+        hash["credit_card"]["token"]  = credit_card_token(hash)
 
-          if credit_card_expiration_month
-            hash["credit_card"]["expiration_month"] = credit_card_expiration_month
-          end
-
-          if credit_card_expiration_year
-            hash["credit_card"]["expiration_year"] = credit_card_expiration_year
-          end
-
-          credit_card = hash.delete("credit_card")
-          hash["credit_cards"] = [credit_card]
+        if credit_card_expiration_month
+          hash["credit_card"]["expiration_month"] = credit_card_expiration_month
         end
+
+        if credit_card_expiration_year
+          hash["credit_card"]["expiration_year"] = credit_card_expiration_year
+        end
+
+        credit_card = hash.delete("credit_card")
+        hash["credit_cards"] = [credit_card]
       else
         hash["credit_cards"] = []
       end
