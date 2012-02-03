@@ -24,9 +24,13 @@ module FakeBraintree
 
     def update
       if customer_exists_in_registry?
-        updates = customer_hash
-        updated_customer = update_existing_customer(updates)
-        response_for_updated_customer(updated_customer)
+        if credit_card_is_failure?
+          response_for_invalid_card
+        else
+          updates = customer_hash
+          updated_customer = update_existing_customer(updates)
+          response_for_updated_customer(updated_customer)
+        end
       else
         response_for_customer_not_found
       end
