@@ -107,6 +107,11 @@ describe FakeBraintree, ".generate_transaction" do
     end
   end
 
+  it "has the correct amount" do
+    transaction = FakeBraintree.generate_transaction(:amount => "20.00")
+    transaction['amount'].should == "20.00"
+  end
+
   it "allows no arguments" do
     expect { FakeBraintree.generate_transaction }.not_to raise_error
   end
