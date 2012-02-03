@@ -1,3 +1,9 @@
+# 0.2.0
+* Generated transactions (from FakeBraintree.generate_transaction) now include
+  the amount.
+* Braintree::Customer.update will reject updates that contain credit cards that
+  have been marked as a failure in the registry.
+
 # 0.1.1
 * Braintree::CreditCard.update now works
 
