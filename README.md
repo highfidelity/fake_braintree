@@ -1,12 +1,16 @@
 # fake\_braintree, a Braintree fake [![Build Status](https://secure.travis-ci.org/thoughtbot/fake_braintree.png)](http://travis-ci.org/thoughtbot/fake_braintree)
 
 
-This library is a way to test Braintree code without hitting Braintree's servers.
-It uses [Capybara::Server](https://github.com/jnicklas/capybara/blob/master/lib/capybara/server.rb)
-to intercept all of the calls from Braintree's Ruby library and returns XML that the Braintree library
-can parse. The whole point is not to hit the Braintree API.
+This library is a way to test [Braintree](http://www.braintreepayments.com/)
+code without hitting Braintree's servers. It uses
+[Capybara::Server](https://github.com/jnicklas/capybara/blob/master/lib/capybara/server.rb)
+to intercept all of the calls from Braintree's Ruby library and returns XML that
+the Braintree library can parse. The whole point is not to hit the Braintree
+API.
 
-Currently in alpha (i.e. it does not support every Braintree call).
+
+It supports a lot of Braintree methods, but it does not support every single one
+of them (yet).
 
 ## Supported API methods
 
