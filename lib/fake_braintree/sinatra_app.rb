@@ -10,18 +10,19 @@ module FakeBraintree
     include Helpers
 
     helpers do
-      def hash_from_request_body_with_key(request, key)
+      def hash_from_request_body_with_key(key)
         value = Hash.from_xml(request.body).delete(key)
         if value.is_a?(String) # This happens if there isn't actually nested data under `key`
-          value = {}
+          {}
+        else
+          value
         end
-        value
       end
     end
 
     # Braintree::Customer.create
     post "/merchants/:merchant_id/customers" do
-      customer_hash = hash_from_request_body_with_key(request, "customer")
+      customer_hash = hash_from_request_body_with_key("customer")
       options = {:merchant_id => params[:merchant_id]}
       Customer.new(customer_hash, options).create
     end
@@ -38,7 +39,7 @@ module FakeBraintree
 
     # Braintree::Customer.update
     put "/merchants/:merchant_id/customers/:id" do
-      customer_hash = hash_from_request_body_with_key(request, "customer")
+      customer_hash = hash_from_request_body_with_key("customer")
       options = {:id => params[:id], :merchant_id => params[:merchant_id]}
       Customer.new(customer_hash, options).update
     end
@@ -52,7 +53,7 @@ module FakeBraintree
 
     # Braintree::Subscription.create
     post "/merchants/:merchant_id/subscriptions" do
-      subscription_hash = hash_from_request_body_with_key(request, "subscription")
+      subscription_hash = hash_from_request_body_with_key("subscription")
       options = {:merchant_id => params[:merchant_id]}
       Subscription.new(subscription_hash, options).create
     end
@@ -69,7 +70,7 @@ module FakeBraintree
 
     # Braintree::Subscription.update
     put "/merchants/:merchant_id/subscriptions/:id" do
-      subscription_hash = hash_from_request_body_with_key(request, "subscription")
+      subscription_hash = hash_from_request_body_with_key("subscription")
       options = {:id => params[:id], :merchant_id => params[:merchant_id]}
       Subscription.new(subscription_hash, options).update
     end
@@ -94,14 +95,14 @@ module FakeBraintree
     # Braintree::CreditCard.update
     put "/merchants/:merchant_id/payment_methods/:credit_card_token" do
       credit_card = FakeBraintree.registry.credit_cards[params[:credit_card_token]]
-      updates     = hash_from_request_body_with_key(request, "credit_card")
+      updates     = hash_from_request_body_with_key("credit_card")
       options     = {:token => params[:credit_card_token], :merchant_id => params[:merchant_id]}
       CreditCard.new(updates, options).update
     end
 
     # Braintree::CreditCard.create
     post "/merchants/:merchant_id/payment_methods" do
-      credit_card_hash = hash_from_request_body_with_key(request, "credit_card")
+      credit_card_hash = hash_from_request_body_with_key("credit_card")
       options = {:merchant_id => params[:merchant_id]}
 
       if credit_card_hash['options']
@@ -117,7 +118,7 @@ module FakeBraintree
       if FakeBraintree.decline_all_cards?
         gzipped_response(422, FakeBraintree.create_failure.to_xml(:root => 'api_error_response'))
       else
-        transaction          = hash_from_request_body_with_key(request, "transaction")
+        transaction          = hash_from_request_body_with_key("transaction")
         transaction_id       = md5("#{params[:merchant_id]}#{Time.now.to_f}")
         transaction_response = {"id" => transaction_id, "amount" => transaction["amount"]}
         FakeBraintree.registry.transactions[transaction_id] = transaction_response
@@ -137,7 +138,7 @@ module FakeBraintree
 
     # Braintree::Transaction.refund
     post "/merchants/:merchant_id/transactions/:transaction_id/refund" do
-      transaction          = hash_from_request_body_with_key(request, "transaction")
+      transaction          = hash_from_request_body_with_key("transaction")
       transaction_id       = md5("#{params[:merchant_id]}#{Time.now.to_f}")
       transaction_response = {"id" => transaction_id, "amount" => transaction["amount"], "type" => "credit"}
       FakeBraintree.registry.transactions[transaction_id] = transaction_response
