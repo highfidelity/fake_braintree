@@ -1,0 +1,6 @@
+This project hits 1.0.0 when it supports all of the Braintree API.
+
+We understand that this is a moving target, so future improvements will
+be the addition of newly addded API endpoints (1.1.0, 1.2.0, etc.), the
+removal of removed or renamed API endpoints (2.0.0, 3.0.0, etc.), and
+bugfixes (1.0.1, 1.0.2, etc.).
