@@ -16,6 +16,10 @@ module FakeBraintree
       end
     end
 
+    def to_xml
+      @hash.to_xml(:root => 'credit_card')
+    end
+
     private
 
     def update_existing_credit_card

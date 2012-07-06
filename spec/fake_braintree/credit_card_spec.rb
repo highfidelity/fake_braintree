@@ -14,6 +14,19 @@ describe "Braintree::CreditCard.find" do
   let(:token) { braintree_credit_card_token(TEST_CC_NUMBER, [month, year].join('/')) }
 end
 
+describe "Braintree::CreditCard.create" do
+  let(:month) { '04' }
+  let(:year)  { '2016' }
+  let(:token) { braintree_credit_card_token(TEST_CC_NUMBER, [month, year].join('/')) }
+  it "successfully creates card with valid data" do
+    result = Braintree::CreditCard.create :token => token,
+      :number => TEST_CC_NUMBER
+    result.should be_success
+
+    Braintree::CreditCard.find(token).should be
+  end
+end
+
 describe "Braintree::CreditCard.sale" do
   it "successfully creates a sale" do
     result = Braintree::CreditCard.sale(cc_token, :amount => 10.00)
