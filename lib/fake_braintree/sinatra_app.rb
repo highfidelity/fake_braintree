@@ -83,6 +83,20 @@ module FakeBraintree
       gzipped_response(200, credit_card.to_xml(:root => "credit_card"))
     end
 
+    post "/merchants/:merchant_id/payment_methods" do
+      opts = {
+        :token => md5("#{Time.now}#{rand}"),
+        :merchant_id => params[:merchant_id]
+      }
+      data = hash_from_request_body_with_key(request, 'credit_card')
+      if data[:token]
+        opts[:token] = data[:token]
+      end
+      credit_card = CreditCard.new(data, opts)
+      FakeBraintree.registry.credit_cards[opts[:token]] = credit_card
+      gzipped_response(200, credit_card.to_xml)
+    end
+
     # Braintree::CreditCard.update
     put "/merchants/:merchant_id/payment_methods/:credit_card_token" do
       credit_card = FakeBraintree.registry.credit_cards[params[:credit_card_token]]
