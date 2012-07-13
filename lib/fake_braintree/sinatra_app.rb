@@ -115,6 +115,16 @@ module FakeBraintree
       end
     end
 
+    put "/merchants/:merchant_id/transactions/:transaction_id/submit_for_settlement" do
+      transaction = FakeBraintree.registry.transactions[params[:transaction_id]]
+      if transaction
+        transaction[:status] = 'submitted_for_settlement'
+        gzipped_response(200, transaction.to_xml(:root => "transaction"))
+      else
+        gzipped_response(404, {})
+      end
+    end
+
     # Braintree::TransparentRedirect.url
     post "/merchants/:merchant_id/transparent_redirect_requests" do
       if params[:tr_data]
