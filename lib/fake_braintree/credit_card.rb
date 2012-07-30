@@ -7,6 +7,21 @@ module FakeBraintree
       set_expiration_month_and_year
     end
 
+    def create
+      if (customer = FakeBraintree.registry.customers[@hash['customer_id']])
+        if token.nil?
+          @hash['token'] = generate_token
+        end
+        FakeBraintree.registry.credit_cards[token] = @hash
+        customer['credit_cards'] << @hash
+
+        update_default_card
+        response_for_updated_card
+      else
+        response_for_invalid_card
+      end
+    end
+
     def update
       if credit_card_exists_in_registry?
         update_existing_credit_card
@@ -24,6 +39,18 @@ module FakeBraintree
 
     def update_existing_credit_card
       @hash = credit_card_from_registry.merge!(@hash)
+      update_default_card
+    end
+
+    # When updating a card that has 'default' set to true, make sure
+    # only one card has the flag.
+    def update_default_card
+      if @hash['default']
+        FakeBraintree.registry.customers[@hash['customer_id']]['credit_cards'].each do |card|
+          card['default'] = false
+        end
+        @hash['default'] = true
+      end
     end
 
     def response_for_updated_card
@@ -42,6 +69,10 @@ module FakeBraintree
       gzipped_response(404, FakeBraintree.failure_response.to_xml(:root => 'api_error_response'))
     end
 
+    def response_for_invalid_card
+      gzipped_response(422, FakeBraintree.failure_response.merge('params' => {:credit_card => @hash}).to_xml(:root => 'api_error_response'))
+    end
+
     def expiration_month
       expiration_date_parts[0]
     end
@@ -53,7 +84,9 @@ module FakeBraintree
     def set_up_credit_card(credit_card_hash_from_params, options)
       @hash = {
         "token"       => options[:token],
-        "merchant_id" => options[:merchant_id]
+        "merchant_id" => options[:merchant_id],
+        "customer_id" => options[:customer_id],
+        "default"     => options[:make_default]
       }.merge(credit_card_hash_from_params)
     end
 
@@ -65,6 +98,10 @@ module FakeBraintree
       if expiration_year
         @hash["expiration_year"] = expiration_year
       end
+    end
+
+    def generate_token
+      md5("#{@hash['number']}#{@hash['merchant_id']}")
     end
 
     def token

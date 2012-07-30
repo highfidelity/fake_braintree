@@ -80,7 +80,11 @@ module FakeBraintree
     # Braintree::CreditCard.find
     get "/merchants/:merchant_id/payment_methods/:credit_card_token" do
       credit_card = FakeBraintree.registry.credit_cards[params[:credit_card_token]]
-      gzipped_response(200, credit_card.to_xml(:root => "credit_card"))
+      if credit_card
+        gzipped_response(200, credit_card.to_xml(:root => "credit_card"))
+      else
+        gzipped_response(404, {})
+      end
     end
 
     post "/merchants/:merchant_id/payment_methods" do
@@ -103,6 +107,14 @@ module FakeBraintree
       updates     = hash_from_request_body_with_key(request, "credit_card")
       options     = {:token => params[:credit_card_token], :merchant_id => params[:merchant_id]}
       CreditCard.new(updates, options).update
+    end
+
+    # Braintree::CreditCard.create
+    post "/merchants/:merchant_id/payment_methods" do
+      credit_card_hash = hash_from_request_body_with_key(request, "credit_card")
+      options = {:token => params[:credit_card_token], :merchant_id => params[:merchant_id]}
+      options.merge!(credit_card_hash.delete('options')).symbolize_keys! if credit_card_hash['options']
+      CreditCard.new(credit_card_hash, options).create
     end
 
     # Braintree::Transaction.sale
