@@ -6,7 +6,10 @@ module FakeBraintree
       @customer_hash = {
         "id"          => options[:id],
         "merchant_id" => options[:merchant_id]
-      }.merge(customer_hash_from_params)
+      }
+      if customer_hash_from_params.is_a?(Hash)
+        @customer_hash.merge!(customer_hash_from_params)
+      end
 
       set_customer_id
     end
