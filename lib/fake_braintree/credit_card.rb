@@ -8,7 +8,8 @@ module FakeBraintree
     end
 
     def create
-      if (customer = FakeBraintree.registry.customers[@hash['customer_id']])
+      customer = FakeBraintree.registry.customers[@hash['customer_id']]
+      if valid_number? && customer
         if token.nil?
           @hash['token'] = generate_token
         end
@@ -33,6 +34,16 @@ module FakeBraintree
 
     def to_xml
       @hash.to_xml(:root => 'credit_card')
+    end
+
+    def valid_number?
+      if FakeBraintree.decline_all_cards?
+        false
+      elsif FakeBraintree.verify_all_cards
+        FakeBraintree::VALID_CREDIT_CARDS.include?(@hash['number'])
+      else
+        true
+      end
     end
 
     private
