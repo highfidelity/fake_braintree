@@ -35,21 +35,26 @@ describe "Braintree::CreditCard.sale" do
   end
 end
 
+
+def build_credit_card_hash
+  {
+    :customer_id => @customer && @customer.id,
+    :number => '4111111111111111',
+    :cvv => '123',
+    :token => 'token',
+    :expiration_date => '07/2020',
+    :billing_address => {
+      :postal_code => '94110'
+    },
+    :options => {
+      :make_default => true
+    }
+  }
+end
+
 describe "Braintree::CreditCard.create" do
   it 'fails to create a credit card without a customer' do
-    result = Braintree::CreditCard.create(
-      :customer_id => 'fail',
-      :number => '4111111111111111',
-      :cvv => '123',
-      :token => 'token',
-      :expiration_date => '07/2020',
-      :billing_address => {
-        :postal_code => '94110'
-      },
-      :options => {
-        :make_default => true
-      }
-    )
+    result = Braintree::CreditCard.create(build_credit_card_hash)
     result.should_not be_success
     expect { Braintree::CreditCard.find('token') }.to raise_exception Braintree::NotFoundError
   end
@@ -58,53 +63,33 @@ describe "Braintree::CreditCard.create" do
     before do
       @customer = Braintree::Customer.create.customer
     end
+    it 'fails to create a credit card if decline_all_cards is set' do
+      FakeBraintree.decline_all_cards!
+      result = Braintree::CreditCard.create(build_credit_card_hash)
+      result.should_not be_success
+      expect { Braintree::CreditCard.find('token') }.to raise_exception Braintree::NotFoundError
+      FakeBraintree.clear!
+    end
+
+    it 'fails to create a credit card if verify_all_cards is set and card is invalid' do
+      FakeBraintree.verify_all_cards!
+      result = Braintree::CreditCard.create(build_credit_card_hash.merge(:number => '12345'))
+      result.should_not be_success
+      expect { Braintree::CreditCard.find('token') }.to raise_exception Braintree::NotFoundError
+      FakeBraintree.verify_all_cards = false
+    end
+
     it 'successfully creates a credit card' do
-      result = Braintree::CreditCard.create(
-        :customer_id => @customer.id,
-        :number => '4111111111111111',
-        :cvv => '123',
-        :token => 'token',
-        :expiration_date => '07/2020',
-        :billing_address => {
-          :postal_code => '94110'
-        },
-        :options => {
-          :make_default => true
-        }
-      )
+      result = Braintree::CreditCard.create(build_credit_card_hash)
       result.should be_success
       Braintree::Customer.find(@customer.id).credit_cards.last.token.should == 'token'
       Braintree::Customer.find(@customer.id).credit_cards.last.default?.should be_true
     end
 
     it 'only allows one credit card to be default' do
-      result = Braintree::CreditCard.create(
-        :customer_id => @customer.id,
-        :number => '4111111111111111',
-        :cvv => '123',
-        :token => 'token',
-        :expiration_date => '07/2020',
-        :billing_address => {
-          :postal_code => '94110'
-        },
-        :options => {
-          :make_default => true
-        }
-      )
+      result = Braintree::CreditCard.create(build_credit_card_hash)
       result.should be_success
-      result = Braintree::CreditCard.create(
-        :customer_id => @customer.id,
-        :number => '4111111111111111',
-        :cvv => '123',
-        :token => 'token',
-        :expiration_date => '07/2020',
-        :billing_address => {
-          :postal_code => '94110'
-        },
-        :options => {
-          :make_default => true
-        }
-      )
+      result = Braintree::CreditCard.create(build_credit_card_hash)
       result.should be_success
       # Reload the customer
       @customer = Braintree::Customer.find(@customer.id)
