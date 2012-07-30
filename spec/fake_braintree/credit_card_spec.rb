@@ -35,6 +35,85 @@ describe "Braintree::CreditCard.sale" do
   end
 end
 
+describe "Braintree::CreditCard.create" do
+  it 'fails to create a credit card without a customer' do
+    result = Braintree::CreditCard.create(
+      :customer_id => 'fail',
+      :number => '4111111111111111',
+      :cvv => '123',
+      :token => 'token',
+      :expiration_date => '07/2020',
+      :billing_address => {
+        :postal_code => '94110'
+      },
+      :options => {
+        :make_default => true
+      }
+    )
+    result.should_not be_success
+    expect { Braintree::CreditCard.find('token') }.to raise_exception Braintree::NotFoundError
+  end
+
+  context 'with a customer' do
+    before do
+      @customer = Braintree::Customer.create.customer
+    end
+    it 'successfully creates a credit card' do
+      result = Braintree::CreditCard.create(
+        :customer_id => @customer.id,
+        :number => '4111111111111111',
+        :cvv => '123',
+        :token => 'token',
+        :expiration_date => '07/2020',
+        :billing_address => {
+          :postal_code => '94110'
+        },
+        :options => {
+          :make_default => true
+        }
+      )
+      result.should be_success
+      Braintree::Customer.find(@customer.id).credit_cards.last.token.should == 'token'
+      Braintree::Customer.find(@customer.id).credit_cards.last.default?.should be_true
+    end
+
+    it 'only allows one credit card to be default' do
+      result = Braintree::CreditCard.create(
+        :customer_id => @customer.id,
+        :number => '4111111111111111',
+        :cvv => '123',
+        :token => 'token',
+        :expiration_date => '07/2020',
+        :billing_address => {
+          :postal_code => '94110'
+        },
+        :options => {
+          :make_default => true
+        }
+      )
+      result.should be_success
+      result = Braintree::CreditCard.create(
+        :customer_id => @customer.id,
+        :number => '4111111111111111',
+        :cvv => '123',
+        :token => 'token',
+        :expiration_date => '07/2020',
+        :billing_address => {
+          :postal_code => '94110'
+        },
+        :options => {
+          :make_default => true
+        }
+      )
+      result.should be_success
+      # Reload the customer
+      @customer = Braintree::Customer.find(@customer.id)
+      @customer.credit_cards.select {|c| c.default?}.length.should == 1
+      @customer.credit_cards.length.should == 2
+    end
+  end
+end
+
 describe "Braintree::CreditCard.update" do
   it "successfully updates the credit card" do
     new_expiration_date = "08/2012"
