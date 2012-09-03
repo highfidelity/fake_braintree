@@ -23,6 +23,7 @@ Spork.prefork do
     config.include BraintreeHelpers
     config.include CustomerHelpers
     config.include SubscriptionHelpers
+    config.include FakeBraintree::Helpers
 
     config.before do
       FakeBraintree.clear!
