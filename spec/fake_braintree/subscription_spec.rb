@@ -30,7 +30,7 @@ describe "Braintree::Subscription.create" do
 
   it "sets the next billing date to a string of 1.month.from_now in UTC" do
     Timecop.freeze do
-      create_subscription.subscription.next_billing_date.should == 1.month.from_now.utc.strftime('%Y-%m-%d')
+      create_subscription.subscription.next_billing_date.should == 1.month.from_now.strftime('%Y-%m-%d')
     end
   end
 end
