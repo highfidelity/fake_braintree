@@ -1,3 +1,10 @@
+# 0.2.1
+* Fake refunds via `Braintree::Transaction.refund` and
+  `Braintree::CreditCard.refund`.
+* Create credit cards via `Braintree::CreditCard.create(:token => token,
+  :number => TEST_CC_NUMBER)`
+* Depend on Thin dependency instead of Mongrel (fixes NotImplementedError).
+
 # 0.2.0
 * Generated transactions (from FakeBraintree.generate_transaction) now include
   the amount.
