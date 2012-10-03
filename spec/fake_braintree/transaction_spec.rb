@@ -37,6 +37,15 @@ describe FakeBraintree::SinatraApp do
 end
 
 describe FakeBraintree::SinatraApp do
+  context "Braintree::Transaction.void" do
+    it "successfully voids a transaction" do
+      result = Braintree::Transaction.void(create_id('foobar'))
+      result.should be_success
+    end
+  end
+end
+
+describe FakeBraintree::SinatraApp do
   context "Braintree::Transaction.find" do
     it "can find a created sale" do
       id = create_transaction.id
