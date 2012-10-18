@@ -24,14 +24,14 @@ describe FakeBraintree::SinatraApp do
       result = Braintree::Transaction.refund(create_id('foobar'), '1')
       result.should be_success
     end
+  end
+end
 
-    context "when all cards are declined" do
-      before { FakeBraintree.decline_all_cards! }
-
-      it "fails" do
-        result = Braintree::Transaction.refund(create_id('foobar'), '1')
-        result.should_not be_success
-      end
+describe FakeBraintree::SinatraApp do
+  context "Braintree::Transaction.void" do
+    it "successfully voids a transaction" do
+      result = Braintree::Transaction.void(create_id('foobar'))
+      result.should be_success
     end
   end
 end

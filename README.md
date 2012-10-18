@@ -33,6 +33,8 @@ of them (yet).
 
 ### Transaction
 * `Braintree::Transaction.sale`
+* `Braintree::Transaction.refund`
+* `Braintree::Transaction.void`
 
 ### TransparentRedirect
 * `Braintree::TransparentRedirect.url`
