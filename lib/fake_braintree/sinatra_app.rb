@@ -140,9 +140,12 @@ module FakeBraintree
 
     # Braintree::Transaction.void
     put "/merchants/:merchant_id/transactions/:transaction_id/void" do
-      transaction_id       = md5("#{params[:merchant_id]}#{Time.now.to_f}")
-      transaction_response = {"id" => transaction_id, "type" => "sale"}
-      FakeBraintree.registry.transactions[transaction_id] = transaction_response
+      transaction = FakeBraintree.registry.transactions[params[:transaction_id]]
+      transaction_response = {"id" => transaction["id"],
+                              "type" => transaction["sale"],
+                              "amount" => transaction["amount"],
+                              "status" => Braintree::Transaction::Status::Voided}
+      FakeBraintree.registry.transactions[transaction['id']] = transaction_response
       gzipped_response(200, transaction_response.to_xml(:root => "transaction"))
     end
 

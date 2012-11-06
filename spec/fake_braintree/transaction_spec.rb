@@ -30,8 +30,10 @@ end
 describe FakeBraintree::SinatraApp do
   context "Braintree::Transaction.void" do
     it "successfully voids a transaction" do
-      result = Braintree::Transaction.void(create_id('foobar'))
+      sale = Braintree::Transaction.sale(:payment_method_token => cc_token, :amount => 10.00)
+      result = Braintree::Transaction.void(sale.transaction.id)
       result.should be_success
+      result.transaction.status.should == Braintree::Transaction::Status::Voided
     end
   end
 end
