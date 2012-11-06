@@ -138,7 +138,6 @@ module FakeBraintree
       gzipped_response(200, transaction_response.to_xml(:root => "transaction"))
     end
 
-
     # Braintree::Transaction.void
     put "/merchants/:merchant_id/transactions/:transaction_id/void" do
       transaction = FakeBraintree.registry.transactions[params[:transaction_id]]
