@@ -1,3 +1,8 @@
+# HEAD (not yet released)
+
+* Braintree::Transaction.void updates the existing sale transaction instead of
+  creating a new transaction of type Braintree::Transaction::Status::Voided
+
 # 0.2.1
 * Fake refunds via `Braintree::Transaction.refund` and
   `Braintree::CreditCard.refund`.
