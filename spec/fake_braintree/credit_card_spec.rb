@@ -36,23 +36,23 @@ describe "Braintree::CreditCard.sale" do
 end
 
 
-def build_credit_card_hash
-  {
-    :customer_id => @customer && @customer.id,
-    :number => '4111111111111111',
-    :cvv => '123',
-    :token => 'token',
-    :expiration_date => '07/2020',
-    :billing_address => {
-      :postal_code => '94110'
-    },
-    :options => {
-      :make_default => true
-    }
-  }
-end
-
 describe "Braintree::CreditCard.create" do
+  def build_credit_card_hash
+    {
+      :customer_id => @customer && @customer.id,
+      :number => '4111111111111111',
+      :cvv => '123',
+      :token => 'token',
+      :expiration_date => '07/2020',
+      :billing_address => {
+        :postal_code => '94110'
+      },
+      :options => {
+        :make_default => true
+      }
+    }
+  end
+
   it 'fails to create a credit card without a customer' do
     result = Braintree::CreditCard.create(build_credit_card_hash)
     result.should_not be_success
