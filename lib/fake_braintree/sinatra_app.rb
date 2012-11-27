@@ -11,7 +11,11 @@ module FakeBraintree
 
     helpers do
       def hash_from_request_body_with_key(request, key)
-        Hash.from_xml(request.body).delete(key)
+        value = Hash.from_xml(request.body).delete(key)
+        if value.is_a?(String) # This happens if there isn't actually nested data under `key`
+          value = {}
+        end
+        value
       end
     end
 
