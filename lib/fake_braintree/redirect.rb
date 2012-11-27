@@ -21,12 +21,11 @@ module FakeBraintree
       if @kind == 'create_customer'
         Customer.new(@params["customer"], {:merchant_id => @merchant_id}).create
       elsif @kind == 'create_payment_method'
-        options = {:merchant_id => @merchant_id}
-        if more_opts = (@transparent_data['credit_card'] && @transparent_data['credit_card'].delete('options'))
-          options.merge!(more_opts)
-        end
-        options.symbolize_keys!
-        CreditCard.new(@params['credit_card'].merge(@transparent_data['credit_card']), options).create
+        credit_card_options = {:merchant_id => @merchant_id}
+        credit_card_options.merge!(@transparent_data['credit_card'].fetch('options', {}))
+
+        credit_card_options.symbolize_keys!
+        CreditCard.new(@params['credit_card'].merge(@transparent_data['credit_card']), credit_card_options).create
       end
     end
 
