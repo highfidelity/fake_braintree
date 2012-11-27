@@ -113,7 +113,11 @@ module FakeBraintree
     post "/merchants/:merchant_id/payment_methods" do
       credit_card_hash = hash_from_request_body_with_key(request, "credit_card")
       options = {:token => params[:credit_card_token], :merchant_id => params[:merchant_id]}
-      options.merge!(credit_card_hash.delete('options')).symbolize_keys! if credit_card_hash['options']
+
+      if credit_card_hash['options']
+        options.merge!(credit_card_hash.delete('options')).symbolize_keys!
+      end
+
       CreditCard.new(credit_card_hash, options).create
     end
 
