@@ -53,10 +53,10 @@ describe "Braintree::CreditCard.create" do
     }
   end
 
-  it 'fails to create a credit card without a customer' do
+  it 'allows creating a credit card without a customer' do
     result = Braintree::CreditCard.create(build_credit_card_hash)
-    result.should_not be_success
-    expect { Braintree::CreditCard.find('token') }.to raise_exception Braintree::NotFoundError
+    result.should be_success
+    Braintree::CreditCard.find('token').should_not be_nil
   end
 
   context 'with a customer' do

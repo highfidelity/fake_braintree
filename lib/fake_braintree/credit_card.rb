@@ -8,15 +8,15 @@ module FakeBraintree
     end
 
     def create
-      customer = FakeBraintree.registry.customers[@hash['customer_id']]
-      if valid_number? && customer
+      if valid_number?
         if token.nil?
           @hash['token'] = generate_token
         end
         FakeBraintree.registry.credit_cards[token] = @hash
-        customer['credit_cards'] << @hash
-
-        update_default_card
+        if customer = FakeBraintree.registry.customers[@hash['customer_id']]
+          customer['credit_cards'] << @hash
+          update_default_card
+        end
         response_for_updated_card
       else
         response_for_invalid_card
