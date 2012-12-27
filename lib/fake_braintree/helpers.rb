@@ -9,7 +9,7 @@ module FakeBraintree
     end
 
     def gzipped_response(status_code, uncompressed_content)
-      [status_code, { "Content-Encoding" => "gzip" }, gzip(uncompressed_content)]
+      [status_code, { 'Content-Encoding' => 'gzip' }, gzip(uncompressed_content)]
     end
 
     def md5(content)

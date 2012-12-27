@@ -22,12 +22,29 @@ module FakeBraintree
 
     private
 
+    def set_up_credit_card(credit_card_hash_from_params, options)
+      @hash = {
+        'token' => options[:token],
+        'merchant_id' => options[:merchant_id]
+      }.merge(credit_card_hash_from_params)
+    end
+
+    def set_expiration_month_and_year
+      if expiration_month
+        @hash['expiration_month'] = expiration_month
+      end
+
+      if expiration_year
+        @hash['expiration_year'] = expiration_year
+      end
+    end
+
     def update_existing_credit_card
       @hash = credit_card_from_registry.merge!(@hash)
     end
 
     def response_for_updated_card
-      gzipped_response(200, @hash.to_xml(:root => 'credit_card'))
+      gzipped_response(200, to_xml)
     end
 
     def credit_card_exists_in_registry?
@@ -50,30 +67,13 @@ module FakeBraintree
       expiration_date_parts[1]
     end
 
-    def set_up_credit_card(credit_card_hash_from_params, options)
-      @hash = {
-        "token"       => options[:token],
-        "merchant_id" => options[:merchant_id]
-      }.merge(credit_card_hash_from_params)
-    end
-
-    def set_expiration_month_and_year
-      if expiration_month
-        @hash["expiration_month"] = expiration_month
-      end
-
-      if expiration_year
-        @hash["expiration_year"] = expiration_year
-      end
-    end
-
     def token
       @hash['token']
     end
 
     def expiration_date_parts
-      if @hash.key?("expiration_date")
-        @hash["expiration_date"].split('/')
+      if @hash.key?('expiration_date')
+        @hash['expiration_date'].split('/')
       else
         []
       end
