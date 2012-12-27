@@ -23,7 +23,7 @@ Gem::Specification.new do |s|
   s.add_dependency 'braintree', '~> 2.5'
   s.add_dependency 'thin'
 
-  s.add_development_dependency 'rspec', '~> 2.6.0'
+  s.add_development_dependency 'rspec', '~> 2.12.0'
   s.add_development_dependency 'bourne', '~> 1.0'
   s.add_development_dependency 'timecop', '~> 0.3.5'
   s.add_development_dependency 'spork', '~> 0.9.0.rc9'
