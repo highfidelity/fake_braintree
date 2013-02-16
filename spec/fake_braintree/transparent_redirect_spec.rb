@@ -15,6 +15,15 @@ describe FakeBraintree::SinatraApp do
       params[:kind].should_not be_nil
     end
 
+    it "preserves redirect_url query parameters" do
+      redirect_url = "http://example.com/redirect_path?preserve=me"
+
+      response = post_transparent_redirect(:redirect_url => redirect_url, :customer => build_customer_hash)
+
+      params = parse_redirect(response)
+      params[:preserve].should == "me"
+    end
+
     it "rejects submissions without transparent redirect data" do
       response = post_transparent_redirect_without_data
       response.code.should == "422"
