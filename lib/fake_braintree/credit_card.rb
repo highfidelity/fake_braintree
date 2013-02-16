@@ -7,6 +7,11 @@ module FakeBraintree
       set_expiration_month_and_year
     end
 
+    def create
+      create_credit_card
+      response_for_created_card
+    end
+
     def update
       if credit_card_exists_in_registry?
         update_existing_credit_card
@@ -22,8 +27,16 @@ module FakeBraintree
 
     private
 
+    def create_credit_card
+      FakeBraintree.registry.credit_cards[@hash[:token]] = @hash
+    end
+
     def update_existing_credit_card
       @hash = credit_card_from_registry.merge!(@hash)
+    end
+
+    def response_for_created_card
+      gzipped_response(200, @hash.to_xml(:root => 'credit_card'))
     end
 
     def response_for_updated_card
