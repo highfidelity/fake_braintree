@@ -32,7 +32,10 @@ module FakeBraintree
     private
 
     def uri
-      URI.parse(@transparent_data['redirect_url']).merge("?#{base_query}&hash=#{hash(base_query)}")
+      uri = URI.parse(@transparent_data['redirect_url'])
+      merged_query = [uri.query, base_query].compact.join('&')
+      uri.query = "#{merged_query}&hash=#{hash(merged_query)}"
+      uri
     end
 
     def base_query
