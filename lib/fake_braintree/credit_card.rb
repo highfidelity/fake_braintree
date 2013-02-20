@@ -4,6 +4,7 @@ module FakeBraintree
 
     def initialize(credit_card_hash_from_params, options)
       set_up_credit_card(credit_card_hash_from_params, options)
+      set_billing_address
       set_expiration_month_and_year
     end
 
@@ -102,6 +103,12 @@ module FakeBraintree
         'customer_id' => options[:customer_id],
         'default' => options[:make_default]
       }.merge(credit_card_hash_from_params)
+    end
+
+    def set_billing_address
+      if @hash["billing_address_id"]
+        @hash["billing_address"] = FakeBraintree.registry.addresses[@hash['billing_address_id']]
+      end
     end
 
     def set_expiration_month_and_year
