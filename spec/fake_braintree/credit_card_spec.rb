@@ -72,6 +72,7 @@ describe 'Braintree::CreditCard.create' do
       result.should be_success
       Braintree::Customer.find(@customer.id).credit_cards.last.token.should == 'token'
       Braintree::Customer.find(@customer.id).credit_cards.last.default?.should be_true
+      Braintree::Customer.find(@customer.id).credit_cards.last.billing_address.postal_code.should == "94110"
     end
 
     it 'only allows one credit card to be default' do
