@@ -46,6 +46,13 @@ module FakeBraintree
       Customer.new(customer_hash, options).delete
     end
 
+    # Braintree::Address.create
+    post "/merchants/:merchant_id/customers/:customer_id/addresses" do
+      address_hash = hash_from_request_body_with_key(request, "address")
+      options = {:customer_id => params[:customer_id], :merchant_id => params[:merchant_id]}
+      Address.new(address_hash, options).create
+    end
+
     # Braintree::Subscription.create
     post "/merchants/:merchant_id/subscriptions" do
       subscription_hash = hash_from_request_body_with_key(request, "subscription")
