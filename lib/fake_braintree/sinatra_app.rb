@@ -118,12 +118,12 @@ module FakeBraintree
       if FakeBraintree.decline_all_cards?
         gzipped_response(422, FakeBraintree.create_failure.to_xml(:root => 'api_error_response'))
       else
-        transaction          = hash_from_request_body_with_key('transaction')
-        transaction_id       = md5("#{params[:merchant_id]}#{Time.now.to_f}")
-        options              = transaction["options"] || {}
-        status               = "authorized"
+        transaction = hash_from_request_body_with_key('transaction')
+        transaction_id = md5("#{params[:merchant_id]}#{Time.now.to_f}")
+        options = transaction["options"] || {}
+        status = "authorized"
         if options.fetch("submit_for_settlement", false) == true
-          status           = "submitted_for_settlement"
+          status = "submitted_for_settlement"
         end
         transaction_response = {'id' => transaction_id, 'amount' => transaction['amount'], 'status' => status}
         FakeBraintree.registry.transactions[transaction_id] = transaction_response

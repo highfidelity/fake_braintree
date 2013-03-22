@@ -31,33 +31,39 @@ describe FakeBraintree::SinatraApp do
 
     context "when submit_for_settlement is not true" do
       it "returns a transaction with a status of authorized" do
-        result = Braintree::Transaction.sale(:payment_method_token => cc_token,
-                                             :amount => 10.00,
-                                             :options => {
-                                              :submit_for_settlement => false
-                                             })
+        result = Braintree::Transaction.sale(
+          :payment_method_token => cc_token,
+          :amount => 10.00,
+          :options => {
+            :submit_for_settlement => false
+          }
+        )
         result.transaction.status.should == 'authorized'
       end
     end
 
     context "when submit_for_settlement does not exist" do
       it "returns a transaction with a status of authorized" do
-        result = Braintree::Transaction.sale(:payment_method_token => cc_token,
-                                             :amount => 10.00,
-                                             :options => {
-                                               :add_billing_address_to_payment_method => true
-                                             })
+        result = Braintree::Transaction.sale(
+          :payment_method_token => cc_token,
+          :amount => 10.00,
+          :options => {
+            :add_billing_address_to_payment_method => true
+          }
+        )
         result.transaction.status.should == 'authorized'
       end
     end
 
     context "when submit_for_settlement is true" do
       it "returns a transaction with a status of submitted_for_settlement" do
-        result = Braintree::Transaction.sale(:payment_method_token => cc_token,
-                                             :amount => 10.00,
-                                             :options => {
-                                              :submit_for_settlement => true
-                                             })
+        result = Braintree::Transaction.sale(
+          :payment_method_token => cc_token,
+          :amount => 10.00,
+          :options => {
+            :submit_for_settlement => true
+          }
+        )
         result.transaction.status.should == 'submitted_for_settlement'
       end
     end
