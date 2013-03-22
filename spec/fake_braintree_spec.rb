@@ -1,13 +1,13 @@
 require 'spec_helper'
 
 describe FakeBraintree, '.decline_all_cards!' do
-  before { FakeBraintree.decline_all_cards! }
-
   it 'declines all cards' do
+    FakeBraintree.decline_all_cards!
     create_sale.should_not be_success
   end
 
   it 'stops declining cards after clear! is called' do
+    FakeBraintree.decline_all_cards!
     FakeBraintree.clear!
     create_sale.should be_success
   end
@@ -24,16 +24,14 @@ describe FakeBraintree, '.log_file_path' do
 end
 
 describe Braintree::Configuration do
-  subject { Braintree::Configuration }
-
   it 'is running in the development environment' do
-    subject.environment.should == :development
+    Braintree::Configuration.environment.should == :development
   end
 
   it 'has some fake API credentials' do
-    subject.merchant_id.should == 'xxx'
-    subject.public_key.should == 'xxx'
-    subject.private_key.should == 'xxx'
+    Braintree::Configuration.merchant_id.should == 'xxx'
+    Braintree::Configuration.public_key.should == 'xxx'
+    Braintree::Configuration.private_key.should == 'xxx'
   end
 end
 
@@ -51,7 +49,7 @@ end
 describe FakeBraintree, '.clear_log!' do
   it 'clears the log file' do
     write_to_log
-    subject.clear_log!
+    FakeBraintree.clear_log!
     File.read(FakeBraintree.log_file_path).should == ''
   end
 
@@ -70,7 +68,7 @@ describe FakeBraintree, 'VALID_CREDIT_CARDS' do
     FakeBraintree::VALID_CREDIT_CARDS.sort.should == valid_credit_cards.sort
   end
 
-  let(:valid_credit_cards) do
+  def valid_credit_cards
     %w(4111111111111111 4005519200000004
        4009348888881881 4012000033330026
        4012000077777777 4012888888881881
