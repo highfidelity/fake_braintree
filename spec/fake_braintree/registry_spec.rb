@@ -9,7 +9,7 @@ describe FakeBraintree::Registry do
   it { should have_hash_accessor_for(:credit_cards) }
 end
 
-describe FakeBraintree::Registry, "#clear!" do
+describe FakeBraintree::Registry, '#clear!' do
   it { should clear_hash_when_cleared(:customers) }
   it { should clear_hash_when_cleared(:subscriptions) }
   it { should clear_hash_when_cleared(:failures) }
@@ -18,12 +18,12 @@ describe FakeBraintree::Registry, "#clear!" do
   it { should clear_hash_when_cleared(:credit_cards) }
 end
 
-describe FakeBraintree::Registry, "#failure?" do
-  it "returns false if the given CC number is not marked as a failure" do
+describe FakeBraintree::Registry, '#failure?' do
+  it 'returns false if the given CC number is not marked as a failure' do
     registry.failure?('not-a-failure').should be_false
   end
 
-  it "returns true if the given CC number is marked as a failure" do
+  it 'returns true if the given CC number is marked as a failure' do
     registry.failures['abc123'] = 'whatever'
     registry.failure?('abc123').should be_true
   end

@@ -1,117 +1,129 @@
 require 'spec_helper'
 
-describe "Braintree::Customer.create" do
+describe 'Braintree::Customer.create' do
   after { FakeBraintree.verify_all_cards = false }
 
-  it "successfully creates a customer" do
-    result = Braintree::Customer.create(:credit_card => { :number => TEST_CC_NUMBER,
-                                                          :expiration_date => '04/2016'})
+  it 'successfully creates a customer' do
+    result = Braintree::Customer.create(
+      :credit_card => { :number => TEST_CC_NUMBER,
+        :expiration_date => '04/2016'}
+    )
     result.should be_success
   end
 
-  it "associates a created credit card with the customer" do
-    result = Braintree::Customer.create(:credit_card => { :number => TEST_CC_NUMBER,
-                                                          :expiration_date => '04/2016'})
+  it 'associates a created credit card with the customer' do
+    result = Braintree::Customer.create(
+      :credit_card => { :number => TEST_CC_NUMBER,
+        :expiration_date => '04/2016'}
+    )
     credit_cards = Braintree::Customer.find(result.customer.id).credit_cards
     credit_cards.size.should == 1
-    credit_cards.first.expiration_date.should == "04/2016"
+    credit_cards.first.expiration_date.should == '04/2016'
   end
 
   it "successfully creates the customer's credit card" do
-    result = Braintree::Customer.create(:credit_card => { :number => TEST_CC_NUMBER,
-                                                          :expiration_date => '04/2016'})
+    result = Braintree::Customer.create(
+      :credit_card => {
+        :number => TEST_CC_NUMBER,
+        :expiration_date => '04/2016'
+      }
+    )
 
     cc_token = result.customer.credit_cards.first.token
     expect { Braintree::CreditCard.find(cc_token) }.not_to raise_error(Braintree::NotFoundError)
   end
 
-  it "can handle an empty credit card hash" do
+  it 'can handle an empty credit card hash' do
     result = Braintree::Customer.create(:credit_card => {})
     result.should be_success
   end
 
-  it "does not overwrite a passed customer id" do
-    result = Braintree::Customer.create({ "id" => '123' })
+  it 'does not overwrite a passed customer id' do
+    result = Braintree::Customer.create({ 'id' => '123' })
 
     result.customer.id.should eq('123')
   end
 
-  it "creates a customer using an expiration month and year" do
-    result = Braintree::Customer.create(:credit_card => { :number => TEST_CC_NUMBER,
-                                                          :expiration_month => '04',
-                                                          :expiration_year => '2016'})
+  it 'creates a customer using an expiration month and year' do
+    result = Braintree::Customer.create(
+      :credit_card => {
+        :number => TEST_CC_NUMBER,
+        :expiration_month => '04',
+        :expiration_year => '2016'
+      }
+    )
     result.should be_success
   end
 
-  it "records the billing address" do
+  it 'records the billing address' do
     result = create_customer(
       :billing_address => {
-        :street_address => "1 E Main St",
-        :extended_address => "Suite 3",
-        :locality => "Chicago",
-        :region => "Illinois",
-        :postal_code => "60622",
-        :country_code_alpha2 => "US"
+        :street_address => '1 E Main St',
+        :extended_address => 'Suite 3',
+        :locality => 'Chicago',
+        :region => 'Illinois',
+        :postal_code => '60622',
+        :country_code_alpha2 => 'US'
       }
     )
 
     billing_address = result.customer.credit_cards[0].billing_address
 
-    billing_address.street_address.should == "1 E Main St"
-    billing_address.postal_code.should == "60622"
+    billing_address.street_address.should == '1 E Main St'
+    billing_address.postal_code.should == '60622'
   end
 end
 
-describe "Braintree::Customer.create", "when passed :verify_card => true" do
-  it "accepts valid cards" do
+describe 'Braintree::Customer.create', 'when passed :verify_card => true' do
+  it 'accepts valid cards' do
     create_customer(:options => { :verify_card => true }).should be_success
   end
 
-  it "rejects invalid cards" do
+  it 'rejects invalid cards' do
     create_customer_with_invalid_card(:options => { :verify_card => true }).should_not be_success
   end
 end
 
-describe "Braintree::Customer.create", "when FakeBraintree.verify_all_cards == true" do
+describe 'Braintree::Customer.create', 'when FakeBraintree.verify_all_cards == true' do
   before { FakeBraintree.verify_all_cards! }
 
-  it "accepts valid cards" do
+  it 'accepts valid cards' do
     create_customer.should be_success
   end
 
-  it "rejects invalid cards" do
+  it 'rejects invalid cards' do
     create_customer_with_invalid_card.should_not be_success
   end
 end
 
-describe "Braintree::Customer.find" do
-  it "successfully finds a customer" do
-    result = Braintree::Customer.create(:first_name => "Bob",
-                                        :last_name => "Smith")
+describe 'Braintree::Customer.find' do
+  it 'successfully finds a customer' do
+    result = Braintree::Customer.create(:first_name => 'Bob',
+                                        :last_name => 'Smith')
 
-    Braintree::Customer.find(result.customer.id).first_name.should == "Bob"
+    Braintree::Customer.find(result.customer.id).first_name.should == 'Bob'
   end
 
-  it "raises an error for a nonexistent customer" do
-    lambda { Braintree::Customer.find("foo") }.should raise_error(Braintree::NotFoundError)
+  it 'raises an error for a nonexistent customer' do
+    lambda { Braintree::Customer.find('foo') }.should raise_error(Braintree::NotFoundError)
   end
 end
 
-describe "Braintree::Customer.update" do
-  it "successfully updates a customer" do
+describe 'Braintree::Customer.update' do
+  it 'successfully updates a customer' do
     customer_id = create_customer.customer.id
-    result = Braintree::Customer.update(customer_id, :first_name => "Jerry")
+    result = Braintree::Customer.update(customer_id, :first_name => 'Jerry')
 
     result.should be_success
-    Braintree::Customer.find(customer_id).first_name.should == "Jerry"
+    Braintree::Customer.find(customer_id).first_name.should == 'Jerry'
   end
 
-  it "raises an error for a nonexistent customer" do
-    lambda { Braintree::Customer.update("foo", {:first_name => "Bob"}) }.should raise_error(Braintree::NotFoundError)
+  it 'raises an error for a nonexistent customer' do
+    lambda { Braintree::Customer.update('foo', {:first_name => 'Bob'}) }.should raise_error(Braintree::NotFoundError)
   end
 
-  it "does not allow a customer to be updated to a failing credit card" do
-    bad_credit_card = "123456"
+  it 'does not allow a customer to be updated to a failing credit card' do
+    bad_credit_card = '123456'
     FakeBraintree.registry.failures[bad_credit_card] = FakeBraintree.failure_response
 
     customer = create_customer
@@ -120,8 +132,8 @@ describe "Braintree::Customer.update" do
   end
 end
 
-describe "Braintree::Customer.delete" do
-  it "successfully deletes a customer" do
+describe 'Braintree::Customer.delete' do
+  it 'successfully deletes a customer' do
     customer_id = create_customer.customer.id
     result = Braintree::Customer.delete(customer_id)
 
