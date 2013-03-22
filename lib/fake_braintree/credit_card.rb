@@ -81,7 +81,10 @@ module FakeBraintree
     end
 
     def response_for_invalid_card
-      gzipped_response(422, FakeBraintree.failure_response.merge('params' => {:credit_card => @hash}).to_xml(:root => 'api_error_response'))
+      gzipped_response(422, FakeBraintree.failure_response.merge(
+          'params' => {:credit_card => @hash}
+        ).
+        to_xml(:root => 'api_error_response'))
     end
 
     def expiration_month
@@ -94,20 +97,20 @@ module FakeBraintree
 
     def set_up_credit_card(credit_card_hash_from_params, options)
       @hash = {
-        "token"       => options[:token],
-        "merchant_id" => options[:merchant_id],
-        "customer_id" => options[:customer_id],
-        "default"     => options[:make_default]
+        'token' => options[:token],
+        'merchant_id' => options[:merchant_id],
+        'customer_id' => options[:customer_id],
+        'default' => options[:make_default]
       }.merge(credit_card_hash_from_params)
     end
 
     def set_expiration_month_and_year
       if expiration_month
-        @hash["expiration_month"] = expiration_month
+        @hash['expiration_month'] = expiration_month
       end
 
       if expiration_year
-        @hash["expiration_year"] = expiration_year
+        @hash['expiration_year'] = expiration_year
       end
     end
 
@@ -120,8 +123,8 @@ module FakeBraintree
     end
 
     def expiration_date_parts
-      if @hash.key?("expiration_date")
-        @hash["expiration_date"].split('/')
+      if @hash.key?('expiration_date')
+        @hash['expiration_date'].split('/')
       else
         []
       end

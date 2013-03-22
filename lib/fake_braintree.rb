@@ -46,26 +46,32 @@ module FakeBraintree
 
   def self.failure_response(card_number = nil)
     failure = registry.failures[card_number] || {}
-    failure["errors"] ||= { "errors" => [] }
+    failure['errors'] ||= { 'errors' => [] }
 
-    { "message"      => failure["message"],
-      "verification" => { "status"                   => failure["status"],
-                          "processor_response_text"  => failure["message"],
-                          "processor_response_code"  => failure["code"],
-                          "gateway_rejection_reason" => "cvv",
-                          "cvv_response_code"        => failure["code"] },
-      "errors"        => failure["errors"],
-      "params"        => {}}
+    {
+      'message' => failure['message'],
+      'verification' => {
+        'status' => failure['status'],
+        'processor_response_text' => failure['message'],
+        'processor_response_code' => failure['code'],
+        'gateway_rejection_reason' => 'cvv',
+        'cvv_response_code' => failure['code']
+      },
+      'errors' => failure['errors'],
+      'params' => {}
+    }
   end
 
   def self.create_failure
     {
-      "message"      => "Do Not Honor",
-      "verification" => { "status"                  => "processor_declined",
-                          "processor_response_text" => "Do Not Honor",
-                          "processor_response_code" => '2000' },
-      "errors"       => { 'errors' => [] },
-      "params"       => {}
+      'message' => 'Do Not Honor',
+      'verification' => {
+        'status' => 'processor_declined',
+        'processor_response_text' => 'Do Not Honor',
+        'processor_response_code' => '2000'
+      },
+      'errors' => { 'errors' => [] },
+      'params' => {}
     }
   end
 
@@ -82,23 +88,27 @@ module FakeBraintree
   end
 
   def self.generate_transaction(options = {})
-    history_item = { 'timestamp'       => Time.now,
-                     'amount'          => options[:amount],
-                     'status'          => options[:status] }
+    history_item = {
+      'timestamp' => Time.now,
+     'amount' => options[:amount],
+     'status' => options[:status]
+    }
     created_at = options[:created_at] || Time.now
-    {'status_history'  => [history_item],
-     'subscription_id' => options[:subscription_id],
-     'created_at'      => created_at,
-     'amount'          => options[:amount] }
+    {
+      'status_history' => [history_item],
+      'subscription_id' => options[:subscription_id],
+      'created_at' => created_at,
+      'amount' => options[:amount]
+    }
   end
 
   private
 
   def self.set_configuration
     Braintree::Configuration.environment = :development
-    Braintree::Configuration.merchant_id = "xxx"
-    Braintree::Configuration.public_key  = "xxx"
-    Braintree::Configuration.private_key = "xxx"
+    Braintree::Configuration.merchant_id = 'xxx'
+    Braintree::Configuration.public_key  = 'xxx'
+    Braintree::Configuration.private_key = 'xxx'
   end
 
   def self.boot_server
