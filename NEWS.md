@@ -5,6 +5,9 @@
 
 * Preserve `redirect_url` query parameters for transparent redirect (#36)
 
+* Transactions can be submitted for settlement by passing an options hash to
+  Braintree::Transaction.create as shown in the [Braintree documentation](https://www.braintreepayments.com/docs/ruby/transactions/create#full_example) (#31)
+
 # 0.2.1
 * Fake refunds via `Braintree::Transaction.refund` and
   `Braintree::CreditCard.refund`.
