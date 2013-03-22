@@ -11,7 +11,7 @@ Spork.prefork do
     File.new('tmp/braintree_log', 'w').close
   end
 
-  Dir[File.join(File.dirname(__FILE__), "support/**/*.rb")].each {|f| require f}
+  Dir[File.join(File.dirname(__FILE__), 'support/**/*.rb')].each {|f| require f}
 
   clear_braintree_log
 

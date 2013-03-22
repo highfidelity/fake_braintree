@@ -5,7 +5,7 @@ module FakeBraintree
     attr_reader :id
 
     def initialize(params, merchant_id)
-      hash, query = *params[:tr_data].split("|", 2)
+      hash, query = *params[:tr_data].split('|', 2)
       @transparent_data = Rack::Utils.parse_nested_query(query)
       @merchant_id = merchant_id
       @id = create_id(@merchant_id)
@@ -19,7 +19,7 @@ module FakeBraintree
 
     def confirm
       if @kind == 'create_customer'
-        Customer.new(@params["customer"], {:merchant_id => @merchant_id}).create
+        Customer.new(@params['customer'], {:merchant_id => @merchant_id}).create
       elsif @kind == 'create_payment_method'
         credit_card_options = {:merchant_id => @merchant_id}
         credit_card_options.merge!(@transparent_data['credit_card'].fetch('options', {}))
@@ -32,7 +32,7 @@ module FakeBraintree
     private
 
     def uri
-      URI.parse(@transparent_data["redirect_url"]).merge("?#{base_query}&hash=#{hash(base_query)}")
+      URI.parse(@transparent_data['redirect_url']).merge("?#{base_query}&hash=#{hash(base_query)}")
     end
 
     def base_query
