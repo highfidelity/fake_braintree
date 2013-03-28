@@ -37,6 +37,18 @@ describe 'Braintree::Customer.create' do
     expect { Braintree::CreditCard.find(cc_token) }.not_to raise_error(Braintree::NotFoundError)
   end
 
+  it "sets a default credit card for the customer" do
+    result = Braintree::Customer.create(
+      :credit_card => {
+        :number => TEST_CC_NUMBER,
+        :expiration_date => '04/2016'
+      }
+    )
+
+    credit_cards = Braintree::Customer.find(result.customer.id).credit_cards
+    credit_cards.first.default?.should be_true
+  end
+
   it 'can handle an empty credit card hash' do
     result = Braintree::Customer.create(:credit_card => {})
     result.should be_success
