@@ -18,6 +18,7 @@ module FakeBraintree
         credit_cards = customer_hash['credit_cards']
         create_customer_with(customer_hash)
         credit_cards.each { |card| add_credit_card_to_registry(card) }
+        set_default_credit_card credit_cards.first
         response_for_created_customer(customer_hash)
       end
     end
@@ -100,8 +101,15 @@ module FakeBraintree
       credit_card_hash['number']
     end
 
+    def set_default_credit_card(credit_card_hash)
+      if credit_card_hash
+        CreditCard.new(credit_card_hash, :customer_id => @customer_hash['id'], :make_default => true).update
+      end
+    end
+
     def generate_credit_cards_from(new_credit_card_hash)
       if new_credit_card_hash.present? && new_credit_card_hash.is_a?(Hash)
+        new_credit_card_hash['bin'] = new_credit_card_hash['number'][0..5]
         new_credit_card_hash['last_4'] = new_credit_card_hash['number'][-4..-1]
         new_credit_card_hash['token']  = credit_card_token(new_credit_card_hash)
 
