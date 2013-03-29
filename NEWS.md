@@ -1,4 +1,4 @@
-# HEAD (not yet released)
+# 0.3
 
 * Braintree::Transaction.void updates the existing sale transaction instead of
   creating a new transaction of type Braintree::Transaction::Status::Voided
