@@ -46,7 +46,7 @@ describe 'Braintree::Customer.create' do
     )
 
     credit_cards = Braintree::Customer.find(result.customer.id).credit_cards
-    credit_cards.first.default?.should be_true
+    credit_cards.first.should be_default
   end
 
   it 'can handle an empty credit card hash' do

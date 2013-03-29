@@ -103,7 +103,7 @@ module FakeBraintree
 
     def set_default_credit_card(credit_card_hash)
       if credit_card_hash
-        CreditCard.new(credit_card_hash, customer_id: @customer_hash['id'], make_default: true).update
+        CreditCard.new(credit_card_hash, :customer_id => @customer_hash['id'], :make_default => true).update
       end
     end
 
