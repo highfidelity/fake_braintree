@@ -1,5 +1,20 @@
 require 'spec_helper'
 
+shared_examples "a failable transaction" do
+  it 'returns an error if we ask it to and resets the failure to nil' do
+    message = 'some error'
+    FakeBraintree.fail_next_transaction_with(message)
+    result = Braintree::Transaction.send(transaction_method,*transaction_method_args)
+    result.should_not be_success
+    result.message.should == message
+    FakeBraintree.fail_next_transaction?.should == false
+  end
+
+  after :each do
+    FakeBraintree.fail_next_transaction_with(nil)
+  end
+end
+
 describe FakeBraintree::SinatraApp do
   context 'Braintree::Transaction.sale' do
     it 'successfully creates a transaction' do
@@ -8,6 +23,11 @@ describe FakeBraintree::SinatraApp do
         :amount => 10.00
       )
       result.should be_success
+    end
+
+    it_behaves_like 'a failable transaction' do
+      let(:transaction_method) { :sale }
+      let(:transaction_method_args) { [{ :payment_method_token => cc_token, :amount => 10.00 }] }
     end
 
     context 'when all cards are declined' do
@@ -76,19 +96,32 @@ describe FakeBraintree::SinatraApp do
       result = Braintree::Transaction.refund(create_id('foobar'), '1')
       result.should be_success
     end
+
+    it_behaves_like 'a failable transaction' do
+      let(:transaction_method) { :refund }
+      let(:transaction_method_args) { [create_id('foobar'), '1'] }
+    end
   end
 end
 
 describe FakeBraintree::SinatraApp do
+  let!(:sale_transaction_id) {
+    FakeBraintree.fail_next_transaction_with(nil)
+    Braintree::Transaction.sale(
+      :payment_method_token => cc_token,
+      :amount => 10.00
+    ).transaction.id
+  }
   context 'Braintree::Transaction.void' do
     it 'successfully voids a transaction' do
-      sale = Braintree::Transaction.sale(
-        :payment_method_token => cc_token,
-        :amount => 10.00
-      )
-      result = Braintree::Transaction.void(sale.transaction.id)
+      result = Braintree::Transaction.void(sale_transaction_id)
       result.should be_success
       result.transaction.status.should == Braintree::Transaction::Status::Voided
+    end
+
+    it_behaves_like 'a failable transaction' do
+      let(:transaction_method) { :void }
+      let(:transaction_method_args) { [sale_transaction_id] }
     end
   end
 end

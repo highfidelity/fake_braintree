@@ -15,7 +15,7 @@ require 'fake_braintree/valid_credit_cards'
 require 'fake_braintree/version'
 
 module FakeBraintree
-  mattr_accessor :registry, :verify_all_cards, :decline_all_cards
+  mattr_accessor :registry, :verify_all_cards, :decline_all_cards, :fail_next_transaction_message
 
   def self.activate!
     initialize_registry
@@ -62,17 +62,27 @@ module FakeBraintree
     }
   end
 
-  def self.create_failure
+  def self.create_failure(message = 'Do Not Honor')
     {
-      'message' => 'Do Not Honor',
+      'message' => message,
       'verification' => {
         'status' => 'processor_declined',
-        'processor_response_text' => 'Do Not Honor',
+        'processor_response_text' => message,
         'processor_response_code' => '2000'
       },
       'errors' => { 'errors' => [] },
       'params' => {}
     }
+  end
+
+  # The next transaction attempted that would otherwise succeed should fail
+  # with the given message
+  def self.fail_next_transaction_with(message)
+    self.fail_next_transaction_message = message
+  end
+
+  def self.fail_next_transaction?
+    !self.fail_next_transaction_message.nil?
   end
 
   def self.decline_all_cards!
