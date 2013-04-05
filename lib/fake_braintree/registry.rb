@@ -4,9 +4,10 @@ class FakeBraintree::Registry
   end
 
   attr_accessor :customers,:subscriptions, :failures, :transactions, :redirects,
-    :credit_cards
+    :credit_cards, :addresses
 
   def clear!
+    @addresses     = {}
     @customers     = {}
     @subscriptions = {}
     @failures      = {}
