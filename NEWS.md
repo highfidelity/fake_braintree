@@ -1,3 +1,7 @@
+# HEAD (unreleased)
+
+* Add support for `Braintree::Address.create`
+
 # 0.3
 
 * Braintree::Transaction.void updates the existing sale transaction instead of

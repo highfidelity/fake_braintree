@@ -40,6 +40,9 @@ of them (yet).
 * `Braintree::TransparentRedirect.url`
 * `Braintree::TransparentRedirect.confirm` (only for creating customers)
 
+### Address
+* `Braintree::Address.create`
+
 ## Quick start
 Just require the library and you're good to go:
 
@@ -102,7 +105,7 @@ This will stay "on" until you set
 
     FakeBraintree.verify_all_cards = false
 
-Calling FakeBraintree.clear! _will not_ change this setting. It does very basic
+Calling `FakeBraintree.clear!` _will not_ change this setting. It does very basic
 verification: it only matches the credit card number against these:
 http://www.braintreepayments.com/docs/ruby/reference/sandbox and rejects them if
 they aren't one of the listed numbers.
