@@ -4,9 +4,9 @@ module FakeBraintree
 
     def initialize(customer_hash_from_params, options)
       @customer_hash = {
-        'id'          => options[:id],
+        'id' => options[:id],
         'merchant_id' => options[:merchant_id],
-        'addresses'   => []        
+        'addresses' => []
       }
       @customer_hash.merge!(customer_hash_from_params)
       set_customer_id

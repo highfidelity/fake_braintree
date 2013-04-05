@@ -35,6 +35,5 @@ module FakeBraintree
     def id
       @hash['id']
     end
-
   end
 end
