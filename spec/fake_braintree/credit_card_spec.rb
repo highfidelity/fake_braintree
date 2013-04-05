@@ -4,9 +4,12 @@ describe 'Braintree::CreditCard.find' do
   it 'gets the correct credit card' do
     credit_card = Braintree::CreditCard.find(token)
 
+    credit_card.bin.should == TEST_CC_NUMBER[0, 6]
+    credit_card.card_type.should == "FakeBraintree"
     credit_card.last_4.should == TEST_CC_NUMBER[-4,4]
     credit_card.expiration_month.should == month
     credit_card.expiration_year.should ==  year
+    credit_card.unique_number_identifier.should == TEST_CC_NUMBER
   end
 
   let(:month) { '04' }
