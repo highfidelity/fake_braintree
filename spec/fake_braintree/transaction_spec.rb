@@ -8,6 +8,7 @@ describe FakeBraintree::SinatraApp do
         :amount => 10.00
       )
       result.should be_success
+      result.transaction.type.should == 'sale'
     end
 
     context 'when all cards are declined' do
