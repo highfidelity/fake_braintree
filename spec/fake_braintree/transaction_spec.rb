@@ -97,9 +97,9 @@ end
 describe FakeBraintree::SinatraApp do
   context 'Braintree::Transaction.find' do
     it 'can find a created sale' do
-      id = create_transaction.id
+      id = create_transaction(10.00).id
       result = Braintree::Transaction.find(id)
-      result.amount.should == amount
+      result.amount.should == 10.00
     end
 
     it 'can find >1 transaction' do
@@ -111,10 +111,11 @@ describe FakeBraintree::SinatraApp do
       expect { Braintree::Transaction.find('foobar') }.to raise_error(Braintree::NotFoundError)
     end
 
-    def create_transaction
-      Braintree::Transaction.sale(payment_method_token: cc_token, amount: amount).transaction
+    def create_transaction(amount = 10.00)
+      Braintree::Transaction.sale(
+        payment_method_token: cc_token,
+        amount: amount
+      ).transaction
     end
-
-    let(:amount) { 10.00 }
   end
 end

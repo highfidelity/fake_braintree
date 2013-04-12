@@ -137,7 +137,7 @@ describe 'Braintree::Customer.update' do
   end
 
   it 'raises an error for a nonexistent customer' do
-    lambda { Braintree::Customer.update('foo', {first_name: 'Bob'}) }.should raise_error(Braintree::NotFoundError)
+    expect { Braintree::Customer.update('foo', {first_name: 'Bob'}) }.to raise_error(Braintree::NotFoundError)
   end
 
   it 'does not allow a customer to be updated to a failing credit card' do
@@ -146,11 +146,7 @@ describe 'Braintree::Customer.update' do
 
     customer = create_customer
     result =  Braintree::Customer.update(customer.customer.id,
-      {
-        credit_card: {
-          number: bad_credit_card
-        }
-      }
+      credit_card: { number: bad_credit_card }
     )
     result.should_not be_success
   end
