@@ -18,14 +18,17 @@ module FakeBraintree
     end
 
     def confirm
-      if @kind == 'create_customer'
-        Customer.new(@params['customer'], {:merchant_id => @merchant_id}).create
-      elsif @kind == 'create_payment_method'
-        credit_card_options = {:merchant_id => @merchant_id}
-        credit_card_options.merge!(@transparent_data['credit_card'].fetch('options', {}))
-
-        credit_card_options.symbolize_keys!
-        CreditCard.new(@params['credit_card'].merge(@transparent_data['credit_card']), credit_card_options).create
+      case @kind
+        when 'create_customer'
+          Customer.new(@params['customer'], {:merchant_id => @merchant_id}).create
+        when 'create_payment_method'
+          credit_card_options = {:merchant_id => @merchant_id}
+          credit_card_options.merge!(@transparent_data['credit_card'].fetch('options', {}))
+  
+          credit_card_options.symbolize_keys!
+          CreditCard.new(@params['credit_card'].merge(@transparent_data['credit_card']), credit_card_options).create
+        else
+          raise "'#{@kind}' is currently not supported."
       end
     end
 
