@@ -77,7 +77,7 @@ To use fake\_braintree with Spork, do this:
 
     # Gemfile
     group :test do
-      gem 'fake_braintree', :require => false
+      gem 'fake_braintree', require: false
     end
 
     # spec/spec_helper.rb
@@ -147,10 +147,10 @@ call it with no arguments.
 
 Full example:
 
-    transaction = FakeBraintree.generate_transaction(:amount => '20.00',
-                                                     :status => Braintree::Transaction::Status::Settled,
-                                                     :subscription_id => 'foobar',
-                                                     :created_at => Time.now + 60)
+    transaction = FakeBraintree.generate_transaction(amount: '20.00',
+                                                     status: Braintree::Transaction::Status::Settled,
+                                                     subscription_id: 'foobar',
+                                                     created_at: Time.now + 60)
     p transaction
     # {
     #   "status_history" =>

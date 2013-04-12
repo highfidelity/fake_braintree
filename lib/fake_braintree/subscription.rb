@@ -98,7 +98,7 @@ module FakeBraintree
     end
 
     def response_for_created_subscription(hash)
-      gzipped_response(201, hash.to_xml(:root => 'subscription'))
+      gzipped_response(201, hash.to_xml(root: 'subscription'))
     end
 
     def response_for_subscription_not_found
@@ -106,7 +106,7 @@ module FakeBraintree
     end
 
     def response_for_created_subscription(hash)
-      gzipped_response(201, hash.to_xml(:root => 'subscription'))
+      gzipped_response(201, hash.to_xml(root: 'subscription'))
     end
   end
 end

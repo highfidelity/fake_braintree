@@ -34,7 +34,7 @@ module FakeBraintree
     end
 
     def to_xml
-      @hash.to_xml(:root => 'credit_card')
+      @hash.to_xml(root: 'credit_card')
     end
 
     def valid_number?
@@ -66,7 +66,7 @@ module FakeBraintree
     end
 
     def response_for_updated_card
-      gzipped_response(200, @hash.to_xml(:root => 'credit_card'))
+      gzipped_response(200, @hash.to_xml(root: 'credit_card'))
     end
 
     def credit_card_exists_in_registry?
@@ -78,14 +78,14 @@ module FakeBraintree
     end
 
     def response_for_card_not_found
-      gzipped_response(404, FakeBraintree.failure_response.to_xml(:root => 'api_error_response'))
+      gzipped_response(404, FakeBraintree.failure_response.to_xml(root: 'api_error_response'))
     end
 
     def response_for_invalid_card
       gzipped_response(422, FakeBraintree.failure_response.merge(
-          'params' => {:credit_card => @hash}
+          'params' => {credit_card: @hash}
         ).
-        to_xml(:root => 'api_error_response'))
+        to_xml(root: 'api_error_response'))
     end
 
     def expiration_month

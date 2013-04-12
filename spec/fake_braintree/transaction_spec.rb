@@ -4,8 +4,8 @@ describe FakeBraintree::SinatraApp do
   context 'Braintree::Transaction.sale' do
     it 'successfully creates a transaction' do
       result = Braintree::Transaction.sale(
-        :payment_method_token => cc_token,
-        :amount => 10.00
+        payment_method_token: cc_token,
+        amount: 10.00
       )
       result.should be_success
       result.transaction.type.should == 'sale'
@@ -16,8 +16,8 @@ describe FakeBraintree::SinatraApp do
 
       it 'fails' do
         result = Braintree::Transaction.sale(
-          :payment_method_token => cc_token,
-          :amount => 10.00
+          payment_method_token: cc_token,
+          amount: 10.00
         )
         result.should_not be_success
       end
@@ -25,7 +25,7 @@ describe FakeBraintree::SinatraApp do
 
     context "when the options hash is nil" do
       it "returns a transaction with a status of authorized" do
-        result = Braintree::Transaction.sale(:payment_method_token => cc_token, :amount => 10.00)
+        result = Braintree::Transaction.sale(payment_method_token: cc_token, amount: 10.00)
         result.transaction.status.should == 'authorized'
       end
     end
@@ -33,10 +33,10 @@ describe FakeBraintree::SinatraApp do
     context "when submit_for_settlement is not true" do
       it "returns a transaction with a status of authorized" do
         result = Braintree::Transaction.sale(
-          :payment_method_token => cc_token,
-          :amount => 10.00,
-          :options => {
-            :submit_for_settlement => false
+          payment_method_token: cc_token,
+          amount: 10.00,
+          options: {
+            submit_for_settlement: false
           }
         )
         result.transaction.status.should == 'authorized'
@@ -46,10 +46,10 @@ describe FakeBraintree::SinatraApp do
     context "when submit_for_settlement does not exist" do
       it "returns a transaction with a status of authorized" do
         result = Braintree::Transaction.sale(
-          :payment_method_token => cc_token,
-          :amount => 10.00,
-          :options => {
-            :add_billing_address_to_payment_method => true
+          payment_method_token: cc_token,
+          amount: 10.00,
+          options: {
+            add_billing_address_to_payment_method: true
           }
         )
         result.transaction.status.should == 'authorized'
@@ -59,10 +59,10 @@ describe FakeBraintree::SinatraApp do
     context "when submit_for_settlement is true" do
       it "returns a transaction with a status of submitted_for_settlement" do
         result = Braintree::Transaction.sale(
-          :payment_method_token => cc_token,
-          :amount => 10.00,
-          :options => {
-            :submit_for_settlement => true
+          payment_method_token: cc_token,
+          amount: 10.00,
+          options: {
+            submit_for_settlement: true
           }
         )
         result.transaction.status.should == 'submitted_for_settlement'
@@ -84,8 +84,8 @@ describe FakeBraintree::SinatraApp do
   context 'Braintree::Transaction.void' do
     it 'successfully voids a transaction' do
       sale = Braintree::Transaction.sale(
-        :payment_method_token => cc_token,
-        :amount => 10.00
+        payment_method_token: cc_token,
+        amount: 10.00
       )
       result = Braintree::Transaction.void(sale.transaction.id)
       result.should be_success
@@ -112,7 +112,7 @@ describe FakeBraintree::SinatraApp do
     end
 
     def create_transaction
-      Braintree::Transaction.sale(:payment_method_token => cc_token, :amount => amount).transaction
+      Braintree::Transaction.sale(payment_method_token: cc_token, amount: amount).transaction
     end
 
     let(:amount) { 10.00 }

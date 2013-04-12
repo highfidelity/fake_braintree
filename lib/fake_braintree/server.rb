@@ -16,7 +16,7 @@ class FakeBraintree::Server
   def with_thin_runner
     default_server_process = Capybara.server
     Capybara.server do |app, port|
-      Rack::Handler::Thin.run(app, :Port => port)
+      Rack::Handler::Thin.run(app, Port: port)
     end
     yield
   ensure

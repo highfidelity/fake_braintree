@@ -104,7 +104,7 @@ module FakeBraintree
 
     def set_default_credit_card(credit_card_hash)
       if credit_card_hash
-        CreditCard.new(credit_card_hash, :customer_id => @customer_hash['id'], :make_default => true).update
+        CreditCard.new(credit_card_hash, customer_id: @customer_hash['id'], make_default: true).update
       end
     end
 
@@ -153,11 +153,11 @@ module FakeBraintree
     end
 
     def response_for_created_customer(hash)
-      gzipped_response(201, hash.to_xml(:root => 'customer'))
+      gzipped_response(201, hash.to_xml(root: 'customer'))
     end
 
     def response_for_updated_customer(hash)
-      gzipped_response(200, hash.to_xml(:root => 'customer'))
+      gzipped_response(200, hash.to_xml(root: 'customer'))
     end
 
     def response_for_invalid_card
@@ -169,7 +169,7 @@ module FakeBraintree
     end
 
     def failure_response(code)
-      gzipped_response(code, FakeBraintree.failure_response(credit_card_number).to_xml(:root => 'api_error_response'))
+      gzipped_response(code, FakeBraintree.failure_response(credit_card_number).to_xml(root: 'api_error_response'))
     end
 
     def customer_id

@@ -6,8 +6,8 @@ describe 'Braintree::Subscription.create' do
 
   it 'successfully creates a subscription' do
     Braintree::Subscription.create(
-      :payment_method_token => cc_token,
-      :plan_id => 'my_plan_id'
+      payment_method_token: cc_token,
+      plan_id: 'my_plan_id'
     ).should be_success
   end
 
@@ -19,12 +19,12 @@ describe 'Braintree::Subscription.create' do
     cc_token_1 = cc_token
     cc_token_2 = braintree_credit_card_token(TEST_CC_NUMBER.sub('1', '5'), expiration_date)
     first_result = Braintree::Subscription.create(
-      :payment_method_token => cc_token_1,
-      :plan_id => plan_id
+      payment_method_token: cc_token_1,
+      plan_id: plan_id
     )
     second_result = Braintree::Subscription.create(
-      :payment_method_token => cc_token_2,
-      :plan_id => plan_id
+      payment_method_token: cc_token_2,
+      plan_id: plan_id
     )
 
     first_result.subscription.id.should_not == second_result.subscription.id
@@ -46,7 +46,7 @@ describe 'Braintree::Subscription.find' do
     payment_method_token = cc_token
     plan_id = 'abc123'
     subscription_id =
-      create_subscription(:payment_method_token => payment_method_token, :plan_id => plan_id).subscription.id
+      create_subscription(payment_method_token: payment_method_token, plan_id: plan_id).subscription.id
     subscription = Braintree::Subscription.find(subscription_id)
     subscription.should_not be_nil
     subscription.payment_method_token.should == payment_method_token
@@ -60,7 +60,7 @@ describe 'Braintree::Subscription.find' do
 
   it 'returns add-ons added with the subscription' do
     add_on_id = 'def456'
-    subscription_id = create_subscription(:add_ons => { :add => [{ :inherited_from_id => add_on_id }] }).subscription.id
+    subscription_id = create_subscription(add_ons: { add: [{ inherited_from_id: add_on_id }] }).subscription.id
     subscription = Braintree::Subscription.find(subscription_id)
     add_ons = subscription.add_ons
     add_ons.size.should == 1
@@ -69,7 +69,7 @@ describe 'Braintree::Subscription.find' do
 
   it 'returns discounts added with the subscription' do
     discount_id = 'def456'
-    subscription_id = create_subscription(:discounts => { :add => [{ :inherited_from_id => discount_id, :amount => BigDecimal.new('15.00') }]}).subscription.id
+    subscription_id = create_subscription(discounts: { add: [{ inherited_from_id: discount_id, amount: BigDecimal.new('15.00') }]}).subscription.id
     subscription = Braintree::Subscription.find(subscription_id)
     discounts = subscription.discounts
     discounts.size.should == 1
@@ -79,7 +79,7 @@ end
 
 describe 'Braintree::Subscription.update' do
   it 'can update a subscription' do
-    Braintree::Subscription.update(subscription_id, :plan_id => 'a_new_plan')
+    Braintree::Subscription.update(subscription_id, plan_id: 'a_new_plan')
     Braintree::Subscription.find(subscription_id).plan_id.should == 'a_new_plan'
   end
 

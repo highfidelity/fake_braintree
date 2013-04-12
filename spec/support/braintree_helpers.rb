@@ -1,10 +1,10 @@
 module BraintreeHelpers
   def create_braintree_customer(cc_number, expiration_date)
     Braintree::Customer.create(
-      :email => 'me@example.com',
-      :credit_card => {
-        :number => cc_number,
-        :expiration_date => expiration_date
+      email: 'me@example.com',
+      credit_card: {
+        number: cc_number,
+        expiration_date: expiration_date
       }
     ).customer
   end

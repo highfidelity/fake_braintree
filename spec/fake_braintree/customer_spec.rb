@@ -5,9 +5,9 @@ describe 'Braintree::Customer.create' do
 
   it 'successfully creates a customer' do
     result = Braintree::Customer.create(
-      :credit_card => {
-        :number => TEST_CC_NUMBER,
-        :expiration_date => '04/2016'
+      credit_card: {
+        number: TEST_CC_NUMBER,
+        expiration_date: '04/2016'
       }
     )
     result.should be_success
@@ -15,9 +15,9 @@ describe 'Braintree::Customer.create' do
 
   it 'associates a created credit card with the customer' do
     result = Braintree::Customer.create(
-      :credit_card => {
-        :number => TEST_CC_NUMBER,
-        :expiration_date => '04/2016'
+      credit_card: {
+        number: TEST_CC_NUMBER,
+        expiration_date: '04/2016'
       }
     )
     credit_cards = Braintree::Customer.find(result.customer.id).credit_cards
@@ -27,9 +27,9 @@ describe 'Braintree::Customer.create' do
 
   it "successfully creates the customer's credit card" do
     result = Braintree::Customer.create(
-      :credit_card => {
-        :number => TEST_CC_NUMBER,
-        :expiration_date => '04/2016'
+      credit_card: {
+        number: TEST_CC_NUMBER,
+        expiration_date: '04/2016'
       }
     )
 
@@ -39,9 +39,9 @@ describe 'Braintree::Customer.create' do
 
   it "sets a default credit card for the customer" do
     result = Braintree::Customer.create(
-      :credit_card => {
-        :number => TEST_CC_NUMBER,
-        :expiration_date => '04/2016'
+      credit_card: {
+        number: TEST_CC_NUMBER,
+        expiration_date: '04/2016'
       }
     )
 
@@ -50,7 +50,7 @@ describe 'Braintree::Customer.create' do
   end
 
   it 'can handle an empty credit card hash' do
-    result = Braintree::Customer.create(:credit_card => {})
+    result = Braintree::Customer.create(credit_card: {})
     result.should be_success
   end
 
@@ -62,10 +62,10 @@ describe 'Braintree::Customer.create' do
 
   it 'creates a customer using an expiration month and year' do
     result = Braintree::Customer.create(
-      :credit_card => {
-        :number => TEST_CC_NUMBER,
-        :expiration_month => '04',
-        :expiration_year => '2016'
+      credit_card: {
+        number: TEST_CC_NUMBER,
+        expiration_month: '04',
+        expiration_year: '2016'
       }
     )
     result.should be_success
@@ -73,13 +73,13 @@ describe 'Braintree::Customer.create' do
 
   it 'records the billing address' do
     result = create_customer(
-      :billing_address => {
-        :street_address => '1 E Main St',
-        :extended_address => 'Suite 3',
-        :locality => 'Chicago',
-        :region => 'Illinois',
-        :postal_code => '60622',
-        :country_code_alpha2 => 'US'
+      billing_address: {
+        street_address: '1 E Main St',
+        extended_address: 'Suite 3',
+        locality: 'Chicago',
+        region: 'Illinois',
+        postal_code: '60622',
+        country_code_alpha2: 'US'
       }
     )
 
@@ -90,13 +90,13 @@ describe 'Braintree::Customer.create' do
   end
 end
 
-describe 'Braintree::Customer.create', 'when passed :verify_card => true' do
+describe 'Braintree::Customer.create', 'when passed verify_card: true' do
   it 'accepts valid cards' do
-    create_customer(:options => { :verify_card => true }).should be_success
+    create_customer(options: { verify_card: true }).should be_success
   end
 
   it 'rejects invalid cards' do
-    create_customer_with_invalid_card(:options => { :verify_card => true }).should_not be_success
+    create_customer_with_invalid_card(options: { verify_card: true }).should_not be_success
   end
 end
 
@@ -115,8 +115,8 @@ end
 describe 'Braintree::Customer.find' do
   it 'successfully finds a customer' do
     result = Braintree::Customer.create(
-      :first_name => 'Bob',
-      :last_name => 'Smith'
+      first_name: 'Bob',
+      last_name: 'Smith'
     )
 
     Braintree::Customer.find(result.customer.id).first_name.should == 'Bob'
@@ -130,14 +130,14 @@ end
 describe 'Braintree::Customer.update' do
   it 'successfully updates a customer' do
     customer_id = create_customer.customer.id
-    result = Braintree::Customer.update(customer_id, :first_name => 'Jerry')
+    result = Braintree::Customer.update(customer_id, first_name: 'Jerry')
 
     result.should be_success
     Braintree::Customer.find(customer_id).first_name.should == 'Jerry'
   end
 
   it 'raises an error for a nonexistent customer' do
-    lambda { Braintree::Customer.update('foo', {:first_name => 'Bob'}) }.should raise_error(Braintree::NotFoundError)
+    lambda { Braintree::Customer.update('foo', {first_name: 'Bob'}) }.should raise_error(Braintree::NotFoundError)
   end
 
   it 'does not allow a customer to be updated to a failing credit card' do
@@ -147,8 +147,8 @@ describe 'Braintree::Customer.update' do
     customer = create_customer
     result =  Braintree::Customer.update(customer.customer.id,
       {
-        :credit_card => {
-          :number => bad_credit_card
+        credit_card: {
+          number: bad_credit_card
         }
       }
     )

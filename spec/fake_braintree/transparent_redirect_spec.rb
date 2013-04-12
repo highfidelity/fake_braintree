@@ -5,7 +5,7 @@ describe FakeBraintree::SinatraApp do
     it 'returns a URL that will redirect with a token for the specified request' do
       redirect_url = 'http://example.com/redirect_path'
 
-      response = post_transparent_redirect(:create_customer_data, :redirect_url => redirect_url, :customer => build_customer_hash)
+      response = post_transparent_redirect(:create_customer_data, redirect_url: redirect_url, customer: build_customer_hash)
 
       response.code.should == '303'
       response['Location'].should =~ %r{http://example\.com/redirect_path}
@@ -20,8 +20,8 @@ describe FakeBraintree::SinatraApp do
 
       response = post_transparent_redirect(
         :create_customer_data,
-        :redirect_url => redirect_url,
-        :customer => build_customer_hash
+        redirect_url: redirect_url,
+        customer: build_customer_hash
       )
 
       params = parse_redirect(response)
@@ -38,8 +38,8 @@ describe FakeBraintree::SinatraApp do
     describe 'Creating customers' do
       it 'confirms and runs the specified request' do
         number = '4111111111111111'
-        customer_hash = build_customer_hash(:credit_card => { :number => number })
-        response = post_transparent_redirect(:create_customer_data, :customer => customer_hash)
+        customer_hash = build_customer_hash(credit_card: { number: number })
+        response = post_transparent_redirect(:create_customer_data, customer: customer_hash)
         query = parse_query(response)
 
         result = Braintree::TransparentRedirect.confirm(query)
@@ -55,8 +55,8 @@ describe FakeBraintree::SinatraApp do
       it 'confirms and runs the specified request' do
         customer = create_customer.customer
         number = '4111111111111337'
-        credit_card_hash = build_credit_card_hash({ :number => number, :customer_id => customer.id})
-        response = post_transparent_redirect(:create_credit_card_data, :credit_card => credit_card_hash)
+        credit_card_hash = build_credit_card_hash({ number: number, customer_id: customer.id})
+        response = post_transparent_redirect(:create_credit_card_data, credit_card: credit_card_hash)
         query = parse_query(response)
 
         result = Braintree::TransparentRedirect.confirm(query)
@@ -71,25 +71,25 @@ describe FakeBraintree::SinatraApp do
 
   def build_customer_hash(options = {})
     {
-      :credit_card => {
-        :number => '4111111111111111',
-        :expiration_date => '4/2015',
-        :cardholder_name => 'Susie Spender'
+      credit_card: {
+        number: '4111111111111111',
+        expiration_date: '4/2015',
+        cardholder_name: 'Susie Spender'
       }.update(options[:credit_card] || {})
     }
   end
 
   def build_credit_card_hash(options = {})
     {
-        :number => '4111111111111111',
-        :expiration_date => '4/2015',
-        :cardholder_name => 'Susie Spender',
-        :cvv => '123',
-        :billing_address => {
-          :street_address => '123 Sesame Street',
-          :locality => 'San Francisco',
-          :region => 'CA',
-          :postal_code => '94110'
+        number: '4111111111111111',
+        expiration_date: '4/2015',
+        cardholder_name: 'Susie Spender',
+        cvv: '123',
+        billing_address: {
+          street_address: '123 Sesame Street',
+          locality: 'San Francisco',
+          region: 'CA',
+          postal_code: '94110'
         }
     }.update(options || {})
   end
@@ -97,7 +97,7 @@ describe FakeBraintree::SinatraApp do
   def post_transparent_redirect(type, data)
     params = data.dup
     redirect_url = params.delete(:redirect_url) || 'http://example.com/redirect_path'
-    params[:tr_data] = Braintree::TransparentRedirect.send(type, {:redirect_url => redirect_url}.merge(params))
+    params[:tr_data] = Braintree::TransparentRedirect.send(type, {redirect_url: redirect_url}.merge(params))
     post_transparent_redirect_params(params)
   end
 

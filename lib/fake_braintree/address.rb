@@ -18,7 +18,7 @@ module FakeBraintree
     end
 
     def response_for_updated_address
-      gzipped_response(200, @hash.to_xml(:root => 'address'))
+      gzipped_response(200, @hash.to_xml(root: 'address'))
     end
 
     def set_up_address(address_hash_from_params, options)

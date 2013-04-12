@@ -16,7 +16,7 @@ end
 
 describe 'Braintree::CreditCard.sale' do
   it 'successfully creates a sale' do
-    result = Braintree::CreditCard.sale(cc_token, :amount => 10.00)
+    result = Braintree::CreditCard.sale(cc_token, amount: 10.00)
     result.should be_success
     Braintree::Transaction.find(result.transaction.id).should be
   end
@@ -26,16 +26,16 @@ end
 describe 'Braintree::CreditCard.create' do
   def build_credit_card_hash
     {
-      :customer_id => @customer && @customer.id,
-      :number => '4111111111111111',
-      :cvv => '123',
-      :token => 'token',
-      :expiration_date => '07/2020',
-      :billing_address => {
-        :postal_code => '94110'
+      customer_id: @customer && @customer.id,
+      number: '4111111111111111',
+      cvv: '123',
+      token: 'token',
+      expiration_date: '07/2020',
+      billing_address: {
+        postal_code: '94110'
       },
-      :options => {
-        :make_default => true
+      options: {
+        make_default: true
       }
     }
   end
@@ -61,7 +61,7 @@ describe 'Braintree::CreditCard.create' do
 
     it 'fails to create a credit card if verify_all_cards is set and card is invalid' do
       FakeBraintree.verify_all_cards!
-      result = Braintree::CreditCard.create(build_credit_card_hash.merge(:number => '12345'))
+      result = Braintree::CreditCard.create(build_credit_card_hash.merge(number: '12345'))
       result.should_not be_success
       expect { Braintree::CreditCard.find('token') }.to raise_exception Braintree::NotFoundError
       FakeBraintree.verify_all_cards = false
@@ -93,12 +93,12 @@ describe 'Braintree::CreditCard.update' do
     new_expiration_date = '08/2012'
     token = cc_token
 
-    result = Braintree::CreditCard.update(token, :expiration_date => new_expiration_date)
+    result = Braintree::CreditCard.update(token, expiration_date: new_expiration_date)
     result.should be_success
     Braintree::CreditCard.find(token).expiration_date.should == new_expiration_date
   end
 
   it 'raises an error for a nonexistent credit card' do
-    lambda { Braintree::CreditCard.update('foo', {:number => TEST_CC_NUMBER}) }.should raise_error(Braintree::NotFoundError)
+    lambda { Braintree::CreditCard.update('foo', {number: TEST_CC_NUMBER}) }.should raise_error(Braintree::NotFoundError)
   end
 end

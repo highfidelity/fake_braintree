@@ -13,7 +13,7 @@ describe FakeBraintree, '.decline_all_cards!' do
   end
 
   def create_sale
-    Braintree::CreditCard.sale(cc_token, :amount => 10.00)
+    Braintree::CreditCard.sale(cc_token, amount: 10.00)
   end
 end
 
@@ -90,13 +90,13 @@ end
 
 describe FakeBraintree, '.generate_transaction' do
   it 'allows setting the subscription id' do
-    transaction = FakeBraintree.generate_transaction(:subscription_id => 'foobar')
+    transaction = FakeBraintree.generate_transaction(subscription_id: 'foobar')
     transaction['subscription_id'].should == 'foobar'
   end
 
   it 'allows setting created_at' do
     time = Time.now
-    transaction = FakeBraintree.generate_transaction(:created_at => time)
+    transaction = FakeBraintree.generate_transaction(created_at: time)
     transaction['created_at'].should == time
   end
 
@@ -108,7 +108,7 @@ describe FakeBraintree, '.generate_transaction' do
   end
 
   it 'has the correct amount' do
-    transaction = FakeBraintree.generate_transaction(:amount => '20.00')
+    transaction = FakeBraintree.generate_transaction(amount: '20.00')
     transaction['amount'].should == '20.00'
   end
 
@@ -118,25 +118,25 @@ describe FakeBraintree, '.generate_transaction' do
 
   context 'status_history' do
     it 'returns a hash with a status_history key' do
-      FakeBraintree.generate_transaction(:amount => '20').should have_key('status_history')
+      FakeBraintree.generate_transaction(amount: '20').should have_key('status_history')
     end
 
     it 'has a timestamp of Time.now' do
       Timecop.freeze do
-        transaction = FakeBraintree.generate_transaction(:status => Braintree::Transaction::Status::Failed,
-                                                         :subscription_id => 'my_subscription_id')
+        transaction = FakeBraintree.generate_transaction(status: Braintree::Transaction::Status::Failed,
+                                                         subscription_id: 'my_subscription_id')
         transaction['status_history'].first['timestamp'].should == Time.now
       end
     end
 
     it 'has the desired amount' do
-      transaction = FakeBraintree.generate_transaction(:amount => '20.00')
+      transaction = FakeBraintree.generate_transaction(amount: '20.00')
       transaction['status_history'].first['amount'].should == '20.00'
     end
 
     it 'has the desired status' do
       status = Braintree::Transaction::Status::Failed
-      transaction = FakeBraintree.generate_transaction(:status => status)
+      transaction = FakeBraintree.generate_transaction(status: status)
       transaction['status_history'].first['status'].should == status
     end
   end

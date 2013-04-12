@@ -23,7 +23,7 @@ module FakeBraintree
     # Braintree::Customer.create
     post '/merchants/:merchant_id/customers' do
       customer_hash = hash_from_request_body_with_key('customer')
-      options = {:merchant_id => params[:merchant_id]}
+      options = {merchant_id: params[:merchant_id]}
       Customer.new(customer_hash, options).create
     end
 
@@ -31,7 +31,7 @@ module FakeBraintree
     get '/merchants/:merchant_id/customers/:id' do
       customer = FakeBraintree.registry.customers[params[:id]]
       if customer
-        gzipped_response(200, customer.to_xml(:root => 'customer'))
+        gzipped_response(200, customer.to_xml(root: 'customer'))
       else
         gzipped_response(404, {})
       end
@@ -40,28 +40,28 @@ module FakeBraintree
     # Braintree::Customer.update
     put '/merchants/:merchant_id/customers/:id' do
       customer_hash = hash_from_request_body_with_key('customer')
-      options = {:id => params[:id], :merchant_id => params[:merchant_id]}
+      options = {id: params[:id], merchant_id: params[:merchant_id]}
       Customer.new(customer_hash, options).update
     end
 
     # Braintree::Customer.delete
     delete '/merchants/:merchant_id/customers/:id' do
       customer_hash = {}
-      options = {:id => params[:id], :merchant_id => params[:merchant_id]}
+      options = {id: params[:id], merchant_id: params[:merchant_id]}
       Customer.new(customer_hash, options).delete
     end
 
     # Braintree::Address.create
     post "/merchants/:merchant_id/customers/:customer_id/addresses" do
       address_hash = hash_from_request_body_with_key('address')
-      options = {:customer_id => params[:customer_id], :merchant_id => params[:merchant_id]}
+      options = {customer_id: params[:customer_id], merchant_id: params[:merchant_id]}
       Address.new(address_hash, options).create
     end
 
     # Braintree::Subscription.create
     post '/merchants/:merchant_id/subscriptions' do
       subscription_hash = hash_from_request_body_with_key('subscription')
-      options = {:merchant_id => params[:merchant_id]}
+      options = {merchant_id: params[:merchant_id]}
       Subscription.new(subscription_hash, options).create
     end
 
@@ -69,7 +69,7 @@ module FakeBraintree
     get '/merchants/:merchant_id/subscriptions/:id' do
       subscription = FakeBraintree.registry.subscriptions[params[:id]]
       if subscription
-        gzipped_response(200, subscription.to_xml(:root => 'subscription'))
+        gzipped_response(200, subscription.to_xml(root: 'subscription'))
       else
         gzipped_response(404, {})
       end
@@ -78,14 +78,14 @@ module FakeBraintree
     # Braintree::Subscription.update
     put '/merchants/:merchant_id/subscriptions/:id' do
       subscription_hash = hash_from_request_body_with_key('subscription')
-      options = {:id => params[:id], :merchant_id => params[:merchant_id]}
+      options = {id: params[:id], merchant_id: params[:merchant_id]}
       Subscription.new(subscription_hash, options).update
     end
 
     # Braintree::Subscription.cancel
     put '/merchants/:merchant_id/subscriptions/:id/cancel' do
       updates = {'status' => Braintree::Subscription::Status::Canceled}
-      options = {:id => params[:id], :merchant_id => params[:merchant_id]}
+      options = {id: params[:id], merchant_id: params[:merchant_id]}
       Subscription.new(updates, options).update
     end
 
@@ -93,7 +93,7 @@ module FakeBraintree
     get '/merchants/:merchant_id/payment_methods/:credit_card_token' do
       credit_card = FakeBraintree.registry.credit_cards[params[:credit_card_token]]
       if credit_card
-        gzipped_response(200, credit_card.to_xml(:root => 'credit_card'))
+        gzipped_response(200, credit_card.to_xml(root: 'credit_card'))
       else
         gzipped_response(404, {})
       end
@@ -103,14 +103,14 @@ module FakeBraintree
     put '/merchants/:merchant_id/payment_methods/:credit_card_token' do
       credit_card = FakeBraintree.registry.credit_cards[params[:credit_card_token]]
       updates     = hash_from_request_body_with_key('credit_card')
-      options     = {:token => params[:credit_card_token], :merchant_id => params[:merchant_id]}
+      options     = {token: params[:credit_card_token], merchant_id: params[:merchant_id]}
       CreditCard.new(updates, options).update
     end
 
     # Braintree::CreditCard.create
     post '/merchants/:merchant_id/payment_methods' do
       credit_card_hash = hash_from_request_body_with_key('credit_card')
-      options = {:merchant_id => params[:merchant_id]}
+      options = {merchant_id: params[:merchant_id]}
 
       if credit_card_hash['options']
         options.merge!(credit_card_hash.delete('options')).symbolize_keys!
@@ -123,7 +123,7 @@ module FakeBraintree
     # Braintree::CreditCard.sale
     post '/merchants/:merchant_id/transactions' do
       if FakeBraintree.decline_all_cards?
-        gzipped_response(422, FakeBraintree.create_failure.to_xml(:root => 'api_error_response'))
+        gzipped_response(422, FakeBraintree.create_failure.to_xml(root: 'api_error_response'))
       else
         transaction = hash_from_request_body_with_key('transaction')
         transaction_id = md5("#{params[:merchant_id]}#{Time.now.to_f}")
@@ -134,7 +134,7 @@ module FakeBraintree
         end
         transaction_response = {'id' => transaction_id, 'amount' => transaction['amount'], 'status' => status, 'type' => 'sale'}
         FakeBraintree.registry.transactions[transaction_id] = transaction_response
-        gzipped_response(200, transaction_response.to_xml(:root => 'transaction'))
+        gzipped_response(200, transaction_response.to_xml(root: 'transaction'))
       end
     end
 
@@ -142,7 +142,7 @@ module FakeBraintree
     get '/merchants/:merchant_id/transactions/:transaction_id' do
       transaction = FakeBraintree.registry.transactions[params[:transaction_id]]
       if transaction
-        gzipped_response(200, transaction.to_xml(:root => 'transaction'))
+        gzipped_response(200, transaction.to_xml(root: 'transaction'))
       else
         gzipped_response(404, {})
       end
@@ -154,7 +154,7 @@ module FakeBraintree
       transaction_id       = md5('#{params[:merchant_id]}#{Time.now.to_f}')
       transaction_response = {'id' => transaction_id, 'amount' => transaction['amount'], 'type' => 'credit'}
       FakeBraintree.registry.transactions[transaction_id] = transaction_response
-      gzipped_response(200, transaction_response.to_xml(:root => 'transaction'))
+      gzipped_response(200, transaction_response.to_xml(root: 'transaction'))
     end
 
     # Braintree::Transaction.void
@@ -165,7 +165,7 @@ module FakeBraintree
                               'amount' => transaction['amount'],
                               'status' => Braintree::Transaction::Status::Voided}
       FakeBraintree.registry.transactions[transaction['id']] = transaction_response
-      gzipped_response(200, transaction_response.to_xml(:root => 'transaction'))
+      gzipped_response(200, transaction_response.to_xml(root: 'transaction'))
     end
 
     # Braintree::TransparentRedirect.url

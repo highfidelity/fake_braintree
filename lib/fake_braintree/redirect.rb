@@ -19,9 +19,9 @@ module FakeBraintree
 
     def confirm
       if @kind == 'create_customer'
-        Customer.new(@params['customer'], {:merchant_id => @merchant_id}).create
+        Customer.new(@params['customer'], {merchant_id: @merchant_id}).create
       elsif @kind == 'create_payment_method'
-        credit_card_options = {:merchant_id => @merchant_id}
+        credit_card_options = {merchant_id: @merchant_id}
         credit_card_options.merge!(@transparent_data['credit_card'].fetch('options', {}))
 
         credit_card_options.symbolize_keys!
