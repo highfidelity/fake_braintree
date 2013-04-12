@@ -14,34 +14,36 @@ of them (yet).
 
 ## Supported API methods
 
-### Customer
-* `Braintree::Customer.find`
-* `Braintree::Customer.create` (including adding add-ons and discounts)
-* `Braintree::Customer.update`
-* `Braintree::Customer.delete`
-
-### Subscription
-* `Braintree::Subscription.find`
-* `Braintree::Subscription.create`
-* `Braintree::Subscription.update`
-* `Braintree::Subscription.cancel`
+### Address
+* `Braintree::Address.create`
 
 ### CreditCard
+* `Braintree::CreditCard.create`
 * `Braintree::CreditCard.find`
 * `Braintree::CreditCard.sale`
 * `Braintree::CreditCard.update`
 
+### Customer
+* `Braintree::Customer.create` (including adding add-ons and discounts)
+* `Braintree::Customer.delete`
+* `Braintree::Customer.find`
+* `Braintree::Customer.update`
+
+### Subscription
+* `Braintree::Subscription.cancel`
+* `Braintree::Subscription.create`
+* `Braintree::Subscription.find`
+* `Braintree::Subscription.update`
+
 ### Transaction
-* `Braintree::Transaction.sale`
+* `Braintree::Transaction.find`
 * `Braintree::Transaction.refund`
+* `Braintree::Transaction.sale`
 * `Braintree::Transaction.void`
 
 ### TransparentRedirect
-* `Braintree::TransparentRedirect.url`
 * `Braintree::TransparentRedirect.confirm` (only for creating customers)
-
-### Address
-* `Braintree::Address.create`
+* `Braintree::TransparentRedirect.url`
 
 ## Quick start
 Just require the library and you're good to go:
