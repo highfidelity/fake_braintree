@@ -124,6 +124,10 @@ module FakeBraintree
     post '/merchants/:merchant_id/transactions' do
       if FakeBraintree.decline_all_cards?
         gzipped_response(422, FakeBraintree.create_failure.to_xml(:root => 'api_error_response'))
+      elsif FakeBraintree.fail_next_transaction?
+        error_message = FakeBraintree.fail_next_transaction_message
+        FakeBraintree.fail_next_transaction_with(nil)
+        gzipped_response(422, FakeBraintree.create_failure(error_message).to_xml(:root => 'api_error_response'))
       else
         transaction = hash_from_request_body_with_key('transaction')
         transaction_id = md5("#{params[:merchant_id]}#{Time.now.to_f}")
@@ -154,18 +158,34 @@ module FakeBraintree
       transaction_id       = md5('#{params[:merchant_id]}#{Time.now.to_f}')
       transaction_response = {'id' => transaction_id, 'amount' => transaction['amount'], 'type' => 'credit'}
       FakeBraintree.registry.transactions[transaction_id] = transaction_response
-      gzipped_response(200, transaction_response.to_xml(:root => 'transaction'))
+      FakeBraintree.registry.failures["foo"] = {
+        "message" => "No can do",
+        "code" => 91234,
+      }
+      if FakeBraintree.fail_next_transaction?
+        error_message = FakeBraintree.fail_next_transaction_message
+        FakeBraintree.fail_next_transaction_with(nil)
+        gzipped_response(422, FakeBraintree.create_failure(error_message).to_xml(:root => 'api_error_response'))
+      else
+        gzipped_response(200, transaction_response.to_xml(:root => 'transaction'))
+      end
     end
 
     # Braintree::Transaction.void
     put '/merchants/:merchant_id/transactions/:transaction_id/void' do
-      transaction = FakeBraintree.registry.transactions[params[:transaction_id]]
-      transaction_response = {'id' => transaction['id'],
-                              'type' => transaction['sale'],
-                              'amount' => transaction['amount'],
-                              'status' => Braintree::Transaction::Status::Voided}
-      FakeBraintree.registry.transactions[transaction['id']] = transaction_response
-      gzipped_response(200, transaction_response.to_xml(:root => 'transaction'))
+      if FakeBraintree.fail_next_transaction?
+        error_message = FakeBraintree.fail_next_transaction_message
+        FakeBraintree.fail_next_transaction_with(nil)
+        gzipped_response(422, FakeBraintree.create_failure(error_message).to_xml(:root => 'api_error_response'))
+      else
+        transaction = FakeBraintree.registry.transactions[params[:transaction_id]]
+        transaction_response = {'id' => transaction['id'],
+                                'type' => transaction['sale'],
+                                'amount' => transaction['amount'],
+                                'status' => Braintree::Transaction::Status::Voided}
+        FakeBraintree.registry.transactions[transaction['id']] = transaction_response
+        gzipped_response(200, transaction_response.to_xml(:root => 'transaction'))
+      end
     end
 
     # Braintree::TransparentRedirect.url

@@ -163,6 +163,20 @@ Full example:
     #   "subscription_id" => "foobar"
     # }
 
+### Forcibly Failing a Transaction
+
+Transactions generally succeed, but if you need to simulate one failing for some reason, 
+use `FakeBraintree.fail_next_transaction_with(message)` to force the next transaction
+that would otherwise succeed to fail, with the given message.
+
+Example:
+
+    FakeBraintree.fail_next_transaction_with('Cannot refund more than was charged')
+
+    response = Braintree::Transaction.refund('ghfytr',1000.00)
+    response.success? # => false
+    response.message  # => 'Cannot refund more than was charged'
+
 Credits
 -------
 

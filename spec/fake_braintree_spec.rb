@@ -88,6 +88,23 @@ describe FakeBraintree, '.failure_response' do
   end
 end
 
+describe FakeBraintree, '.create_failure' do
+  it 'generates a reasonable response with no arguments' do
+    failure = FakeBraintree.create_failure
+
+    failure['message'].should == 'Do Not Honor'
+    failure['verification']['processor_response_text'].should == 'Do Not Honor'
+  end
+
+  it 'allows a customized error message' do
+    message = 'You have refunded too much'
+    failure = FakeBraintree.create_failure(message)
+
+    failure['message'].should == message
+    failure['verification']['processor_response_text'].should == message
+  end
+end
+
 describe FakeBraintree, '.generate_transaction' do
   it 'allows setting the subscription id' do
     transaction = FakeBraintree.generate_transaction(:subscription_id => 'foobar')
@@ -139,5 +156,26 @@ describe FakeBraintree, '.generate_transaction' do
       transaction = FakeBraintree.generate_transaction(:status => status)
       transaction['status_history'].first['status'].should == status
     end
+  end
+end
+
+describe FakeBraintree, '.fail_next_transaction_with' do
+  context 'a non-nil message' do
+    let(:message) { 'some_message' }
+
+    it 'sets fail_next_transaction_message' do
+      FakeBraintree.fail_next_transaction_with(message)
+      FakeBraintree.fail_next_transaction_message.should == message
+    end
+
+    it 'indicates the next transaction should fail' do
+      FakeBraintree.fail_next_transaction_with(message)
+      FakeBraintree.fail_next_transaction?.should == true
+    end
+  end
+
+  it "indicates the next transaction shouldn't fail" do
+      FakeBraintree.fail_next_transaction_with(nil)
+      FakeBraintree.fail_next_transaction?.should == false
   end
 end
