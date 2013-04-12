@@ -3,6 +3,7 @@
 * Add support for `Braintree::Address.create`
 * Add support for creating a card with an existing billing address (#45)
 * Transactions have a type of "sale" (#46)
+* Require at least Ruby 1.9.2
 
 # 0.3
 
