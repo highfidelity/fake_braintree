@@ -1,6 +1,7 @@
 # HEAD (unreleased)
 
 * Add support for `Braintree::Address.create`
+* Add support for creating a card with an existing billing address (#45)
 
 # 0.3
 
