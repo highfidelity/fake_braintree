@@ -25,6 +25,10 @@ Gem::Specification.new do |s|
   s.add_dependency 'thin'
 
   s.add_development_dependency 'rspec', '~> 2.12.0'
+  # Capybara 2.1.0 requires 1.9.3+ so we install a version that works with
+  # every Ruby version we test against. This can be removed if we stop testing
+  # against 1.9.2.
+  s.add_development_dependency 'capybara', '~> 2.0.3'
   s.add_development_dependency 'bourne', '~> 1.3'
   s.add_development_dependency 'timecop', '~> 0.6'
   s.add_development_dependency 'rake'

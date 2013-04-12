@@ -3,10 +3,6 @@ rvm:
   - 1.9.3
 before_install:
   - gem update --system
-    # Capybara 2.1.0 requires 1.9.3+ so we install a version that works with
-    # every Ruby version we test against. This can be removed if we stop testing
-    # against 1.9.2.
-  - gem install capybara -v '< 2.1.0'
 branches:
   only:
     - master
