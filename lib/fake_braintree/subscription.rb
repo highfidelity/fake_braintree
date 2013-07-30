@@ -3,9 +3,10 @@ module FakeBraintree
     include Helpers
 
     def initialize(subscription_hash_from_params, options)
+      id = subscription_hash_from_params['id'] || options[:id]
       @subscription_hash = subscription_hash_from_params.merge(
         'merchant_id' => options[:merchant_id],
-        'id' => options[:id]
+        'id' => id
       )
       set_subscription_id
       set_subscription_status
