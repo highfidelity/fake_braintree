@@ -92,6 +92,19 @@ describe 'Braintree::Subscription.update' do
   end
 end
 
+describe 'Braintree::Subscription.retry_charge' do
+  it 'can submit for settlement' do
+    subscription_id = create_subscription.subscription.id
+
+    authorized_transaction = Braintree::Subscription.retry_charge(subscription_id, 42.0).transaction
+    result = Braintree::Transaction.submit_for_settlement(
+      authorized_transaction.id
+    )
+    result.should be_success
+  end
+end
+
+
 describe 'Braintree::Subscription.cancel' do
   it 'can cancel a subscription' do
     subscription_id = create_subscription.subscription.id

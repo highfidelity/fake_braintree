@@ -157,6 +157,17 @@ module FakeBraintree
       gzipped_response(200, transaction_response.to_xml(root: 'transaction'))
     end
 
+
+    put '/merchants/:merchant_id/transactions/:transaction_id/submit_for_settlement' do
+      transaction = FakeBraintree.registry.transactions[params[:transaction_id]]
+      transaction_response = {'id' => transaction['id'],
+                              'type' => transaction['sale'],
+                              'amount' => transaction['amount'],
+                              'status' => Braintree::Transaction::Status::SubmittedForSettlement}
+      FakeBraintree.registry.transactions[transaction['id']] = transaction_response
+      gzipped_response(200, transaction_response.to_xml(root: 'transaction'))
+    end
+
     # Braintree::Transaction.void
     put '/merchants/:merchant_id/transactions/:transaction_id/void' do
       transaction = FakeBraintree.registry.transactions[params[:transaction_id]]
