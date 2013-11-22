@@ -43,8 +43,8 @@ describe FakeBraintree do
   end
 
   it 'logs to the correct path' do
-    Braintree::Configuration.logger.info('Logger test')
-    File.readlines(FakeBraintree.log_file_path).last.should == "Logger test\n"
+    Braintree::Configuration.logger.info('Some test')
+    File.readlines(FakeBraintree.log_file_path).last.should include "Some test"
   end
 end
 
