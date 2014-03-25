@@ -1,4 +1,4 @@
-# HEAD (unreleased)
+# 0.4.1
 
 * Add support for `Braintree::Subscription.retry_charge`
 
