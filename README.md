@@ -34,6 +34,7 @@ of them (yet).
 * `Braintree::Subscription.create`
 * `Braintree::Subscription.find`
 * `Braintree::Subscription.update`
+* `Braintree::Subscription.retry_charge`
 
 ### Transaction
 * `Braintree::Transaction.find`
