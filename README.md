@@ -73,6 +73,11 @@ If you're using Cucumber, add this too:
       FakeBraintree.clear!
     end
 
+It is advised to run your tests with `js: true` (RSpec) or `@javascript`
+(Cucumber), so that the requests correctly go through `FakeBraintree`. You might
+want to give a look at
+[capybara-webkit](https://github.com/thoughtbot/capybara-webkit).
+
 ## Spork
 
 To use fake\_braintree with Spork, do this:
