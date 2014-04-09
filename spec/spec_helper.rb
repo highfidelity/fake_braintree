@@ -1,3 +1,7 @@
+require 'bundler'
+
+Bundler.require
+
 require 'rspec'
 require 'fake_braintree'
 require 'timecop'

@@ -1,5 +1,15 @@
 source 'http://rubygems.org'
 
+# Web servers for different platforms
+
+platform :jruby do
+  gem 'puma'
+end
+
+platform :mri do
+  gem 'thin'
+end
+
 # Specify your gem's dependencies in fake_braintree.gemspec
 gemspec
 
