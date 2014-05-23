@@ -107,6 +107,12 @@ module FakeBraintree
       CreditCard.new(updates, options).update
     end
 
+    # Braintree::CreditCard.delete
+    delete '/merchants/:merchant_id/payment_methods/:credit_card_token' do
+      FakeBraintree.registry.customers[params[:credit_card_token]] = nil
+      gzipped_response(200, '')
+    end
+
     # Braintree::CreditCard.create
     post '/merchants/:merchant_id/payment_methods' do
       credit_card_hash = hash_from_request_body_with_key('credit_card')
