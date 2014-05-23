@@ -24,14 +24,7 @@ class FakeBraintree::Server
   end
 
   def handler
-    if defined?(Thin)
       require 'rack/handler/thin'
       Rack::Handler::Thin
-    elsif defined?(Puma)
-      require 'rack/handler/puma'
-      Rack::Handler::Puma
-    else
-      raise 'No Rack handler was defined! Please include `gem "thin"` or `gem "puma"` in your Gemfile."
-    end
   end
 end
