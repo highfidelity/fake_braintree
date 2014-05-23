@@ -5,7 +5,7 @@ module FakeBraintree
     set :show_exceptions, false
     set :dump_errors, true
     set :raise_errors, true
-    disable :logging
+    enable :logging
 
     include Helpers
 
