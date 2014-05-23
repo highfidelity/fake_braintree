@@ -6,9 +6,7 @@ platform :jruby do
   gem 'puma'
 end
 
-platform :mri do
-  gem 'thin'
-end
+gem 'thin'
 
 # Specify your gem's dependencies in fake_braintree.gemspec
 gemspec
@@ -21,3 +19,6 @@ gem 'capybara', '~> 2.0.3'
 if RUBY_VERSION == '1.9.2'
   gem 'activesupport', '< 4.0'
 end
+
+gem 'fake_braintree', :path => "/vagrant/venmo_tests/fake_braintree"
+
