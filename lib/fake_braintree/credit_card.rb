@@ -5,7 +5,11 @@ module FakeBraintree
     def initialize(credit_card_hash_from_params, options)
       set_up_credit_card(credit_card_hash_from_params, options)
       set_billing_address
+      set_bin
+      set_card_type
       set_expiration_month_and_year
+      set_last_4
+      set_unique_number_identifier
     end
 
     def create
@@ -111,6 +115,14 @@ module FakeBraintree
       end
     end
 
+    def set_bin
+      @hash['bin'] = number[0, 6]
+    end
+
+    def set_card_type
+      @hash['card_type'] = 'FakeBraintree'
+    end
+
     def set_expiration_month_and_year
       if expiration_month
         @hash['expiration_month'] = expiration_month
@@ -120,6 +132,18 @@ module FakeBraintree
         @hash['expiration_year'] = expiration_year
       end
     end
+
+    def set_last_4
+      @hash['last_4'] = number[-4, 4]
+    end
+
+    def number
+      @hash['number'].to_s
+    end    
+
+    def set_unique_number_identifier
+      @hash["unique_number_identifier"] = number
+    end    
 
     def generate_token
       md5("#{@hash['number']}#{@hash['merchant_id']}")
