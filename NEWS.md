@@ -1,3 +1,8 @@
+# 0.4.2
+
+* Add support for Puma server for JRuby support (#59). `fake_braintree` will
+  try to use Thin first and then Puma.
+
 # 0.4.1
 
 * Add support for `Braintree::Subscription.retry_charge`
