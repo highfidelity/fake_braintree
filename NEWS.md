@@ -1,3 +1,7 @@
+# 0.4.3
+
+* Add missing quote.
+
 # 0.4.2
 
 * Add support for Puma server for JRuby support (#59). `fake_braintree` will
