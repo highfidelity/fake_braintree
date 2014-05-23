@@ -31,7 +31,7 @@ class FakeBraintree::Server
       require 'rack/handler/puma'
       Rack::Handler::Puma
     else
-      raise "No Rack handler was defined! Please include \"gem 'thin'\" or \"gem 'puma'\" in your Gemfile."
+      raise 'No Rack handler was defined! Please include `gem "thin"` or `gem "puma"` in your Gemfile."
     end
   end
 end
