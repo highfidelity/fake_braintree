@@ -1,3 +1,7 @@
+# HEAD
+
+* Remove unused `i18n` gem dependency (#56).
+
 # 0.4.3
 
 * Add missing quote.
