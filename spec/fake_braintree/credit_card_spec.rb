@@ -6,12 +6,12 @@ describe 'Braintree::CreditCard.find' do
     year = '2016'
     credit_card = Braintree::CreditCard.find(token_for(month, year))
 
-    credit_card.bin.should == TEST_CC_NUMBER[0, 6]
-    credit_card.card_type.should == "FakeBraintree"
-    credit_card.last_4.should == TEST_CC_NUMBER[-4,4]
-    credit_card.expiration_month.should == month
-    credit_card.expiration_year.should ==  year
-    credit_card.unique_number_identifier.should == TEST_CC_NUMBER
+    expect(credit_card.bin).to eq TEST_CC_NUMBER[0, 6]
+    expect(credit_card.card_type).to eq "FakeBraintree"
+    expect(credit_card.last_4).to eq TEST_CC_NUMBER[-4,4]
+    expect(credit_card.expiration_month).to eq month
+    expect(credit_card.expiration_year).to eq  year
+    expect(credit_card.unique_number_identifier).to eq TEST_CC_NUMBER
   end
 
   def token_for(month, year)
@@ -22,8 +22,8 @@ end
 describe 'Braintree::CreditCard.sale' do
   it 'successfully creates a sale' do
     result = Braintree::CreditCard.sale(cc_token, amount: 10.00)
-    result.should be_success
-    Braintree::Transaction.find(result.transaction.id).should be
+    expect(result).to be_success
+    expect(Braintree::Transaction.find(result.transaction.id)).to be
   end
 end
 
@@ -31,8 +31,8 @@ end
 describe 'Braintree::CreditCard.create' do
   it 'allows creating a credit card without a customer' do
     result = Braintree::CreditCard.create(build_credit_card_hash)
-    result.should be_success
-    Braintree::CreditCard.find('token').should_not be_nil
+    expect(result).to be_success
+    expect(Braintree::CreditCard.find('token')).to_not be_nil
   end
 
   context 'with a customer' do
@@ -43,7 +43,7 @@ describe 'Braintree::CreditCard.create' do
     it 'fails to create a credit card if decline_all_cards is set' do
       FakeBraintree.decline_all_cards!
       result = Braintree::CreditCard.create(build_credit_card_hash)
-      result.should_not be_success
+      expect(result).to_not be_success
       expect { Braintree::CreditCard.find('token') }.to raise_error Braintree::NotFoundError
       FakeBraintree.clear!
     end
@@ -51,28 +51,28 @@ describe 'Braintree::CreditCard.create' do
     it 'fails to create a credit card if verify_all_cards is set and card is invalid' do
       FakeBraintree.verify_all_cards!
       result = Braintree::CreditCard.create(build_credit_card_hash.merge(number: '12345'))
-      result.should_not be_success
+      expect(result).to_not be_success
       expect { Braintree::CreditCard.find('token') }.to raise_error Braintree::NotFoundError
       FakeBraintree.verify_all_cards = false
     end
 
     it 'successfully creates a credit card' do
       result = Braintree::CreditCard.create(build_credit_card_hash)
-      result.should be_success
-      Braintree::Customer.find(@customer.id).credit_cards.last.token.should == 'token'
-      Braintree::Customer.find(@customer.id).credit_cards.last.should be_default
-      Braintree::Customer.find(@customer.id).credit_cards.last.billing_address.postal_code.should == "94110"
+      expect(result).to be_success
+      expect(Braintree::Customer.find(@customer.id).credit_cards.last.token).to eq 'token'
+      expect(Braintree::Customer.find(@customer.id).credit_cards.last).to be_default
+      expect(Braintree::Customer.find(@customer.id).credit_cards.last.billing_address.postal_code).to eq "94110"
     end
 
     it 'only allows one credit card to be default' do
       result = Braintree::CreditCard.create(build_credit_card_hash)
-      result.should be_success
+      expect(result).to be_success
       result = Braintree::CreditCard.create(build_credit_card_hash)
-      result.should be_success
+      expect(result).to be_success
       # Reload the customer
       @customer = Braintree::Customer.find(@customer.id)
-      @customer.credit_cards.select(&:default?).length.should == 1
-      @customer.credit_cards.length.should == 2
+      expect(@customer.credit_cards.select(&:default?).length).to eq 1
+      expect(@customer.credit_cards.length).to eq 2
     end
   end
 
@@ -99,8 +99,8 @@ describe 'Braintree::CreditCard.update' do
     token = cc_token
 
     result = Braintree::CreditCard.update(token, expiration_date: new_expiration_date)
-    result.should be_success
-    Braintree::CreditCard.find(token).expiration_date.should == new_expiration_date
+    expect(result).to be_success
+    expect(Braintree::CreditCard.find(token).expiration_date).to eq new_expiration_date
   end
 
   it 'raises an error for a nonexistent credit card' do

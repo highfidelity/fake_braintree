@@ -7,12 +7,12 @@ describe FakeBraintree::SinatraApp do
 
       response = post_transparent_redirect(:create_customer_data, redirect_url: redirect_url, customer: build_customer_hash)
 
-      response.code.should == '303'
-      response['Location'].should =~ %r{http://example\.com/redirect_path}
+      expect(response.code).to eq '303'
+      expect(response['Location']).to match %r{http://example\.com/redirect_path}
       params = parse_redirect(response)
-      params[:http_status].should == '200'
-      params[:id].should_not be_nil
-      params[:kind].should_not be_nil
+      expect(params[:http_status]).to eq '200'
+      expect(params[:id]).to_not be_nil
+      expect(params[:kind]).to_not be_nil
     end
 
     it "preserves redirect_url query parameters" do
@@ -25,12 +25,12 @@ describe FakeBraintree::SinatraApp do
       )
 
       params = parse_redirect(response)
-      params[:preserve].should == 'me'
+      expect(params[:preserve]).to eq 'me'
     end
 
     it 'rejects submissions without transparent redirect data' do
       response = post_transparent_redirect_without_data
-      response.code.should == '422'
+      expect(response.code).to eq '422'
     end
   end
 
@@ -44,10 +44,10 @@ describe FakeBraintree::SinatraApp do
 
         result = Braintree::TransparentRedirect.confirm(query)
 
-        result.should be_success
+        expect(result).to be_success
 
         customer = Braintree::Customer.find(result.customer.id)
-        customer.credit_cards.first.last_4.should == '1111'
+        expect(customer.credit_cards.first.last_4).to eq '1111'
       end
     end
 
@@ -61,10 +61,10 @@ describe FakeBraintree::SinatraApp do
 
         result = Braintree::TransparentRedirect.confirm(query)
 
-        result.should be_success
+        expect(result).to be_success
 
         customer = Braintree::Customer.find(customer.id)
-        customer.credit_cards.first.last_4.should == '1111'
+        expect(customer.credit_cards.first.last_4).to eq '1111'
       end
     end
   end

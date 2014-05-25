@@ -5,18 +5,20 @@ describe 'Braintree::Subscription.create' do
   let(:expiration_date)        { '04/2016' }
 
   it 'successfully creates a subscription' do
-    Braintree::Subscription.create(
+    subscription_result = Braintree::Subscription.create(
       payment_method_token: cc_token,
       plan_id: 'my_plan_id'
-    ).should be_success
+    )
+
+    expect(subscription_result).to be_success
   end
 
   it 'assigns a Braintree-esque ID to the subscription' do
-    create_subscription.subscription.id.should =~ /^[a-z0-9]{6}$/
+    expect(create_subscription.subscription.id).to match  /^[a-z0-9]{6}$/
   end
 
   it 'supports custom IDs' do
-    create_subscription('id' => 'custom1').subscription.id.should == 'custom1'
+    expect(create_subscription('id' => 'custom1').subscription.id).to eq 'custom1'
   end
 
   it 'assigns unique IDs to each subscription' do
@@ -31,16 +33,16 @@ describe 'Braintree::Subscription.create' do
       plan_id: plan_id
     )
 
-    first_result.subscription.id.should_not == second_result.subscription.id
+    expect(first_result.subscription.id).not_to eq second_result.subscription.id
   end
 
   it 'stores created subscriptions in FakeBraintree.registry.subscriptions' do
-    FakeBraintree.registry.subscriptions[create_subscription.subscription.id].should_not be_nil
+    expect(FakeBraintree.registry.subscriptions[create_subscription.subscription.id]).not_to be_nil
   end
 
   it 'sets the next billing date to a string of 1.month.from_now in UTC' do
     Timecop.freeze do
-      create_subscription.subscription.next_billing_date.should == 1.month.from_now.strftime('%Y-%m-%d')
+      expect(create_subscription.subscription.next_billing_date).to eq 1.month.from_now.strftime('%Y-%m-%d')
     end
   end
 end
@@ -54,9 +56,9 @@ describe 'Braintree::Subscription.find' do
       plan_id: plan_id
     ).subscription.id
     subscription = Braintree::Subscription.find(subscription_id)
-    subscription.should_not be_nil
-    subscription.payment_method_token.should == payment_method_token
-    subscription.plan_id.should == plan_id
+    expect(subscription).to_not be_nil
+    expect(subscription.payment_method_token).to eq payment_method_token
+    expect(subscription.plan_id).to eq plan_id
   end
 
   it 'raises a Braintree:NotFoundError when it cannot find a subscription' do
@@ -69,8 +71,8 @@ describe 'Braintree::Subscription.find' do
     subscription_id = create_subscription(add_ons: { add: [{ inherited_from_id: add_on_id }] }).subscription.id
     subscription = Braintree::Subscription.find(subscription_id)
     add_ons = subscription.add_ons
-    add_ons.size.should == 1
-    add_ons.first.id.should == add_on_id
+    expect(add_ons.size).to eq 1
+    expect(add_ons.first.id).to eq add_on_id
   end
 
   it 'returns discounts added with the subscription' do
@@ -78,8 +80,8 @@ describe 'Braintree::Subscription.find' do
     subscription_id = create_subscription(discounts: { add: [{ inherited_from_id: discount_id, amount: BigDecimal.new('15.00') }]}).subscription.id
     subscription = Braintree::Subscription.find(subscription_id)
     discounts = subscription.discounts
-    discounts.size.should == 1
-    discounts.first.id.should == discount_id
+    expect(discounts.size).to eq 1
+    expect(discounts.first.id).to eq discount_id
   end
 end
 
@@ -88,7 +90,7 @@ describe 'Braintree::Subscription.update' do
     subscription_id = create_subscription.subscription.id
 
     Braintree::Subscription.update(subscription_id, plan_id: 'a_new_plan')
-    Braintree::Subscription.find(subscription_id).plan_id.should == 'a_new_plan'
+    expect(Braintree::Subscription.find(subscription_id).plan_id).to eq 'a_new_plan'
   end
 end
 
@@ -100,7 +102,7 @@ describe 'Braintree::Subscription.retry_charge' do
     result = Braintree::Transaction.submit_for_settlement(
       authorized_transaction.id
     )
-    result.should be_success
+    expect(result).to be_success
   end
 end
 
@@ -109,8 +111,8 @@ describe 'Braintree::Subscription.cancel' do
   it 'can cancel a subscription' do
     subscription_id = create_subscription.subscription.id
 
-    Braintree::Subscription.cancel(subscription_id).should be_success
-    Braintree::Subscription.find(subscription_id).status.should == Braintree::Subscription::Status::Canceled
+    expect(Braintree::Subscription.cancel(subscription_id)).to be_success
+    expect(Braintree::Subscription.find(subscription_id).status).to eq Braintree::Subscription::Status::Canceled
   end
 
   it 'cannot cancel an unknown subscription' do

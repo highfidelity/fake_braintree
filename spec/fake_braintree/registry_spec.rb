@@ -20,12 +20,12 @@ end
 
 describe FakeBraintree::Registry, '#failure?' do
   it 'returns false if the given CC number is not marked as a failure' do
-    FakeBraintree::Registry.new.failure?('not-a-failure').should be_false
+    expect(FakeBraintree::Registry.new.failure?('not-a-failure')).to be_false
   end
 
   it 'returns true if the given CC number is marked as a failure' do
     registry = FakeBraintree::Registry.new
     registry.failures['abc123'] = 'whatever'
-    registry.failure?('abc123').should be_true
+    expect(registry.failure?('abc123')).to be_true
   end
 end

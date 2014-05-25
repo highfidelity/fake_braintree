@@ -7,8 +7,8 @@ describe FakeBraintree::SinatraApp do
         payment_method_token: cc_token,
         amount: 10.00
       )
-      result.should be_success
-      result.transaction.type.should == 'sale'
+      expect(result).to be_success
+      expect(result.transaction.type).to eq 'sale'
     end
 
     context 'when all cards are declined' do
@@ -19,14 +19,14 @@ describe FakeBraintree::SinatraApp do
           payment_method_token: cc_token,
           amount: 10.00
         )
-        result.should_not be_success
+        expect(result).to_not be_success
       end
     end
 
     context "when the options hash is nil" do
       it "returns a transaction with a status of authorized" do
         result = Braintree::Transaction.sale(payment_method_token: cc_token, amount: 10.00)
-        result.transaction.status.should == 'authorized'
+        expect(result.transaction.status).to eq 'authorized'
       end
     end
 
@@ -39,7 +39,7 @@ describe FakeBraintree::SinatraApp do
             submit_for_settlement: false
           }
         )
-        result.transaction.status.should == 'authorized'
+        expect(result.transaction.status).to eq 'authorized'
       end
     end
 
@@ -52,7 +52,7 @@ describe FakeBraintree::SinatraApp do
             add_billing_address_to_payment_method: true
           }
         )
-        result.transaction.status.should == 'authorized'
+        expect(result.transaction.status).to eq 'authorized'
       end
     end
 
@@ -65,7 +65,7 @@ describe FakeBraintree::SinatraApp do
             submit_for_settlement: true
           }
         )
-        result.transaction.status.should == 'submitted_for_settlement'
+        expect(result.transaction.status).to eq 'submitted_for_settlement'
       end
     end
   end
@@ -75,7 +75,7 @@ describe FakeBraintree::SinatraApp do
   context 'Braintree::Transaction.refund' do
     it 'successfully refunds a transaction' do
       result = Braintree::Transaction.refund(create_id('foobar'), '1')
-      result.should be_success
+      expect(result).to be_success
     end
   end
 end
@@ -88,8 +88,8 @@ describe FakeBraintree::SinatraApp do
         amount: 10.00
       )
       result = Braintree::Transaction.void(sale.transaction.id)
-      result.should be_success
-      result.transaction.status.should == Braintree::Transaction::Status::Voided
+      expect(result).to be_success
+      expect(result.transaction.status).to eq Braintree::Transaction::Status::Voided
     end
   end
 end
@@ -99,12 +99,12 @@ describe FakeBraintree::SinatraApp do
     it 'can find a created sale' do
       id = create_transaction(10.00).id
       result = Braintree::Transaction.find(id)
-      result.amount.should == 10.00
+      expect(result.amount).to eq 10.00
     end
 
     it 'can find >1 transaction' do
-      Braintree::Transaction.find(create_transaction.id).should be
-      Braintree::Transaction.find(create_transaction.id).should be
+      expect(Braintree::Transaction.find(create_transaction.id)).to be
+      expect(Braintree::Transaction.find(create_transaction.id)).to be
     end
 
     it 'raises an error when the transaction does not exist' do

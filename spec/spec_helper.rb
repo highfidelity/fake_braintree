@@ -20,6 +20,10 @@ TEST_CC_NUMBER = %w(4111 1111 1111 1111).join
 RSpec.configure do |config|
   config.mock_with :rspec
 
+  config.expect_with :rspec do |c|
+    c.syntax = :expect
+  end
+
   config.include BraintreeHelpers
   config.include CustomerHelpers
   config.include SubscriptionHelpers
