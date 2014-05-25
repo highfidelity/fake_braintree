@@ -74,6 +74,10 @@ If you're using Cucumber, add this too:
       FakeBraintree.clear!
     end
 
+# Credit Cards
+
+* `credit_card.card_type` will always be `"FakeBraintree"`.
+
 ## Spork
 
 To use fake\_braintree with Spork, do this:
