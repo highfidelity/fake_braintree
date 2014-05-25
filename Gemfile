@@ -1,7 +1,5 @@
 source 'http://rubygems.org'
 
-gemspec
-
 # Web servers for different platforms
 platform :jruby do
   gem 'puma'
@@ -10,6 +8,8 @@ end
 platform :mri do
   gem 'thin'
 end
+
+gemspec
 
 # Capybara 2.1.0 requires 1.9.3+ so we install a version that works with every
 # Ruby version we test against. This can be removed if we stop testing against
