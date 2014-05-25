@@ -22,6 +22,7 @@ end
 describe 'Braintree::CreditCard.sale' do
   it 'successfully creates a sale' do
     result = Braintree::CreditCard.sale(cc_token, amount: 10.00)
+
     expect(result).to be_success
     expect(Braintree::Transaction.find(result.transaction.id)).to be
   end
@@ -31,6 +32,7 @@ end
 describe 'Braintree::CreditCard.create' do
   it 'allows creating a credit card without a customer' do
     result = Braintree::CreditCard.create(build_credit_card_hash)
+
     expect(result).to be_success
     expect(Braintree::CreditCard.find('token')).to_not be_nil
   end
@@ -42,10 +44,11 @@ describe 'Braintree::CreditCard.create' do
 
     it 'fails to create a credit card if decline_all_cards is set' do
       FakeBraintree.decline_all_cards!
+
       result = Braintree::CreditCard.create(build_credit_card_hash)
+
       expect(result).to_not be_success
       expect { Braintree::CreditCard.find('token') }.to raise_error Braintree::NotFoundError
-      FakeBraintree.clear!
     end
 
     it 'fails to create a credit card if verify_all_cards is set and card is invalid' do
@@ -53,7 +56,6 @@ describe 'Braintree::CreditCard.create' do
       result = Braintree::CreditCard.create(build_credit_card_hash.merge(number: '12345'))
       expect(result).to_not be_success
       expect { Braintree::CreditCard.find('token') }.to raise_error Braintree::NotFoundError
-      FakeBraintree.verify_all_cards = false
     end
 
     it 'successfully creates a credit card' do
