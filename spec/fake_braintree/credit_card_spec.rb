@@ -28,7 +28,6 @@ describe 'Braintree::CreditCard.sale' do
   end
 end
 
-
 describe 'Braintree::CreditCard.create' do
   it 'allows creating a credit card without a customer' do
     result = Braintree::CreditCard.create(build_credit_card_hash)

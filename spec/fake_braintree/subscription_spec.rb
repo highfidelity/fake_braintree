@@ -106,7 +106,6 @@ describe 'Braintree::Subscription.retry_charge' do
   end
 end
 
-
 describe 'Braintree::Subscription.cancel' do
   it 'can cancel a subscription' do
     subscription_id = create_subscription.subscription.id
