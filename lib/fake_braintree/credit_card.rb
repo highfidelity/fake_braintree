@@ -58,8 +58,8 @@ module FakeBraintree
       update_default_card
     end
 
-    # When updating a card that has 'default' set to true, make sure
-    # only one card has the flag.
+    # When updating a card that has 'default' set to true, make sure only one
+    # card has the flag.
     def update_default_card
       if @hash['default']
         FakeBraintree.registry.customers[@hash['customer_id']]['credit_cards'].each do |card|
@@ -86,10 +86,11 @@ module FakeBraintree
     end
 
     def response_for_invalid_card
-      gzipped_response(422, FakeBraintree.failure_response.merge(
-          'params' => {credit_card: @hash}
-        ).
-        to_xml(root: 'api_error_response'))
+      body = FakeBraintree.failure_response.merge(
+        'params' => {credit_card: @hash}
+      ).to_xml(root: 'api_error_response')
+
+      gzipped_response(422, body)
     end
 
     def expiration_month

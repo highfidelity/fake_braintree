@@ -8,8 +8,8 @@ module FakeBraintree
       ActiveSupport::Gzip.compress(content)
     end
 
-    def gzipped_response(status_code, uncompressed_content)
-      [status_code, { 'Content-Encoding' => 'gzip' }, gzip(uncompressed_content)]
+    def gzipped_response(status_code, uncompressed_body)
+      [status_code, { 'Content-Encoding' => 'gzip' }, gzip(uncompressed_body)]
     end
 
     def md5(content)
