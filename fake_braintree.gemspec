@@ -17,12 +17,12 @@ Gem::Specification.new do |s|
   s.require_paths = ['lib']
   s.required_ruby_version = Gem::Requirement.new(">= 1.9.2")
 
-  s.add_dependency 'capybara'
   s.add_dependency 'activesupport'
-  s.add_dependency 'sinatra'
   s.add_dependency 'braintree', '~> 2.5'
+  s.add_dependency 'capybara'
+  s.add_dependency 'sinatra'
 
+  s.add_development_dependency 'rake'
   s.add_development_dependency 'rspec', '~> 2.14'
   s.add_development_dependency 'timecop', '~> 0.6'
-  s.add_development_dependency 'rake'
 end
