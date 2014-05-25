@@ -34,7 +34,7 @@ describe 'Braintree::Customer.create' do
     )
 
     cc_token = result.customer.credit_cards.first.token
-    expect { Braintree::CreditCard.find(cc_token) }.not_to raise_error(Braintree::NotFoundError)
+    expect { Braintree::CreditCard.find(cc_token) }.not_to raise_error
   end
 
   it "sets a default credit card for the customer" do

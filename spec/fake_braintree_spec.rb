@@ -56,8 +56,11 @@ describe FakeBraintree, '.clear_log!' do
   end
 
   it 'is called by clear!' do
-    FakeBraintree.expects(:clear_log!)
+    FakeBraintree.stub(:clear_log!)
+
     FakeBraintree.clear!
+
+    FakeBraintree.should have_received(:clear_log!)
   end
 
   def write_to_log

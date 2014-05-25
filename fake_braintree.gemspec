@@ -22,8 +22,7 @@ Gem::Specification.new do |s|
   s.add_dependency 'sinatra'
   s.add_dependency 'braintree', '~> 2.5'
 
-  s.add_development_dependency 'rspec', '~> 2.12.0'
-  s.add_development_dependency 'bourne', '~> 1.3'
+  s.add_development_dependency 'rspec', '~> 2.14'
   s.add_development_dependency 'timecop', '~> 0.6'
   s.add_development_dependency 'rake'
 end

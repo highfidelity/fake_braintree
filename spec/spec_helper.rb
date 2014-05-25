@@ -5,7 +5,6 @@ Bundler.require
 require 'rspec'
 require 'fake_braintree'
 require 'timecop'
-require 'bourne'
 
 def clear_braintree_log
   Dir.mkdir('tmp') unless File.directory?('tmp')
@@ -19,7 +18,7 @@ clear_braintree_log
 TEST_CC_NUMBER = %w(4111 1111 1111 1111).join
 
 RSpec.configure do |config|
-  config.mock_with :mocha
+  config.mock_with :rspec
 
   config.include BraintreeHelpers
   config.include CustomerHelpers
