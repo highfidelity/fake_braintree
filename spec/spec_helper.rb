@@ -24,6 +24,8 @@ RSpec.configure do |config|
     c.syntax = :expect
   end
 
+  config.order = :random
+
   config.include BraintreeHelpers
   config.include CustomerHelpers
   config.include SubscriptionHelpers
