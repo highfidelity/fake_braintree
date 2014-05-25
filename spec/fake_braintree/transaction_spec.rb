@@ -119,3 +119,20 @@ describe FakeBraintree::SinatraApp do
     end
   end
 end
+
+describe FakeBraintree::SinatraApp do
+  context "Braintree::Transaction.submit_for_settlement" do
+    it "should be able to mark transaction as completed" do
+      id = create_transaction.id
+
+      result = Braintree::Transaction.submit_for_settlement(id)
+
+      expect(result).to be_success
+      expect(Braintree::Transaction.find(id).status).to eq Braintree::Transaction::Status::SubmittedForSettlement
+    end
+
+    def create_transaction
+      Braintree::Transaction.sale(payment_method_token: cc_token, amount: 10.0).transaction
+    end
+  end
+end

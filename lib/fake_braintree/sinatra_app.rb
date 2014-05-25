@@ -157,7 +157,7 @@ module FakeBraintree
       gzipped_response(200, transaction_response.to_xml(root: 'transaction'))
     end
 
-
+    # Braintree:Transaction.submit_for_settlement
     put '/merchants/:merchant_id/transactions/:transaction_id/submit_for_settlement' do
       transaction = FakeBraintree.registry.transactions[params[:transaction_id]]
       transaction_response = {'id' => transaction['id'],

@@ -41,6 +41,7 @@ of them (yet).
 * `Braintree::Transaction.refund`
 * `Braintree::Transaction.sale`
 * `Braintree::Transaction.void`
+* `Braintree::Transaction.submit_for_settlement`
 
 ### TransparentRedirect
 * `Braintree::TransparentRedirect.confirm` (only for creating customers)
