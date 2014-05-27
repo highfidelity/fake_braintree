@@ -100,7 +100,8 @@ module FakeBraintree
       'subscription_id' => options[:subscription_id],
       'created_at' => created_at,
       'amount' => options[:amount],
-      'tax_amount' => 0
+      'tax_amount' => 0,
+      'processor_response_text' => 'ok'
     }
   end
 

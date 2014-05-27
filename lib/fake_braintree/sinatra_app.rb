@@ -138,7 +138,8 @@ module FakeBraintree
         if options.fetch("submit_for_settlement", false) == true
           status = "submitted_for_settlement"
         end
-        transaction_response = {'id' => transaction_id, 'amount' => transaction['amount'], 'tax_amount' => 0, 'status' => status, 'type' => 'sale'}
+        transaction_response = {'id' => transaction_id, 'amount' => transaction['amount'], 'processor_response_text' => 'ok',
+            'tax_amount' => 0, 'status' => status, 'type' => 'sale'}
         FakeBraintree.registry.transactions[transaction_id] = transaction_response
         gzipped_response(200, transaction_response.to_xml(root: 'transaction'))
       end
@@ -158,7 +159,8 @@ module FakeBraintree
     post '/merchants/:merchant_id/transactions/:transaction_id/refund' do
       transaction          = hash_from_request_body_with_key('transaction')
       transaction_id       = md5('#{params[:merchant_id]}#{Time.now.to_f}')
-      transaction_response = {'id' => transaction_id, 'amount' => transaction['amount'], 'tax_amount' => 0,  'type' => 'credit'}
+      transaction_response = {'id' => transaction_id, 'amount' => transaction['amount'],  'processor_response_text' => 'ok',
+'tax_amount' => 0,  'type' => 'credit'}
       FakeBraintree.registry.transactions[transaction_id] = transaction_response
       gzipped_response(200, transaction_response.to_xml(root: 'transaction'))
     end
@@ -169,6 +171,7 @@ module FakeBraintree
       transaction_response = {'id' => transaction['id'],
                               'type' => transaction['sale'],
                               'amount' => transaction['amount'], 'tax_amount' => 0, 
+                               'processor_response_text' => 'ok',
                               'status' => Braintree::Transaction::Status::SubmittedForSettlement}
       FakeBraintree.registry.transactions[transaction['id']] = transaction_response
       gzipped_response(200, transaction_response.to_xml(root: 'transaction'))
@@ -180,6 +183,7 @@ module FakeBraintree
       transaction_response = {'id' => transaction['id'],
                               'type' => transaction['sale'],
                               'amount' => transaction['amount'], 'tax_amount' => 0, 
+                               'processor_response_text' => 'ok',
                               'status' => Braintree::Transaction::Status::Voided}
       FakeBraintree.registry.transactions[transaction['id']] = transaction_response
       gzipped_response(200, transaction_response.to_xml(root: 'transaction'))
