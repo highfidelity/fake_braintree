@@ -99,7 +99,8 @@ module FakeBraintree
       'status_history' => [history_item],
       'subscription_id' => options[:subscription_id],
       'created_at' => created_at,
-      'amount' => options[:amount]
+      'amount' => options[:amount],
+      'tax_amount' => 0
     }
   end
 
