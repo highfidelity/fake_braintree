@@ -5,9 +5,10 @@ class FakeBraintree::Server
 
   def boot
     with_runner do
-      server = Capybara::Server.new(FakeBraintree::SinatraApp)
+      port = ENV.fetch('GATEWAY_PORT', Capybara.server_port)
+      server = Capybara::Server.new(FakeBraintree::SinatraApp, port)
       server.boot
-      ENV['GATEWAY_PORT'] = server.port.to_s
+      ENV['GATEWAY_PORT'] = port.to_s
     end
   end
 
