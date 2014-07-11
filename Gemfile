@@ -6,7 +6,6 @@ platform :jruby do
   gem 'puma'
 end
 
-gem 'thin', '< 2'
 
 # Specify your gem's dependencies in fake_braintree.gemspec
 gemspec
