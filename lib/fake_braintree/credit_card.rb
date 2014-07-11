@@ -13,7 +13,7 @@ module FakeBraintree
     end
 
     def create
-      if valid_number?
+      if valid_number? and FakeBraintree.registry.customers.key?(@hash['customer_id'])
         if token.nil?
           @hash['token'] = generate_token
         end
