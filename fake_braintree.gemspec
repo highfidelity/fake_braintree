@@ -21,7 +21,7 @@ Gem::Specification.new do |s|
   s.add_dependency 'activesupport'
   s.add_dependency 'i18n'
   s.add_dependency 'sinatra'
-  s.add_dependency 'thin', '< 2'
+  s.add_dependency 'thin', '~> 1.6.2'
   s.add_dependency 'braintree', '~> 2.5'
 
   s.add_development_dependency 'rspec', '~> 2.12.0'
