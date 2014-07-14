@@ -132,6 +132,10 @@ module FakeBraintree
         gzipped_response(422, FakeBraintree.create_failure.to_xml(root: 'api_error_response'))
       else
         transaction = hash_from_request_body_with_key('transaction')
+        card = FakeBraintree.registry.credit_cards[transaction['payment_method_token']]
+        if not card
+          return gzipped_response(404, {})
+        end
         transaction_id = create_id(params[:merchant_id])
         options = transaction["options"] || {}
         status = "authorized"
@@ -139,7 +143,7 @@ module FakeBraintree
           status = "submitted_for_settlement"
         end
         transaction_response = {'id' => transaction_id, 'amount' => transaction['amount'], 'processor_response_text' => 'ok',
-            'tax_amount' => 0, 'status' => status, 'type' => 'sale'}
+            'tax_amount' => 0, 'status' => status, 'type' => 'sale', 'credit_card' => card}
         FakeBraintree.registry.transactions[transaction_id] = transaction_response
         gzipped_response(200, transaction_response.to_xml(root: 'transaction'))
       end
