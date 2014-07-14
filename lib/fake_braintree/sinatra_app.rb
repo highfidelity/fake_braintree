@@ -132,7 +132,7 @@ module FakeBraintree
         gzipped_response(422, FakeBraintree.create_failure.to_xml(root: 'api_error_response'))
       else
         transaction = hash_from_request_body_with_key('transaction')
-        transaction_id = md5("#{params[:merchant_id]}#{Time.now.to_f}")
+        transaction_id = create_id(params[:merchant_id])
         options = transaction["options"] || {}
         status = "authorized"
         if options.fetch("submit_for_settlement", false) == true
@@ -158,7 +158,7 @@ module FakeBraintree
     # Braintree::Transaction.refund
     post '/merchants/:merchant_id/transactions/:transaction_id/refund' do
       transaction          = hash_from_request_body_with_key('transaction')
-      transaction_id       = md5('#{params[:merchant_id]}#{Time.now.to_f}')
+      transaction_id       = create_id(params[:merchant_id])
       transaction_response = {'id' => transaction_id, 'amount' => transaction['amount'],  'processor_response_text' => 'ok',
 'tax_amount' => 0,  'type' => 'credit'}
       FakeBraintree.registry.transactions[transaction_id] = transaction_response
