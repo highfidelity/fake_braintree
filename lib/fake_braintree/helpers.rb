@@ -17,7 +17,10 @@ module FakeBraintree
     end
 
     def create_id(merchant_id)
-      md5("#{merchant_id}#{Time.now.to_f}")
+      chars = 'abcdefghjkmnopqrstuvwxyzABCDEFGHJKLMNOPQRSTUVWXYZ0123456789'
+      res = ''
+      6.times { res << chars[rand(chars.size)] }
+      res
     end
   end
 end
