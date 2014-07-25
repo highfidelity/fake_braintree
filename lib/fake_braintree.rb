@@ -26,10 +26,6 @@ module FakeBraintree
     boot_server
   end
 
-  def self.log_file_path
-    'tmp/log'
-  end
-
   def self.clear!
     self.registry.clear!
     self.decline_all_cards = false
@@ -124,4 +120,4 @@ module FakeBraintree
 end
 
 FakeBraintree.activate!
-Braintree::Configuration.logger = Logger.new(FakeBraintree.log_file_path)
+Braintree::Configuration.logger = Logger.new(STDOUT)
