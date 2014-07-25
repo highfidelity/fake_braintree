@@ -31,6 +31,10 @@ module FakeBraintree
     self.decline_all_cards = false
     clear_log!
   end
+  
+  def self.log_file_path
+    'tmp/log'
+  end
 
   def self.clear_log!
     FileUtils.mkdir_p(File.dirname(log_file_path))
