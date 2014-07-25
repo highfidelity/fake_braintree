@@ -107,9 +107,9 @@ module FakeBraintree
       CreditCard.new(updates, options).update
     end
 
-    # Braintree::CreditCard.delete
-    delete '/merchants/:merchant_id/payment_methods/:credit_card_token' do
-      FakeBraintree.registry.customers[params[:credit_card_token]] = nil
+    # Braintree::CreditCard.delete (old and new client library)
+    delete /^\/merchants\/.+\/payment_methods(?:\/credit_card)?\/(?<credit_card_token>.+)$/ do |credit_card_token|
+      FakeBraintree.registry.credit_cards[credit_card_token] = nil
       gzipped_response(200, '')
     end
 
