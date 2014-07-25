@@ -29,7 +29,7 @@ module FakeBraintree
   def self.clear!
     self.registry.clear!
     self.decline_all_cards = false
-    clear_log!
+    #clear_log!
   end
   
   def self.log_file_path
