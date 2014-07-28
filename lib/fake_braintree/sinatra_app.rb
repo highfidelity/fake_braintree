@@ -89,9 +89,9 @@ module FakeBraintree
       Subscription.new(updates, options).update
     end
 
-    # Braintree::CreditCard.find
-    get '/merchants/:merchant_id/payment_methods/:credit_card_token' do
-      credit_card = FakeBraintree.registry.credit_cards[params[:credit_card_token]]
+    # Braintree::CreditCard.find (old and new client library)
+    get /^\/merchants\/.+\/payment_methods(?:\/credit_card)?\/(?<credit_card_token>.+)$/ do |credit_card_token|
+      credit_card = FakeBraintree.registry.credit_cards[credit_card_token]
       if credit_card
         gzipped_response(200, credit_card.to_xml(root: 'credit_card'))
       else
@@ -99,11 +99,11 @@ module FakeBraintree
       end
     end
 
-    # Braintree::CreditCard.update
-    put '/merchants/:merchant_id/payment_methods/:credit_card_token' do
-      credit_card = FakeBraintree.registry.credit_cards[params[:credit_card_token]]
+    # Braintree::CreditCard.update (old and new client library)
+    put /^\/merchants\/(?<merchant_id>.+)\/payment_methods(?:\/credit_card)?\/(?<credit_card_token>.+)$/ do |merchant_id, credit_card_token|
+      credit_card = FakeBraintree.registry.credit_cards[credit_card_token]
       updates     = hash_from_request_body_with_key('credit_card')
-      options     = {token: params[:credit_card_token], merchant_id: params[:merchant_id]}
+      options     = {token: credit_card_token, merchant_id: merchant_id}
       CreditCard.new(updates, options).update
     end
 
@@ -174,7 +174,7 @@ module FakeBraintree
       transaction = FakeBraintree.registry.transactions[params[:transaction_id]]
       transaction_response = {'id' => transaction['id'],
                               'type' => transaction['sale'],
-                              'amount' => transaction['amount'], 'tax_amount' => 0, 
+                              'amount' => transaction['amount'], 'tax_amount' => 0,
                                'processor_response_text' => 'ok',
                               'status' => Braintree::Transaction::Status::SubmittedForSettlement}
       FakeBraintree.registry.transactions[transaction['id']] = transaction_response
@@ -186,7 +186,7 @@ module FakeBraintree
       transaction = FakeBraintree.registry.transactions[params[:transaction_id]]
       transaction_response = {'id' => transaction['id'],
                               'type' => transaction['sale'],
-                              'amount' => transaction['amount'], 'tax_amount' => 0, 
+                              'amount' => transaction['amount'], 'tax_amount' => 0,
                                'processor_response_text' => 'ok',
                               'status' => Braintree::Transaction::Status::Voided}
       FakeBraintree.registry.transactions[transaction['id']] = transaction_response
