@@ -155,6 +155,11 @@ Full example:
     #   "subscription_id" => "foobar"
     # }
 
+## Running the tests
+
+During tests, debug-level logs will be sent to `tmp/braintree_log`. This is
+useful for seeing which URLs Braintree is actually hitting.
+
 Credits
 -------
 

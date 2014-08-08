@@ -7,8 +7,11 @@ require 'fake_braintree'
 require 'timecop'
 
 def clear_braintree_log
-  Dir.mkdir('tmp') unless File.directory?('tmp')
-  File.new('tmp/braintree_log', 'w').close
+  path = File.expand_path("./tmp/braintree_log")
+  FileUtils.mkdir_p(File.dirname(path))
+  logger = Logger.new(path)
+  logger.level = Logger::DEBUG
+  Braintree::Configuration.logger = logger
 end
 
 Dir[File.join(File.dirname(__FILE__), 'support/**/*.rb')].each {|f| require f}
