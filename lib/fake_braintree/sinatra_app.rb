@@ -90,7 +90,7 @@ module FakeBraintree
     end
 
     # Braintree::CreditCard.find
-    get '/merchants/:merchant_id/payment_methods/:credit_card_token' do
+    get '/merchants/:merchant_id/payment_methods/credit_card/:credit_card_token' do
       credit_card = FakeBraintree.registry.credit_cards[params[:credit_card_token]]
       if credit_card
         gzipped_response(200, credit_card.to_xml(root: 'credit_card'))
@@ -100,10 +100,11 @@ module FakeBraintree
     end
 
     # Braintree::CreditCard.update
-    put '/merchants/:merchant_id/payment_methods/:credit_card_token' do
+    put '/merchants/:merchant_id/payment_methods/credit_card/:credit_card_token' do
       credit_card = FakeBraintree.registry.credit_cards[params[:credit_card_token]]
       updates     = hash_from_request_body_with_key('credit_card')
       options     = {token: params[:credit_card_token], merchant_id: params[:merchant_id]}
+
       CreditCard.new(updates, options).update
     end
 
