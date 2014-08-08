@@ -41,11 +41,6 @@ describe FakeBraintree do
   it 'creates a log file' do
     expect(File.exist?(FakeBraintree.log_file_path)).to eq true
   end
-
-  it 'logs to the correct path' do
-    Braintree::Configuration.logger.info('Some test')
-    expect(File.readlines(FakeBraintree.log_file_path).last).to include "Some test"
-  end
 end
 
 describe FakeBraintree, '.clear_log!' do
