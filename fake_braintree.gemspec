@@ -18,7 +18,7 @@ Gem::Specification.new do |s|
   s.required_ruby_version = Gem::Requirement.new(">= 1.9.2")
 
   s.add_dependency 'activesupport'
-  s.add_dependency 'braintree', '~> 2.5'
+  s.add_dependency 'braintree', '~> 2.32'
   s.add_dependency 'capybara'
   s.add_dependency 'sinatra'
 
