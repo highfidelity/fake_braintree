@@ -4,6 +4,8 @@
 * Set `credit_card.card_type`, `credit_card.last_4`, and
   `credit_card.unique_number_identifier`. Ensure `credit_card.bin` is always
   set (#47).
+* Support new Braintree credit card API URLs
+* Requires Braintree ~> 2.32 instead of Braintree ~> 2.5.
 
 # 0.4.3
 
