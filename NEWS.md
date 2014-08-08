@@ -1,4 +1,4 @@
-# HEAD
+# 0.5.0
 
 * Remove unused `i18n` gem dependency (#56).
 * Set `credit_card.card_type`, `credit_card.last_4`, and
