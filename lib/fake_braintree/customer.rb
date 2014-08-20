@@ -110,8 +110,8 @@ module FakeBraintree
 
     def generate_credit_cards_from(new_credit_card_hash)
       if new_credit_card_hash.present? && new_credit_card_hash.is_a?(Hash)
-        new_credit_card_hash['bin'] = new_credit_card_hash['number'][0..5]
-        new_credit_card_hash['last_4'] = new_credit_card_hash['number'][-4..-1]
+        new_credit_card_hash['bin'] = new_credit_card_hash['number'].to_s[0..5].to_i
+        new_credit_card_hash['last_4'] = new_credit_card_hash['number'].to_s[-4..-1].to_i
         new_credit_card_hash['token']  = credit_card_token(new_credit_card_hash)
 
         if credit_card_expiration_month
