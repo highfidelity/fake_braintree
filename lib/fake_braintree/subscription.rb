@@ -78,7 +78,7 @@ module FakeBraintree
     end
 
     def next_billing_date
-      1.month.from_now
+      billing_period_start_date + 1.month
     end
 
     def billing_day_of_month
@@ -86,7 +86,7 @@ module FakeBraintree
     end
 
     def billing_period_start_date
-      Date.today
+      @billing_period_start_date ||= Date.today
     end
 
     def billing_period_end_date
