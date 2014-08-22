@@ -33,7 +33,10 @@ module FakeBraintree
         'transactions' => [],
         'add_ons' => added_add_ons,
         'discounts' => added_discounts,
-        'next_billing_date' => braintree_formatted_date(1.month.from_now)
+        'next_billing_date' => braintree_formatted_date(next_billing_date),
+        'billing_day_of_month' => billing_day_of_month,
+        'billing_period_start_date' => braintree_formatted_date(billing_period_start_date),
+        'billing_period_end_date' => braintree_formatted_date(billing_period_end_date)
       )
     end
 
@@ -72,6 +75,22 @@ module FakeBraintree
       else
         []
       end
+    end
+
+    def next_billing_date
+      billing_period_start_date + 1.month
+    end
+
+    def billing_day_of_month
+      next_billing_date.mday > 28 ? 31 : next_billing_date.mday
+    end
+
+    def billing_period_start_date
+      @billing_period_start_date ||= Date.today
+    end
+
+    def billing_period_end_date
+      next_billing_date - 1.day
     end
 
     def set_subscription_id
