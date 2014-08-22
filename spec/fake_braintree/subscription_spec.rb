@@ -45,6 +45,18 @@ describe 'Braintree::Subscription.create' do
       expect(create_subscription.subscription.next_billing_date).to eq 1.month.from_now.strftime('%Y-%m-%d')
     end
   end
+
+  # according to https://developers.braintreepayments.com/javascript+ruby/reference/objects/subscription#subscription.billing-day-of-month
+  it 'sets billing_day_of_month, keeping values in 1..28' do
+    Timecop.freeze(Date.new(2014, 8, 28)) do
+      expect(create_subscription.subscription.billing_day_of_month).to eq 28
+    end
+  end
+  it 'sets billing_day_of_month, forcing value to 31 if outside of 1..28' do
+    Timecop.freeze(Date.new(2014, 8, 29)) do
+      expect(create_subscription.subscription.billing_day_of_month).to eq 31
+    end
+  end
 end
 
 describe 'Braintree::Subscription.find' do
