@@ -57,6 +57,22 @@ describe 'Braintree::Subscription.create' do
       expect(create_subscription.subscription.billing_day_of_month).to eq 31
     end
   end
+
+  context 'without custom start date' do
+    around do |example|
+      Timecop.freeze(Date.new(2014, 8, 25), &example)
+    end
+    it 'sets billing_period_start_date to today' do
+      expect(create_subscription.subscription.billing_period_start_date).to eq "2014-08-25"
+    end
+    it 'sets next_billing_date to one month from now' do
+      expect(create_subscription.subscription.next_billing_date).to eq "2014-09-25"
+    end
+    it 'sets billing_period_end_date to one day before next_billing_date' do
+      expect(create_subscription.subscription.billing_period_end_date).to eq "2014-09-24"
+    end
+  end
+
 end
 
 describe 'Braintree::Subscription.find' do
