@@ -236,5 +236,12 @@ module FakeBraintree
       redirect = FakeBraintree.registry.redirects[params[:id]]
       redirect.confirm
     end
+
+    # Braintree::ClientToken.generate
+    post "/merchants/:merchant_id/client_token" do
+      token = "client_token"
+      response = { value: token }.to_xml(root: :client_token)
+      gzipped_response(200, response)
+    end
   end
 end
