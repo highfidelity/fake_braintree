@@ -46,7 +46,7 @@ module FakeBraintree
     end
 
     def create_subscription_with(new_subscription_hash)
-      FakeBraintree.registry.subscriptions[new_subscription_hash['id']] = new_subscription_hash
+      FakeBraintree.registry.subscriptions[new_subscription_hash['id'].to_s] = new_subscription_hash
     end
 
     def subscription_from_registry
