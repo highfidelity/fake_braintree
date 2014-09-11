@@ -125,6 +125,26 @@ describe 'Braintree::Customer.find' do
   it 'raises an error for a nonexistent customer' do
     expect(lambda { Braintree::Customer.find('foo') }).to raise_error(Braintree::NotFoundError)
   end
+
+  it 'finds customer created with custom id' do
+    Braintree::Customer.create(
+        id: 'bob-smith',
+        first_name: 'Bob',
+        last_name: 'Smith'
+    )
+
+    expect(Braintree::Customer.find('bob-smith').first_name).to eq 'Bob'
+  end
+
+  it 'finds customer created with custom integer id' do
+    Braintree::Customer.create(
+        id: 1,
+        first_name: 'Bob',
+        last_name: 'Smith'
+    )
+
+    expect(Braintree::Customer.find(1).first_name).to eq 'Bob'
+  end
 end
 
 describe 'Braintree::Customer.update' do

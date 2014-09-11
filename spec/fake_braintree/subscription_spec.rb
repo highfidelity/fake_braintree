@@ -111,6 +111,16 @@ describe 'Braintree::Subscription.find' do
     expect(discounts.size).to eq 1
     expect(discounts.first.id).to eq discount_id
   end
+
+  it 'finds subscriptions created with custom id' do
+    create_subscription(id: 'bob-smiths-subscription')
+    expect(Braintree::Subscription.find('bob-smiths-subscription')).to be_a Braintree::Subscription
+  end
+
+  it 'finds subscriptions created with custom integer id' do
+    create_subscription(id: 1)
+    expect(Braintree::Subscription.find(1)).to be_a Braintree::Subscription
+  end
 end
 
 describe 'Braintree::Subscription.update' do
