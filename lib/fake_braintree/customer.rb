@@ -50,7 +50,7 @@ module FakeBraintree
     end
 
     def create_customer_with(hash)
-      FakeBraintree.registry.customers[hash['id']] = hash
+      FakeBraintree.registry.customers[hash['id'].to_s] = hash
     end
 
     def add_credit_card_to_registry(new_credit_card_hash)
