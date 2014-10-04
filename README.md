@@ -160,6 +160,21 @@ Full example:
 During tests, debug-level logs will be sent to `tmp/braintree_log`. This is
 useful for seeing which URLs Braintree is actually hitting.
 
+## Error: No Rack handler defined
+
+If you get this error:
+
+> No Rack handler was defined! Please include gem "thin" or gem "puma" in your
+> Gemfile." (RuntimeError).
+
+First, ensure that either thin or puma is in your Gemfile.
+
+If they're in your Gemfile and you still see the error, try these steps:
+
+* Add `require "fake_braintree"` to your `spec/spec_helper.rb`
+* Add `require "thin"` or `require "puma"` above `require "fake_braintree"` in
+  your `spec_helper.rb`.
+
 Credits
 -------
 
