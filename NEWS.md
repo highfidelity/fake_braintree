@@ -1,5 +1,7 @@
 # HEAD
 
+* Customers and Subscriptions that were stored with a custom (non-integer) ID
+  can be retrieved (#67)
 * Braintree::Subscription has associated dates thanks to @1st8 (#66):
   - `next_billing_date` is 1 month from billing period start date
   - `billing_day_of_month` is the next billing date's mday, but is true to
