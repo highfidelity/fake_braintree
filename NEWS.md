@@ -1,5 +1,7 @@
 # HEAD
 
+* Use WEBrick as the Capybara server handler in all cases. Previously we used
+  Thin and fell back to Puma, which caused problems like issue #54.
 * Customers and Subscriptions that were stored with a custom (non-integer) ID
   can be retrieved (#67)
 * Braintree::Subscription has associated dates thanks to @1st8 (#66):
