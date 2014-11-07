@@ -1,5 +1,7 @@
 # HEAD
 
+* Remove support for 1.9.2, which is EOL'd. `fake_braintree` now requires
+  Ruby 1.9.3+.
 * Use WEBrick as the Capybara server handler in all cases. Previously we used
   Thin and fell back to Puma, which caused problems like issue #54.
 * Customers and Subscriptions that were stored with a custom (non-integer) ID
