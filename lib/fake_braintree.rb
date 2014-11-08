@@ -1,6 +1,9 @@
-require 'fileutils'
 require 'braintree'
-require 'active_support/core_ext/module/attribute_accessors'
+require 'capybara'
+require 'digest/md5'
+require 'fileutils'
+require 'active_support/core_ext'
+require 'sinatra/base'
 
 require 'fake_braintree/helpers'
 require 'fake_braintree/customer'

@@ -1,5 +1,3 @@
-require 'sinatra/base'
-
 module FakeBraintree
   class SinatraApp < Sinatra::Base
     set :show_exceptions, false
