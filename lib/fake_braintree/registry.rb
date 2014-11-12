@@ -4,7 +4,7 @@ class FakeBraintree::Registry
   end
 
   attr_accessor :customers,:subscriptions, :failures, :transactions, :redirects,
-    :credit_cards, :addresses, :payment_methods
+    :credit_cards, :addresses, :payment_methods, :merchant_accounts
 
   def clear!
     @addresses       = {}
@@ -15,6 +15,7 @@ class FakeBraintree::Registry
     @redirects       = {}
     @credit_cards    = {}
     @payment_methods = {}
+    @merchant_accounts = {}
   end
 
   def failure?(card_number)

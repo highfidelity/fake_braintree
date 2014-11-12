@@ -7,6 +7,7 @@ require 'fake_braintree/credit_card'
 require 'fake_braintree/address'
 require 'fake_braintree/payment_method'
 require 'fake_braintree/transaction'
+require 'fake_braintree/merchant_account'
 
 module FakeBraintree
   class SinatraApp < Sinatra::Base
@@ -241,12 +242,76 @@ module FakeBraintree
     post "/merchants/:merchant_id/client_token" do
       # token = "client_token"
       token = {
-        "clientApiUrl" => "http://127.0.0.1:#{ENV['GATEWAY_PORT']}/merchants/#{params[:merchant_id]}/client_api",
+        "clientApiUrl" => "http://localhost:#{ENV['GATEWAY_PORT']}/merchants/#{params[:merchant_id]}/client_api",
         "authUrl" => "TODO_for_venmo_support",
-        "merchant_id" => params[:merchant_id]
+        "configUrl" => "http://localhost:#{ENV['GATEWAY_PORT']}/merchants/#{params[:merchant_id]}/client_api/v1/configuration",
+        "merchant_id" => params[:merchant_id],
+        "authorizationFingerprint" => "xxx"
       }.to_json
       response = { value: Base64.strict_encode64(token) }.to_xml(root: :client_token)
       gzipped_response(200, response)
+    end
+
+    #Braintree::MerchantAccount.find
+    get '/merchants/:merchant_id/merchant_accounts/:merchant_account_id' do
+      merchant_account = FakeBraintree.registry.merchant_accounts[params[:merchant_account_id]]
+      if merchant_account
+        gzipped_response(200, merchant_account.to_xml(root: 'merchant_account'))
+      else
+        gzipped_response(404, {})
+      end
+    end
+
+    # Braintree::MerchantAccount.update
+    put '/merchants/:merchant_id/merchant_accounts/:merchant_account_id/update_via_api' do
+      merchant_account_hash = hash_from_request_body_with_key('merchant_account')
+      options = {id: params[:merchant_account_id], merchant_id: params[:merchant_id]}
+      MerchantAccount.new(merchant_account_hash, options).update
+    end
+
+    # Braintree::MerchantAccount.create
+    post '/merchants/:merchant_id/merchant_accounts/create_via_api' do
+      merchant_account_hash = hash_from_request_body_with_key('merchant_account')
+      options = {merchant_id: params[:merchant_id]}
+      #
+      # if credit_card_hash['options']
+      #   options.merge!(credit_card_hash.delete('options')).symbolize_keys!
+      # end
+      MerchantAccount.new(merchant_account_hash, options).create
+    end
+
+    #JS api for credit card tokenization
+    get '/merchants/:merchant_id/client_api/v1/payment_methods/credit_cards' do
+      credit_card_hash = params[:creditCard]
+      options = {merchant_id: params[:merchant_id]}
+
+      if credit_card_hash['options']
+        options.merge!(credit_card_hash.delete('options')).symbolize_keys!
+      end
+
+      nonce = PaymentMethod.tokenize_card(credit_card_hash)
+      response = {
+        creditCards: [
+         {
+           type: 'CreditCard',
+           nonce: nonce,
+         }
+        ],
+        status: 202
+      }.to_json
+      gzipped_response(200, "/**/#{params[:callback]}(#{response})")
+    end
+
+    get '/merchants/:merchant_id/client_api/v1/configuration' do
+      response = {
+        "clientApiUrl" => "http://localhost:#{ENV['GATEWAY_PORT']}/merchants/#{params[:merchant_id]}/client_api",
+        "authUrl" => "TODO_for_venmo_support",
+        "configUrl" => "http://localhost:#{ENV['GATEWAY_PORT']}/merchants/#{params[:merchant_id]}/client_api/v1/configuration",
+        "merchant_id" => params[:merchant_id],
+        "authorizationFingerprint" => "xxx",
+        "status" => 200
+      }.to_json
+      gzipped_response(200, "/**/#{params[:callback]}(#{response})")
     end
   end
 end
