@@ -239,8 +239,13 @@ module FakeBraintree
 
     # Braintree::ClientToken.generate
     post "/merchants/:merchant_id/client_token" do
-      token = "client_token"
-      response = { value: token }.to_xml(root: :client_token)
+      # token = "client_token"
+      token = {
+        "clientApiUrl" => "http://127.0.0.1:#{ENV['GATEWAY_PORT']}/merchants/#{params[:merchant_id]}/client_api",
+        "authUrl" => "TODO_for_venmo_support",
+        "merchant_id" => params[:merchant_id]
+      }.to_json
+      response = { value: Base64.strict_encode64(token) }.to_xml(root: :client_token)
       gzipped_response(200, response)
     end
   end
