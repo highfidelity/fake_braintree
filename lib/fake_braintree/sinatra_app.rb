@@ -9,6 +9,7 @@ require 'fake_braintree/payment_method'
 require 'fake_braintree/transaction'
 require 'fake_braintree/client_token'
 require 'fake_braintree/credit_card_serializer'
+require 'fake_braintree/merchant_account'
 
 module FakeBraintree
   class SinatraApp < Sinatra::Base
@@ -302,6 +303,30 @@ module FakeBraintree
       }
       response = "#{params['callback']}(#{{ status: 200 }.to_json})"
       [200, headers, gzip(response)]
+    end
+
+    #Braintree::MerchantAccount.find
+    get '/merchants/:merchant_id/merchant_accounts/:merchant_account_id' do
+      merchant_account = FakeBraintree.registry.merchant_accounts[params[:merchant_account_id]]
+      if merchant_account
+        gzipped_response(200, merchant_account.to_xml(root: 'merchant_account'))
+      else
+        gzipped_response(404, {})
+      end
+    end
+
+    # Braintree::MerchantAccount.update
+    put '/merchants/:merchant_id/merchant_accounts/:merchant_account_id/update_via_api' do
+      merchant_account_hash = hash_from_request_body_with_key('merchant_account')
+      options = {id: params[:merchant_account_id], merchant_id: params[:merchant_id]}
+      MerchantAccount.new(merchant_account_hash, options).update
+    end
+
+    # Braintree::MerchantAccount.create
+    post '/merchants/:merchant_id/merchant_accounts/create_via_api' do
+      merchant_account_hash = hash_from_request_body_with_key('merchant_account')
+      options = {merchant_id: params[:merchant_id]}
+      MerchantAccount.new(merchant_account_hash, options).create
     end
   end
 end
