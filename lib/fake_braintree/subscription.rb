@@ -71,7 +71,7 @@ module FakeBraintree
 
     def added_discounts
       if @subscription_hash['discounts'].is_a?(Hash) && @subscription_hash['discounts']['add']
-        @subscription_hash['discounts']['add'].map { |discount| { 'id' => discount['inherited_from_id'] } }
+        @subscription_hash['discounts']['add'].map { |discount| { 'id' => discount['inherited_from_id'], 'amount' => discount['amount'] } }
       else
         []
       end
