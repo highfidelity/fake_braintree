@@ -105,11 +105,13 @@ describe 'Braintree::Subscription.find' do
 
   it 'returns discounts added with the subscription' do
     discount_id = 'def456'
-    subscription_id = create_subscription(discounts: { add: [{ inherited_from_id: discount_id, amount: BigDecimal.new('15.00') }]}).subscription.id
+    amount = BigDecimal.new('15.00')
+    subscription_id = create_subscription(discounts: { add: [{ inherited_from_id: discount_id, amount: amount }]}).subscription.id
     subscription = Braintree::Subscription.find(subscription_id)
     discounts = subscription.discounts
     expect(discounts.size).to eq 1
     expect(discounts.first.id).to eq discount_id
+    expect(discounts.first.amount).to eq amount
   end
 
   it 'finds subscriptions created with custom id' do
