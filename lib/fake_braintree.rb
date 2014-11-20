@@ -124,5 +124,4 @@ module FakeBraintree
   end
 end
 
-FakeBraintree.activate!
 Braintree::Configuration.logger = Logger.new(FakeBraintree.log_file_path)
