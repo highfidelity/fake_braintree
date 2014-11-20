@@ -155,6 +155,31 @@ Full example:
     #   "subscription_id" => "foobar"
     # }
 
+Note that the generated transaction is not saved in `fake_braintree` - the
+method just gives you a hash.
+
+## Adding your own transactions
+
+If you want `fake_braintree` to be aware of a transaction, you can add it to the
+`FakeBraintree.registry.transactions` hash like this:
+
+
+```ruby
+transaction_id = "something"
+example_response = { "id" => transaction_id, "amount" => "10.0", "type" => "credit", "status" => "authorized" }
+FakeBraintree.registry.transactions[transaction_id] = example_response
+```
+
+Now you can do `Braintree::Transaction.find("something")` and it will find that
+transaction.
+
+Not all of the keys in `example_response` are necessary, but you'll probably
+want at least `id` and `amount`, depending on the type of response.
+
+`FakeBraintree.registry.transactions` will be cleared when you call
+`FakeBraintree.clear!`.
+
+
 ## Running the tests
 
 During tests, debug-level logs will be sent to `tmp/braintree_log`. This is

@@ -87,6 +87,7 @@ describe FakeBraintree::SinatraApp do
         payment_method_token: cc_token,
         amount: 10.00
       )
+      p FakeBraintree.registry.transactions
       result = Braintree::Transaction.void(sale.transaction.id)
       expect(result).to be_success
       expect(result.transaction.status).to eq Braintree::Transaction::Status::Voided
