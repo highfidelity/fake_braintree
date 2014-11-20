@@ -13,6 +13,7 @@
     month](https://www.braintreepayments.com/docs/ruby/subscriptions/details#attributes_that_need_a_bit_more_explaining)
   - `billing_period_start_date` is either the provided start date or today
   - `billing_period_end_date` is the day before the next billing date
+* Save discounts amount when adding them to a Subscription (#72)
 
 # 0.5.0
 
