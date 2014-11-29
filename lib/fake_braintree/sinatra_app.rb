@@ -239,7 +239,9 @@ module FakeBraintree
 
     # Braintree::ClientToken.generate
     post "/merchants/:merchant_id/client_token" do
-      token = "client_token"
+      # This generated token doesn't have uppercase letters like the actual
+      # Braintree-generated token does, but it is the right length.
+      token = SecureRandom.hex(748)
       response = { value: token }.to_xml(root: :client_token)
       gzipped_response(200, response)
     end
