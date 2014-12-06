@@ -48,9 +48,10 @@ of them (yet).
 * `Braintree::TransparentRedirect.url`
 
 ## Quick start
-Just require the library and you're good to go:
+Require the library and activate it to start the API server:
 
     require 'fake_braintree'
+    FakeBraintree.activate!
 
 `FakeBraintree.clear!` will clear all data, which you almost certainly want to
 do before each test.
@@ -59,6 +60,7 @@ Full example:
 
     # spec/spec_helper.rb
     require 'fake_braintree'
+    FakeBraintree.activate!
 
     RSpec.configure do |c|
       c.before do
@@ -70,6 +72,7 @@ If you're using Cucumber, add this too:
 
     # features/support/env.rb
     require 'fake_braintree'
+    FakeBraintree.activate!
 
     Before do
       FakeBraintree.clear!
