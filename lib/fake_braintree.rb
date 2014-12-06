@@ -113,6 +113,7 @@ module FakeBraintree
     Braintree::Configuration.merchant_id = 'xxx'
     Braintree::Configuration.public_key  = 'xxx'
     Braintree::Configuration.private_key = 'xxx'
+    Braintree::Configuration.logger = Logger.new(log_file_path)
   end
 
   def self.boot_server
@@ -123,5 +124,3 @@ module FakeBraintree
     self.registry = Registry.new
   end
 end
-
-Braintree::Configuration.logger = Logger.new(FakeBraintree.log_file_path)
