@@ -1,3 +1,6 @@
+require 'digest/md5'
+require 'active_support/gzip'
+
 module FakeBraintree
   module Helpers
     def gzip(content)

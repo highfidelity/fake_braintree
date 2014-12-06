@@ -1,23 +1,10 @@
 require 'braintree'
-require 'capybara'
-require 'digest/md5'
 require 'fileutils'
 require 'active_support'
-require 'active_support/core_ext'
-require 'sinatra/base'
-
-require 'fake_braintree/helpers'
-require 'fake_braintree/customer'
-require 'fake_braintree/subscription'
-require 'fake_braintree/redirect'
-require 'fake_braintree/credit_card'
-require 'fake_braintree/address'
-require 'fake_braintree/payment_method'
+require 'active_support/core_ext/module/attribute_accessors'
 
 require 'fake_braintree/registry'
 require 'fake_braintree/server'
-require 'fake_braintree/sinatra_app'
-require 'fake_braintree/valid_credit_cards'
 require 'fake_braintree/version'
 
 module FakeBraintree

@@ -1,4 +1,6 @@
 require 'forwardable'
+require 'capybara'
+require 'fake_braintree/sinatra_app'
 
 class FakeBraintree::Server
   SERVER_HOST = '127.0.0.1'
