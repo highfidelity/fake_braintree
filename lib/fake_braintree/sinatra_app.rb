@@ -1,3 +1,11 @@
+require 'sinatra/base'
+require 'active_support/core_ext/hash/conversions'
+require 'fake_braintree/customer'
+require 'fake_braintree/subscription'
+require 'fake_braintree/redirect'
+require 'fake_braintree/credit_card'
+require 'fake_braintree/address'
+
 module FakeBraintree
   class SinatraApp < Sinatra::Base
     set :show_exceptions, false

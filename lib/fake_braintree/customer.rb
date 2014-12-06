@@ -1,3 +1,7 @@
+require 'fake_braintree/helpers'
+require 'fake_braintree/credit_card'
+require 'fake_braintree/valid_credit_cards'
+
 module FakeBraintree
   class Customer
     include Helpers

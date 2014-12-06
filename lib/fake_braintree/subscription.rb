@@ -1,3 +1,5 @@
+require 'fake_braintree/helpers'
+
 module FakeBraintree
   class Subscription
     include Helpers
