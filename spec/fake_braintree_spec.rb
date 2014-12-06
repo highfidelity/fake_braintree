@@ -1,5 +1,38 @@
 require 'spec_helper'
 
+describe FakeBraintree, '.activate!' do
+  around do |example|
+    old_gateway_port = ENV['GATEWAY_PORT']
+    begin
+      example.call
+    ensure
+      ENV['GATEWAY_PORT'] = old_gateway_port
+    end
+  end
+
+  before do
+    # Ensure no examples will manage to actually boot another server, but
+    # provide them with access to the server instance.
+    allow_any_instance_of(Capybara::Server).to receive(:boot) do |server|
+      @capybara_server = server
+    end
+  end
+
+  it 'starts the server at ephemeral port assigned by Capybara::Server' do
+    ENV.delete 'GATEWAY_PORT'
+    FakeBraintree.activate!
+
+    expect(ENV['GATEWAY_PORT']).to eq(@capybara_server.port.to_s)
+  end
+
+  it 'starts the server at specified port' do
+    FakeBraintree.activate! :gateway_port => 1337
+
+    expect(@capybara_server.port).to be(1337)
+    expect(ENV['GATEWAY_PORT']).to eq('1337')
+  end
+end
+
 describe FakeBraintree, '.decline_all_cards!' do
   before { FakeBraintree.decline_all_cards! }
 

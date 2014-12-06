@@ -1,7 +1,11 @@
+require 'forwardable'
+
 class FakeBraintree::Server
-  def boot
-    server = Capybara::Server.new(FakeBraintree::SinatraApp)
-    server.boot
-    ENV['GATEWAY_PORT'] = server.port.to_s
+  extend Forwardable
+  def_delegators :@server, :port, :boot
+
+  def initialize(options = {})
+    app = FakeBraintree::SinatraApp
+    @server = Capybara::Server.new(app, options.fetch(:port, nil))
   end
 end

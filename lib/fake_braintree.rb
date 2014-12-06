@@ -21,12 +21,18 @@ require 'fake_braintree/version'
 module FakeBraintree
   mattr_accessor :registry, :verify_all_cards, :decline_all_cards
 
-  def self.activate!
+  # Public: Prepare FakeBraintree for use and start the API server.
+  #
+  # options: Hash options to configure (default: {}):
+  #          :gateway_port - The port to start the API server on (optional).
+  #                          If not given, an ephemeral port will be used.
+  #
+  def self.activate!(options = {})
     initialize_registry
     self.verify_all_cards = false
     set_configuration
     clear!
-    boot_server
+    boot_server(port: options.fetch(:gateway_port, nil))
   end
 
   def self.log_file_path
@@ -116,8 +122,10 @@ module FakeBraintree
     Braintree::Configuration.logger = Logger.new(log_file_path)
   end
 
-  def self.boot_server
-    Server.new.boot
+  def self.boot_server(options = {})
+    server = Server.new(options)
+    server.boot
+    ENV['GATEWAY_PORT'] = server.port.to_s
   end
 
   def self.initialize_registry
