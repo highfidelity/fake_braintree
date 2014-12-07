@@ -1,3 +1,9 @@
+require 'uri'
+require 'rack/utils'
+require 'fake_braintree/helpers'
+require 'fake_braintree/credit_card'
+require 'fake_braintree/customer'
+
 module FakeBraintree
   class Redirect
     include Helpers
