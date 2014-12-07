@@ -30,8 +30,8 @@ module FakeBraintree
   def self.activate!(options = {})
     initialize_registry
     self.verify_all_cards = false
-    set_configuration
     clear!
+    set_configuration
     boot_server(port: options.fetch(:gateway_port, nil))
   end
 
