@@ -1,6 +1,8 @@
 # HEAD (unreleased)
 
 * Allow configuring API server port (#73)
+* `FakeBraintree` no longer auto-starts when it is required. You must explicitly
+  call `FakeBraintree.activate!`
 
 # 0.6.0
 
