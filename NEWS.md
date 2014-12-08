@@ -1,6 +1,7 @@
 # HEAD (unreleased)
 
 * Allow configuring API server port (#73)
+* Require Capybara 2.2.0+ so we can configure the API server port
 * `FakeBraintree` no longer auto-starts when it is required. You must explicitly
   call `FakeBraintree.activate!`
 
