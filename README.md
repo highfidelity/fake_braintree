@@ -53,6 +53,10 @@ Require the library and activate it to start the API server:
     require 'fake_braintree'
     FakeBraintree.activate!
 
+To run the server on a specific port, pass in the `:gateway_port` option:
+
+    FakeBraintree.activate!(gateway_port: 1234)
+
 `FakeBraintree.clear!` will clear all data, which you almost certainly want to
 do before each test.
 

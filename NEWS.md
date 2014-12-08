@@ -1,3 +1,7 @@
+# HEAD (unreleased)
+
+* Allow configuring API server port (#73)
+
 # 0.6.0
 
 * Remove support for 1.9.2, which is EOL'd. `fake_braintree` now requires
