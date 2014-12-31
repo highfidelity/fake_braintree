@@ -11,6 +11,7 @@ require 'fake_braintree/subscription'
 require 'fake_braintree/redirect'
 require 'fake_braintree/credit_card'
 require 'fake_braintree/address'
+require 'fake_braintree/transaction'
 
 require 'fake_braintree/registry'
 require 'fake_braintree/server'
