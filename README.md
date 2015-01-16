@@ -8,7 +8,6 @@ to intercept all of the calls from Braintree's Ruby library and returns XML that
 the Braintree library can parse. The whole point is not to hit the Braintree
 API.
 
-
 It supports a lot of Braintree methods, but it does not support every single one
 of them (yet).
 
@@ -86,6 +85,12 @@ It is advised to run your tests with `js: true` (RSpec) or `@javascript`
 (Cucumber), so that the requests correctly go through `FakeBraintree`. You might
 want to take a look at
 [capybara-webkit](https://github.com/thoughtbot/capybara-webkit).
+
+## Don't set the Braintree environment
+
+`fake_braintree` sets `Braintree::Configuration.environment = :development`. If
+your code sets it to anything else (like `:sandbox`), then `fake_braintree` won't
+work.
 
 # Credit Cards
 
