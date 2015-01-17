@@ -18,3 +18,18 @@ describe 'Braintree::PaymentMethod.find' do
     braintree_credit_card_token(TEST_CC_NUMBER, [month, year].join('/'))
   end
 end
+
+describe 'Braintree::PaymentMethod.update' do
+  it 'successfully updates the credit card' do
+    new_expiration_date = '08/2012'
+    token = cc_token
+
+    result = Braintree::PaymentMethod.update(token, expiration_date: new_expiration_date)
+    expect(result).to be_success
+    expect(Braintree::CreditCard.find(token).expiration_date).to eq new_expiration_date
+  end
+
+  it 'raises an error for a nonexistent credit card' do
+    expect { Braintree::PaymentMethod.update('foo', number: TEST_CC_NUMBER) }.to raise_error(Braintree::NotFoundError)
+  end
+end
