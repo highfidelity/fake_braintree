@@ -2,6 +2,7 @@ require 'braintree'
 require 'capybara'
 require 'digest/md5'
 require 'fileutils'
+require 'active_support'
 require 'active_support/core_ext'
 require 'sinatra/base'
 
