@@ -135,8 +135,9 @@ module FakeBraintree
         if request_hash.key?('credit_card')
           hash_from_request_body_with_key('credit_card')
         else
-          nonce = request_hash['payment_method']['payment_method_nonce']
-          FakeBraintree.registry.payment_methods[nonce]
+          payment_method_hash = hash_from_request_body_with_key('payment_method')
+          nonce = payment_method_hash.delete('payment_method_nonce')
+          FakeBraintree.registry.payment_methods[nonce].merge(payment_method_hash)
         end
       options = {merchant_id: params[:merchant_id]}
 

@@ -52,7 +52,7 @@ describe 'Braintree::PaymentMethod.create' do
       FakeBraintree.decline_all_cards!
 
       nonce = FakeBraintree::PaymentMethod.tokenize_card(build_credit_card_hash)
-      result = Braintree::PaymentMethod.create(payment_method_nonce: nonce)
+      result = Braintree::PaymentMethod.create(payment_method_nonce: nonce, customer_id: @customer.id)
 
       expect(result).to_not be_success
       expect { Braintree::PaymentMethod.find('token') }.to raise_error Braintree::NotFoundError
@@ -62,7 +62,7 @@ describe 'Braintree::PaymentMethod.create' do
       FakeBraintree.verify_all_cards!
 
       nonce = FakeBraintree::PaymentMethod.tokenize_card(build_credit_card_hash.merge(number: '12345'))
-      result = Braintree::PaymentMethod.create(payment_method_nonce: nonce)
+      result = Braintree::PaymentMethod.create(payment_method_nonce: nonce, customer_id: @customer.id)
 
       expect(result).to_not be_success
       expect { Braintree::CreditCard.find('token') }.to raise_error Braintree::NotFoundError
@@ -70,7 +70,7 @@ describe 'Braintree::PaymentMethod.create' do
 
     it 'successfully creates a credit card' do
       nonce = FakeBraintree::PaymentMethod.tokenize_card(build_credit_card_hash)
-      result = Braintree::PaymentMethod.create(payment_method_nonce: nonce)
+      result = Braintree::PaymentMethod.create(payment_method_nonce: nonce, customer_id: @customer.id)
 
       expect(result).to be_success
       expect(Braintree::Customer.find(@customer.id).credit_cards.last.token).to eq 'token'
@@ -80,9 +80,9 @@ describe 'Braintree::PaymentMethod.create' do
 
     it 'only allows one credit card to be default' do
       nonce = FakeBraintree::PaymentMethod.tokenize_card(build_credit_card_hash)
-      result = Braintree::PaymentMethod.create(payment_method_nonce: nonce)
+      result = Braintree::PaymentMethod.create(payment_method_nonce: nonce, customer_id: @customer.id)
       expect(result).to be_success
-      result = Braintree::PaymentMethod.create(payment_method_nonce: nonce)
+      result = Braintree::PaymentMethod.create(payment_method_nonce: nonce, customer_id: @customer.id)
       expect(result).to be_success
       # Reload the customer
       @customer = Braintree::Customer.find(@customer.id)
@@ -93,7 +93,6 @@ describe 'Braintree::PaymentMethod.create' do
 
   def build_credit_card_hash
     {
-      customer_id: @customer && @customer.id,
       number: '4111111111111111',
       cvv: '123',
       token: 'token',
