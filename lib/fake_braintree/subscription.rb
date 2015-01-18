@@ -16,6 +16,10 @@ module FakeBraintree
 
     def create
       create_subscription_with(subscription_hash)
+      if credit_card = FakeBraintree.registry.credit_cards[payment_method_token]
+        credit_card['subscriptions'] ||= []
+        credit_card['subscriptions'] << subscription_hash
+      end
       response_for_created_subscription(subscription_hash)
     end
 

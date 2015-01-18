@@ -40,6 +40,21 @@ describe 'Braintree::Subscription.create' do
     expect(FakeBraintree.registry.subscriptions[create_subscription.subscription.id]).not_to be_nil
   end
 
+  context 'when associated credit card' do
+    it 'adds this to its subscriptions' do
+      subscription = create_subscription.subscription
+      credit_card = Braintree::CreditCard.find(subscription.payment_method_token)
+      expect(credit_card.subscriptions.length).to eq 1
+
+      Braintree::Subscription.create(
+        payment_method_token: credit_card.token,
+        plan_id: 'my_plan_id'
+      )
+      credit_card = Braintree::CreditCard.find(subscription.payment_method_token)
+      expect(credit_card.subscriptions.length).to eq 2
+    end
+  end
+
   it 'sets the next billing date to a string of 1.month.from_now in UTC' do
     Timecop.freeze do
       expect(create_subscription.subscription.next_billing_date).to eq 1.month.from_now.strftime('%Y-%m-%d')
