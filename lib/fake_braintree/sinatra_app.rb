@@ -125,9 +125,19 @@ module FakeBraintree
       CreditCard.new(updates, options).update
     end
 
+    # Braintree::PaymentMethod.create
     # Braintree::CreditCard.create
     post '/merchants/:merchant_id/payment_methods' do
-      credit_card_hash = hash_from_request_body_with_key('credit_card')
+      request_hash = Hash.from_xml(request.body)
+      request.body.rewind
+
+      credit_card_hash =
+        if request_hash.key?('credit_card')
+          hash_from_request_body_with_key('credit_card')
+        else
+          nonce = request_hash['payment_method']['payment_method_nonce']
+          FakeBraintree.registry.payment_methods[nonce]
+        end
       options = {merchant_id: params[:merchant_id]}
 
       if credit_card_hash['options']

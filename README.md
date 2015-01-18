@@ -29,6 +29,7 @@ of them (yet).
 * `Braintree::Customer.update`
 
 ### PaymentMethod
+* `Braintree::PaymentMethod.create`
 * `Braintree::PaymentMethod.find`
 * `Braintree::PaymentMethod.update`
 
