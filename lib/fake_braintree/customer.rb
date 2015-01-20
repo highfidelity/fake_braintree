@@ -43,8 +43,12 @@ module FakeBraintree
     end
 
     def delete
-      delete_customer_with_id(customer_id)
-      deletion_response
+      if customer_exists_in_registry?
+        delete_customer_with_id(customer_id)
+        deletion_response
+      else
+        response_for_customer_not_found
+      end
     end
 
     private
@@ -149,7 +153,7 @@ module FakeBraintree
     end
 
     def delete_customer_with_id(id)
-      FakeBraintree.registry.customers[id] = nil
+      FakeBraintree.registry.customers.delete(id)
     end
 
     def deletion_response

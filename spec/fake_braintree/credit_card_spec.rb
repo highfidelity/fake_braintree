@@ -108,3 +108,18 @@ describe 'Braintree::CreditCard.update' do
     expect { Braintree::CreditCard.update('foo', number: TEST_CC_NUMBER) }.to raise_error(Braintree::NotFoundError)
   end
 end
+
+describe 'Braintree::CreditCard.delete' do
+  it 'successfully deletes a credit card' do
+    token = cc_token # creates card
+
+    result = Braintree::CreditCard.delete(token)
+
+    expect(result).to eq true
+    expect { Braintree::CreditCard.find(token) }.to raise_error(Braintree::NotFoundError)
+  end
+
+  it 'raises an error for a nonexistent credit card' do
+    expect { Braintree::CreditCard.delete('foo') }.to raise_error(Braintree::NotFoundError)
+  end
+end

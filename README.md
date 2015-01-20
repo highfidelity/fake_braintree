@@ -18,6 +18,7 @@ of them (yet).
 
 ### CreditCard
 * `Braintree::CreditCard.create`
+* `Braintree::CreditCard.delete`
 * `Braintree::CreditCard.find`
 * `Braintree::CreditCard.sale`
 * `Braintree::CreditCard.update`
