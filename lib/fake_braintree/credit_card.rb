@@ -40,6 +40,15 @@ module FakeBraintree
       end
     end
 
+    def delete
+      if credit_card_exists_in_registry?
+        delete_credit_card
+        deletion_response
+      else
+        response_for_card_not_found
+      end
+    end
+
     def to_xml
       @credit_card.to_xml(root: 'credit_card')
     end
@@ -72,6 +81,10 @@ module FakeBraintree
       end
     end
 
+    def delete_credit_card
+      FakeBraintree.registry.credit_cards.delete(token)
+    end
+
     def response_for_updated_card
       gzipped_response(200, @credit_card.to_xml(root: 'credit_card'))
     end
@@ -94,6 +107,10 @@ module FakeBraintree
       ).to_xml(root: 'api_error_response')
 
       gzipped_response(422, body)
+    end
+
+    def deletion_response
+      gzipped_response(200, '')
     end
 
     def expiration_month
