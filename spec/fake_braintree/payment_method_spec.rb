@@ -10,7 +10,7 @@ describe 'Braintree::PaymentMethod.find' do
     expect(credit_card.card_type).to eq "FakeBraintree"
     expect(credit_card.last_4).to eq TEST_CC_NUMBER[-4,4]
     expect(credit_card.expiration_month).to eq month
-    expect(credit_card.expiration_year).to eq  year
+    expect(credit_card.expiration_year).to eq year
     expect(credit_card.unique_number_identifier).to eq TEST_CC_NUMBER
   end
 
