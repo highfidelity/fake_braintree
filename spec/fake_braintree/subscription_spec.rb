@@ -96,13 +96,11 @@ describe 'Braintree::Subscription.find' do
 
   it 'returns add-ons added with the subscription' do
     add_on_id = 'def456'
-    amount = BigDecimal.new('20.00')
-    subscription_id = create_subscription(add_ons: { add: [{ inherited_from_id: add_on_id, amount: amount }] }).subscription.id
+    subscription_id = create_subscription(add_ons: { add: [{ inherited_from_id: add_on_id }] }).subscription.id
     subscription = Braintree::Subscription.find(subscription_id)
     add_ons = subscription.add_ons
     expect(add_ons.size).to eq 1
     expect(add_ons.first.id).to eq add_on_id
-    expect(add_ons.first.amount).to eq amount
   end
 
   it 'returns discounts added with the subscription' do

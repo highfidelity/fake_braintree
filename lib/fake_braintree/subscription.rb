@@ -63,7 +63,7 @@ module FakeBraintree
 
     def added_add_ons
       if @subscription_hash['add_ons'].is_a?(Hash) && @subscription_hash['add_ons']['add']
-        @subscription_hash['add_ons']['add'].map { |add_on| { 'id' => add_on['inherited_from_id'], 'amount' => add_on['amount'] } }
+        @subscription_hash['add_ons']['add'].map { |add_on| { 'id' => add_on['inherited_from_id'] } }
       else
         []
       end
