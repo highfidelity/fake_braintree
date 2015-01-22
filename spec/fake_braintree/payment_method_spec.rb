@@ -107,16 +107,16 @@ describe 'Braintree::PaymentMethod.create' do
   end
 
   describe 'FakeBraintree::PaymentMethod.tokenize_card' do
-  it 'stores provided payment data in the registry' do
-    FakeBraintree::PaymentMethod.tokenize_card number: '4111111111111111'
-    first_payment_method = FakeBraintree.registry.payment_methods.values[0]
-    expect(first_payment_method['number']).to eq '4111111111111111'
-  end
+    it 'stores provided payment data in the registry' do
+      FakeBraintree::PaymentMethod.tokenize_card number: '4111111111111111'
+      first_payment_method = FakeBraintree.registry.payment_methods.values[0]
+      expect(first_payment_method['number']).to eq '4111111111111111'
+    end
 
-  it 'returns key to payment data' do
-    nonce = FakeBraintree::PaymentMethod.tokenize_card number: '4111111111111111'
-    payment_methods = FakeBraintree.registry.payment_methods
-    expect(payment_methods[nonce]['number']).to eq '4111111111111111'
+    it 'returns key to payment data' do
+      nonce = FakeBraintree::PaymentMethod.tokenize_card number: '4111111111111111'
+      payment_methods = FakeBraintree.registry.payment_methods
+      expect(payment_methods[nonce]['number']).to eq '4111111111111111'
+    end
   end
-end
 end
