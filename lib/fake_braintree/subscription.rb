@@ -31,8 +31,8 @@ module FakeBraintree
     def subscription_hash
       @subscription_hash.merge(
         'transactions' => [],
-        'add_ons' => added_add_ons,
-        'discounts' => added_discounts,
+        'add_ons'   => add_ons,
+        'discounts' => discounts,
         'next_billing_date' => braintree_formatted_date(next_billing_date),
         'billing_day_of_month' => billing_day_of_month,
         'billing_period_start_date' => braintree_formatted_date(billing_period_start_date),
@@ -61,17 +61,33 @@ module FakeBraintree
       date.strftime('%Y-%m-%d')
     end
 
-    def added_add_ons
-      if @subscription_hash['add_ons'].is_a?(Hash) && @subscription_hash['add_ons']['add']
-        @subscription_hash['add_ons']['add'].map { |add_on| { 'id' => add_on['inherited_from_id'] } }
-      else
-        []
-      end
+    def add_ons
+      discounts_or_add_ons(@subscription_hash['add_ons'])
     end
 
-    def added_discounts
-      if @subscription_hash['discounts'].is_a?(Hash) && @subscription_hash['discounts']['add']
-        @subscription_hash['discounts']['add'].map { |discount| { 'id' => discount['inherited_from_id'], 'amount' => discount['amount'] } }
+    def discounts
+      discounts_or_add_ons(@subscription_hash['discounts'])
+    end
+
+    def discounts_or_add_ons(discount_or_add_on)
+      return [] unless discount_or_add_on.is_a?(Hash)
+
+      if discount_or_add_on['add']
+        discount_or_add_on['add'].map do |hsh|
+          {
+            'id'       => hsh['inherited_from_id'],
+            'quantity' => hsh['quantity'],
+            'amount'   => hsh['amount']
+          }
+        end
+      elsif discount_or_add_on['update']
+        discount_or_add_on['update'].map do |hsh|
+          {
+            'id'       => hsh['existing_id'],
+            'quantity' => hsh['quantity'],
+            'amount'   => hsh['amount']
+          }
+        end
       else
         []
       end
