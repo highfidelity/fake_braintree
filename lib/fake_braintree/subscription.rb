@@ -31,7 +31,7 @@ module FakeBraintree
     def subscription_hash
       @subscription_hash.merge(
         'transactions' => [],
-        'add_ons'   => add_ons,
+        'add_ons' => add_ons,
         'discounts' => discounts,
         'next_billing_date' => braintree_formatted_date(next_billing_date),
         'billing_day_of_month' => billing_day_of_month,
