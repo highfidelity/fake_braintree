@@ -1,4 +1,4 @@
-# fake\_braintree, a Braintree fake [![Build Status](https://secure.travis-ci.org/thoughtbot/fake_braintree.png)](http://travis-ci.org/thoughtbot/fake_braintree)
+# fake\_braintree, a Braintree fake [![Build Status](https://secure.travis-ci.org/thoughtbot/fake_braintree.svg)](http://travis-ci.org/thoughtbot/fake_braintree)
 
 
 This library is a way to test [Braintree](http://www.braintreepayments.com/)
