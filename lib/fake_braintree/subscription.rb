@@ -32,6 +32,15 @@ module FakeBraintree
       end
     end
 
+    def cancel
+      if subscription_exists_in_registry?
+        canceled_subscription = update_existing_subscription('status' => canceled_status)
+        response_for_canceled_subscription(canceled_subscription)
+      else
+        response_for_subscription_not_found
+      end
+    end
+
     private
 
     def subscription_hash
@@ -139,6 +148,10 @@ module FakeBraintree
       Braintree::Subscription::Status::Active
     end
 
+    def canceled_status
+      Braintree::Subscription::Status::Canceled
+    end
+
     def response_for_created_subscription(hash)
       gzipped_response(201, hash.to_xml(root: 'subscription'))
     end
@@ -147,8 +160,8 @@ module FakeBraintree
       gzipped_response(404, {})
     end
 
-    def response_for_created_subscription(hash)
-      gzipped_response(201, hash.to_xml(root: 'subscription'))
+    def response_for_canceled_subscription(hash)
+      gzipped_response(200, hash.to_xml(root: 'subscription'))
     end
   end
 end

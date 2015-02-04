@@ -192,6 +192,17 @@ describe 'Braintree::Subscription.cancel' do
     expect(Braintree::Subscription.find(subscription_id).status).to eq Braintree::Subscription::Status::Canceled
   end
 
+  it 'leaves discounts and add_ons alone' do
+    discounts = { add: [{ inherited_from_id: 'abc123', quantity: 2 }] }
+    add_ons = { add: [{ inherited_from_id: 'def456', quantity: 4 }] }
+    subscription_id = create_subscription(discounts: discounts, add_ons: add_ons).subscription.id
+
+    expect(Braintree::Subscription.cancel(subscription_id)).to be_success
+    subscription = Braintree::Subscription.find(subscription_id)
+    expect(subscription.discounts).not_to be_empty
+    expect(subscription.add_ons).not_to be_empty
+  end
+
   it 'cannot cancel an unknown subscription' do
     expect { Braintree::Subscription.cancel('totally-bogus-id') }.to raise_error(Braintree::NotFoundError)
   end

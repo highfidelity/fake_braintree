@@ -91,9 +91,8 @@ module FakeBraintree
 
     # Braintree::Subscription.cancel
     put '/merchants/:merchant_id/subscriptions/:id/cancel' do
-      updates = {'status' => Braintree::Subscription::Status::Canceled}
       options = {id: params[:id], merchant_id: params[:merchant_id]}
-      Subscription.new(updates, options).update
+      Subscription.new({}, options).cancel
     end
 
     # Braintree::PaymentMethod.find
