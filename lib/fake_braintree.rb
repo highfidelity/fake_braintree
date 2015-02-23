@@ -3,9 +3,9 @@ require 'fileutils'
 require 'active_support'
 require 'active_support/core_ext/module/attribute_accessors'
 
+require 'fake_braintree/version'
 require 'fake_braintree/registry'
 require 'fake_braintree/server'
-require 'fake_braintree/version'
 
 module FakeBraintree
   mattr_accessor :registry, :verify_all_cards, :decline_all_cards
