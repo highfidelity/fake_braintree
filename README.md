@@ -16,6 +16,9 @@ of them (yet).
 ### Address
 * `Braintree::Address.create`
 
+### ClientToken
+* `Braintree::ClientToken.generate`
+
 ### CreditCard
 * `Braintree::CreditCard.create`
 * `Braintree::CreditCard.delete`

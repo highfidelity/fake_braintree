@@ -7,6 +7,7 @@ require 'fake_braintree/credit_card'
 require 'fake_braintree/address'
 require 'fake_braintree/payment_method'
 require 'fake_braintree/transaction'
+require 'fake_braintree/client_token'
 
 module FakeBraintree
   class SinatraApp < Sinatra::Base
@@ -235,6 +236,13 @@ module FakeBraintree
     post '/merchants/:merchant_id/transparent_redirect_requests/:id/confirm' do
       redirect = FakeBraintree.registry.redirects[params[:id]]
       redirect.confirm
+    end
+
+    # Braintree::ClientToken.generate
+    post '/merchants/:merchant_id/client_token' do
+      token = FakeBraintree::ClientToken.generate
+      response = { value: token }.to_xml(root: :client_token)
+      gzipped_response(200, response)
     end
   end
 end
