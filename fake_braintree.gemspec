@@ -23,6 +23,6 @@ Gem::Specification.new do |s|
   s.add_dependency 'sinatra'
 
   s.add_development_dependency 'rake'
-  s.add_development_dependency 'rspec', '~> 2.14'
+  s.add_development_dependency 'rspec', '~> 3.2'
   s.add_development_dependency 'timecop', '~> 0.6'
 end

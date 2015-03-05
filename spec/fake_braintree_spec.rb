@@ -84,7 +84,7 @@ describe FakeBraintree, '.clear_log!' do
   end
 
   it 'is called by clear!' do
-    FakeBraintree.stub(:clear_log!)
+    allow(FakeBraintree).to receive(:clear_log!)
 
     FakeBraintree.clear!
 

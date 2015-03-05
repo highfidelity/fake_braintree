@@ -5,7 +5,7 @@ RSpec::Matchers.define :clear_hash_when_cleared do |property|
     expect(object.send(property.to_sym)).to be_empty
   end
 
-  failure_message_for_should do
+  failure_message do
     "Expected #{object} to clear #{property} hash after clear!, but it did not."
   end
 end
