@@ -4,6 +4,8 @@
 * Require Capybara 2.2.0+ so we can configure the API server port
 * `FakeBraintree` no longer auto-starts when it is required. You must explicitly
   call `FakeBraintree.activate!`
+* Allow associating a credit card with a subcription when calling
+  `Braintree::Subscription.create` (#80)
 
 # 0.6.0
 
