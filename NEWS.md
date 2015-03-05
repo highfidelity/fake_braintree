@@ -6,6 +6,7 @@
   call `FakeBraintree.activate!`
 * Allow associating a credit card with a subcription when calling
   `Braintree::Subscription.create` (#80)
+* Update addons/discounts when calling `Braintree::Subscription.cancel` (#84)
 
 # 0.6.0
 
