@@ -111,15 +111,27 @@ describe 'Braintree::Subscription.find' do
 
   it 'returns add-ons added with the subscription' do
     add_on_id = 'def456'
-    subscription_id = create_subscription(add_ons: { add: [{ inherited_from_id: add_on_id }] }).subscription.id
+    subscription_id = create_subscription(add_ons: { add: [{ inherited_from_id: add_on_id, amount: 10.50 }] }).subscription.id
     subscription = Braintree::Subscription.find(subscription_id)
     add_ons = subscription.add_ons
     expect(add_ons.size).to eq 1
     expect(add_ons.first.id).to eq add_on_id
+    expect(add_ons.first.amount).to eq 10.50
+  end
+
+  it 'updates existing add-ons' do
+    add_on_id = 'def456'
+    subscription_id = create_subscription(add_ons: { add: [{ inherited_from_id: add_on_id, quantity: 2 }] }).subscription.id
+    update_subscription(subscription_id, add_ons: { update: [{ existing_id: add_on_id, quantity: 5 }] })
+    subscription = Braintree::Subscription.find(subscription_id)
+    add_ons = subscription.add_ons
+    expect(add_ons.size).to eq 1
+    expect(add_ons.first.id).to eq add_on_id
+    expect(add_ons.first.quantity).to eq 5
   end
 
   it 'returns discounts added with the subscription' do
-    discount_id = 'def456'
+    discount_id = 'abc123'
     amount = BigDecimal.new('15.00')
     subscription_id = create_subscription(discounts: { add: [{ inherited_from_id: discount_id, amount: amount }]}).subscription.id
     subscription = Braintree::Subscription.find(subscription_id)
@@ -127,6 +139,17 @@ describe 'Braintree::Subscription.find' do
     expect(discounts.size).to eq 1
     expect(discounts.first.id).to eq discount_id
     expect(discounts.first.amount).to eq amount
+  end
+
+  it 'updates existing discounts' do
+    discount_id = 'abc123'
+    subscription_id = create_subscription(discounts: { add: [{ inherited_from_id: discount_id, quantity: 2 }] }).subscription.id
+    update_subscription(subscription_id, discounts: { update: [{ existing_id: discount_id, quantity: 5 }] })
+    subscription = Braintree::Subscription.find(subscription_id)
+    discounts = subscription.discounts
+    expect(discounts.size).to eq 1
+    expect(discounts.first.id).to eq discount_id
+    expect(discounts.first.quantity).to eq 5
   end
 
   it 'finds subscriptions created with custom id' do
@@ -167,6 +190,17 @@ describe 'Braintree::Subscription.cancel' do
 
     expect(Braintree::Subscription.cancel(subscription_id)).to be_success
     expect(Braintree::Subscription.find(subscription_id).status).to eq Braintree::Subscription::Status::Canceled
+  end
+
+  it 'leaves discounts and add_ons alone' do
+    discounts = { add: [{ inherited_from_id: 'abc123', quantity: 2 }] }
+    add_ons = { add: [{ inherited_from_id: 'def456', quantity: 4 }] }
+    subscription_id = create_subscription(discounts: discounts, add_ons: add_ons).subscription.id
+
+    expect(Braintree::Subscription.cancel(subscription_id)).to be_success
+    subscription = Braintree::Subscription.find(subscription_id)
+    expect(subscription.discounts).not_to be_empty
+    expect(subscription.add_ons).not_to be_empty
   end
 
   it 'cannot cancel an unknown subscription' do
