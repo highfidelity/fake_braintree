@@ -29,6 +29,25 @@ module FakeBraintree
       end
     end
 
+    # braintree.api.Client.prototype.tokenizeCard()
+    get '/merchants/:merchant_id/client_api/v1/payment_methods/credit_cards' do
+      request_hash = params
+
+      callback = request_hash.delete('callback')
+      nonce = FakeBraintree::PaymentMethod.tokenize_card(request_hash['creditCard'])
+
+      headers = {
+        'Content-Encoding' => 'gzip',
+        'Content-Type' => 'application/javascript; charset=utf-8'
+      }
+      json = {
+        creditCards: [nonce: nonce],
+        status: 201
+      }.to_json
+      response = "#{callback}(#{json})"
+      [200, headers, gzip(response)]
+    end
+
     # Braintree::Customer.create
     post '/merchants/:merchant_id/customers' do
       customer_hash = hash_from_request_body_with_key('customer')
