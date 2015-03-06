@@ -196,7 +196,7 @@ module FakeBraintree
     # Braintree::Transaction.refund
     post '/merchants/:merchant_id/transactions/:transaction_id/refund' do
       transaction          = hash_from_request_body_with_key('transaction')
-      transaction_id       = md5('#{params[:merchant_id]}#{Time.now.to_f}')
+      transaction_id       = md5("#{params[:merchant_id]}#{Time.now.to_f}")
       transaction_response = {'id' => transaction_id, 'amount' => transaction['amount'], 'type' => 'credit'}
       FakeBraintree.registry.transactions[transaction_id] = transaction_response
       gzipped_response(200, transaction_response.to_xml(root: 'transaction'))
