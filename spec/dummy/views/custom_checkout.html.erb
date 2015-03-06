@@ -31,6 +31,7 @@
           $('#status').html(nonce ? 'success' : 'failure');
           $('#nonce').html(nonce);
           $('#error').html(error);
+          $.post('/credit_cards', {payment_method_nonce: nonce});
         });
       });
     });
