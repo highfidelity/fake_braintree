@@ -6,6 +6,7 @@ require 'fake_braintree/redirect'
 require 'fake_braintree/credit_card'
 require 'fake_braintree/address'
 require 'fake_braintree/payment_method'
+require 'fake_braintree/transaction'
 
 module FakeBraintree
   class SinatraApp < Sinatra::Base
@@ -168,18 +169,13 @@ module FakeBraintree
     # Braintree::CreditCard.sale
     post '/merchants/:merchant_id/transactions' do
       if FakeBraintree.decline_all_cards?
-        gzipped_response(422, FakeBraintree.create_failure.to_xml(root: 'api_error_response'))
+        gzipped_response(422, FakeBraintree.create_failure.to_xml(root: "api_error_response"))
       else
-        transaction = hash_from_request_body_with_key('transaction')
+        data = hash_from_request_body_with_key("transaction")
         transaction_id = md5("#{params[:merchant_id]}#{Time.now.to_f}")
-        options = transaction["options"] || {}
-        status = "authorized"
-        if options.fetch("submit_for_settlement", false) == true
-          status = "submitted_for_settlement"
-        end
-        transaction_response = {'id' => transaction_id, 'amount' => transaction['amount'], 'status' => status, 'type' => 'sale'}
-        FakeBraintree.registry.transactions[transaction_id] = transaction_response
-        gzipped_response(200, transaction_response.to_xml(root: 'transaction'))
+        transaction = FakeBraintree::Transaction.new(data, transaction_id)
+        response = transaction.create
+        gzipped_response(200, response.to_xml(root: "transaction"))
       end
     end
 
