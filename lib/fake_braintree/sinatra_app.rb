@@ -70,7 +70,15 @@ module FakeBraintree
       request_hash = params
 
       callback = request_hash.delete('callback')
-      credit_cards = []
+      customer_id = request_hash['authorizationFingerprint']
+      begin
+        customer = Braintree::Customer.find(customer_id)
+        credit_cards = customer.credit_cards.collect do |card|
+          FakeBraintree::CreditCardSerializer.new(card).to_h
+        end
+      rescue Braintree::NotFoundError, ArgumentError
+        credit_cards = []
+      end
 
       headers = {
         'Content-Encoding' => 'gzip',
@@ -295,7 +303,8 @@ module FakeBraintree
 
     # Braintree::ClientToken.generate
     post '/merchants/:merchant_id/client_token' do
-      token = FakeBraintree::ClientToken.generate
+      client_token_hash = hash_from_request_body_with_key('client_token')
+      token = FakeBraintree::ClientToken.generate(client_token_hash)
       response = { value: token }.to_xml(root: :client_token)
       gzipped_response(200, response)
     end

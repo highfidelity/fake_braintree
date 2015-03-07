@@ -36,5 +36,10 @@ feature 'checkout', js: true do
     find('#submit').click
 
     expect(page).to have_content('ending in 11')
+
+    visit('/dropin_checkout')
+    within_frame('braintree-dropin-frame') do
+      expect(page).to have_content('ending in 11')
+    end
   end
 end

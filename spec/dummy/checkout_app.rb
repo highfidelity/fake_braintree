@@ -16,7 +16,7 @@ class CheckoutApp < Sinatra::Base
 
   get '/dropin_checkout' do
     populate_credit_cards
-    @token = Braintree::ClientToken.generate
+    @token = Braintree::ClientToken.generate(customer_id: @customer.id)
     erb :'dropin_checkout.html'
   end
 
