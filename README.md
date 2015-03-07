@@ -55,6 +55,10 @@ of them (yet).
 * `Braintree::TransparentRedirect.confirm` (only for creating customers)
 * `Braintree::TransparentRedirect.url`
 
+### Javascript SDK
+* `braintree.setup()`
+* `braintree.api.Client.prototype.tokenizeCard()`
+
 ## Quick start
 Require the library and activate it to start the API server:
 
