@@ -10,20 +10,6 @@ require 'fake_braintree/transaction'
 require 'fake_braintree/client_token'
 require 'fake_braintree/credit_card_serializer'
 
-class Braintree::CreditCard
-  def to_client_json
-    last_2 = last_4[-2..-1]
-    {
-      type: 'CreditCard',
-      description: "ending in #{last_2}",
-      details: {
-        cardType: card_type,
-        lastTwo: last_2
-      }
-    }
-  end
-end
-
 module FakeBraintree
   class SinatraApp < Sinatra::Base
     set :show_exceptions, false

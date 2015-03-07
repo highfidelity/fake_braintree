@@ -25,9 +25,8 @@ class CheckoutApp < Sinatra::Base
   end
 
   post '/credit_cards' do
-    customer
     Braintree::PaymentMethod.create(
-      customer_id: 'customer_id',
+      customer_id: customer.id,
       payment_method_nonce: params['payment_method_nonce']
     )
     redirect to('/credit_cards')

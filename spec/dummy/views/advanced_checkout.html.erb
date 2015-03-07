@@ -27,8 +27,9 @@
           expirationDate: $('input[name=expiration-date]').val()
         };
         client.tokenizeCard(ccInfo, function (error, nonce) {
-          $('#status').html(nonce ? 'success' : 'failure');
-          $.post('/credit_cards', {payment_method_nonce: nonce});
+          $.post('/credit_cards', {payment_method_nonce: nonce}, function() {
+            $('#status').html(nonce ? 'success' : 'failure');
+          });
         });
       });
     });
