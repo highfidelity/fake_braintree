@@ -15,16 +15,15 @@
     <% end %>
   </ul>
 
-  <form id='checkout' action='/credit_cards' method='post'>
-    <input name='number' data-braintree-name='number'>
-    <input name='expiration-date' data-braintree-name='expiration_date'>
+  <form action='/credit_cards' method='post'>
+    <div id='checkout'></div>
     <input id='submit' type='submit'>
   </div>
 
   <script>
     jQuery(function() {
       var token = $('#client-token').data('token');
-      braintree.setup(token, 'custom', {id: 'checkout'});
+      braintree.setup(token, 'dropin', {container: 'checkout'});
     });
   </script>
 </body>

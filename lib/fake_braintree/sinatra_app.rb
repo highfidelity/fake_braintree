@@ -8,12 +8,29 @@ require 'fake_braintree/address'
 require 'fake_braintree/payment_method'
 require 'fake_braintree/transaction'
 require 'fake_braintree/client_token'
+require 'fake_braintree/credit_card_serializer'
+
+class Braintree::CreditCard
+  def to_client_json
+    last_2 = last_4[-2..-1]
+    {
+      type: 'CreditCard',
+      description: "ending in #{last_2}",
+      details: {
+        cardType: card_type,
+        lastTwo: last_2
+      }
+    }
+  end
+end
 
 module FakeBraintree
   class SinatraApp < Sinatra::Base
     set :show_exceptions, false
     set :dump_errors, true
     set :raise_errors, true
+    set :public_folder, File.dirname(__FILE__) + '/braintree_assets'
+    set :protection, except: :frame_options
     disable :logging
 
     include Helpers
@@ -43,6 +60,25 @@ module FakeBraintree
       json = {
         creditCards: [nonce: nonce],
         status: 201
+      }.to_json
+      response = "#{callback}(#{json})"
+      [200, headers, gzip(response)]
+    end
+
+    # braintree.api.Client.prototype.getCreditCards()
+    get '/merchants/:merchant_id/client_api/v1/payment_methods' do
+      request_hash = params
+
+      callback = request_hash.delete('callback')
+      credit_cards = []
+
+      headers = {
+        'Content-Encoding' => 'gzip',
+        'Content-Type' => 'application/javascript; charset=utf-8'
+      }
+      json = {
+        paymentMethods: credit_cards,
+        status: 200
       }.to_json
       response = "#{callback}(#{json})"
       [200, headers, gzip(response)]
