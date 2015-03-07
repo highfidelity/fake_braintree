@@ -2,7 +2,7 @@ require 'sinatra/base'
 require 'fake_braintree/credit_card_serializer'
 
 class CheckoutApp < Sinatra::Base
-  get '/custom_checkout' do
+  get '/advanced_checkout' do
     begin
       customer = Braintree::Customer.find('customer_id')
     rescue Braintree::NotFoundError
@@ -13,7 +13,7 @@ class CheckoutApp < Sinatra::Base
     end
 
     @token = Braintree::ClientToken.generate
-    erb :'custom_checkout.html'
+    erb :'advanced_checkout.html'
   end
 
   post '/credit_cards' do
