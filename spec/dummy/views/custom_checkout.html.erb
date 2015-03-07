@@ -8,13 +8,6 @@
 <body>
   <div id='client-token' data-token='<%= @token %>'></div>
 
-  <h4> Saved Credit Cards: </h4>
-  <ul>
-    <% @credit_cards.each do |card| %>
-      <li> <%= card[:description] %> </li>
-    <% end %>
-  </ul>
-
   <form id='checkout' action='/credit_cards' method='post'>
     <input name='number' data-braintree-name='number'>
     <input name='expiration-date' data-braintree-name='expiration_date'>

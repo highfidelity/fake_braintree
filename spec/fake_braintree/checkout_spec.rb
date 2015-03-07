@@ -10,7 +10,7 @@ feature 'checkout', js: true do
     find('#submit').click
 
     find('#status', text: 'success')
-    visit('/advanced_checkout')
+    visit('/credit_cards')
 
     expect(page).to have_content('ending in 11')
   end

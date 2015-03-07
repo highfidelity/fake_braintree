@@ -8,23 +8,13 @@
 <body>
   <div id='client-token' data-token='<%= @token %>'></div>
 
-  <h4> Saved Credit Cards: </h4>
-  <ul>
-    <% @credit_cards.each do |card| %>
-      <li> <%= card[:description] %> </li>
-    <% end %>
-  </ul>
-
   <div class='form'>
     <input name='number'>
     <input name='expiration-date'>
     <input id='submit' type='submit'>
   </div>
-  <ul>
-    <li> status: <span id='status'></span> </li>
-    <li> nonce: <span id='nonce'></span> </li>
-    <li> error: <span id='error'></span> </li>
-  </ul>
+
+  <div id='status'></div>
 
   <script>
     jQuery(function() {
@@ -38,8 +28,6 @@
         };
         client.tokenizeCard(ccInfo, function (error, nonce) {
           $('#status').html(nonce ? 'success' : 'failure');
-          $('#nonce').html(nonce);
-          $('#error').html(error);
           $.post('/credit_cards', {payment_method_nonce: nonce});
         });
       });
