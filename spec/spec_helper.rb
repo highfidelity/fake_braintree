@@ -3,7 +3,7 @@ Bundler.require
 
 require 'fake_braintree'
 require 'timecop'
-require 'dummy/custom_checkout_app'
+require 'dummy/checkout_app'
 
 FakeBraintree.activate!
 

@@ -6,7 +6,15 @@
   <script src='jquery-2.1.0.js'></script>
 </head>
 <body>
-  <div id='client-token' data-token='<%= @token %>'
+  <div id='client-token' data-token='<%= @token %>'></div>
+
+  <h4> Saved Credit Cards: </h4>
+  <ul>
+    <% @credit_cards.each do |card| %>
+      <li> <%= card[:description] %> </li>
+    <% end %>
+  </ul>
+
   <div class='form'>
     <input name='number'>
     <input name='expiration-date'>
@@ -22,6 +30,7 @@
     jQuery(function() {
       var token = $('#client-token').data('token');
       var client = new braintree.api.Client({clientToken: token});
+
       $('#submit').click(function() {
         var ccInfo = {
           number: $('input[name=number]').val(),
