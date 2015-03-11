@@ -11,3 +11,4 @@ branches:
 notifications:
   email: false
 sudo: false
+script: xvfb-run bundle exec rake
