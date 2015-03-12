@@ -1,0 +1,2 @@
+spec/dummy/public/*
+lib/fake_braintree/braintree_assets/**
