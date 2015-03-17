@@ -15,7 +15,7 @@ task :update_braintree do
   version = FakeBraintree::BRAINTREE_VERSION
   puts 'Downloading braintree.js'
 
-  origin = "https://js.braintreegateway.com/js/braintree-#{version}.js"
+  origin = "https://js.braintreegateway.com/v2/braintree.js"
   target = 'spec/dummy/public/braintree.js'
   sh "curl #{origin} -o #{target}"
 end
