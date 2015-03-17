@@ -15,7 +15,7 @@ task :update_braintree do
   version = FakeBraintree::BRAINTREE_VERSION
   puts 'Downloading braintree.js'
 
-  origin = "https://js.braintreegateway.com/js/braintree-#{version}.js"
+  origin = "https://js.braintreegateway.com/v2/braintree.js"
   target = 'spec/dummy/public/braintree.js'
   sh "curl #{origin} -o #{target}"
 end
@@ -34,7 +34,8 @@ task :update_dropin do
     'modal-frame.html',
     'vendor/jquery-2.1.0.js',
     'vendor/modernizr.js',
-    'vendor/normalize.css'
+    'vendor/normalize.css', 
+    'images/2x-sf9a66b4f5a.png'
   ].each do |path|
     puts "Downloading #{path}"
     sh "curl #{origin_root + path} -o #{target_root + path} --create-dirs"
