@@ -1,5 +1,15 @@
-# fake\_braintree, a Braintree fake [![Build Status](https://secure.travis-ci.org/thoughtbot/fake_braintree.svg)](http://travis-ci.org/thoughtbot/fake_braintree)
+# We are looking for a maintainer
 
+We no longer use Braintree but we want this library to live on.
+
+If you're interested in taking over this project, reach out to the current
+maintainer, Gabe Berke-Williams, at gabe@thoughtbot.com.
+
+The number one outstanding issue is [support for Braintree's v.zero API][issue].
+
+[issue]: https://github.com/thoughtbot/fake_braintree/issues/61
+
+# fake\_braintree, a Braintree fake [![Build Status](https://secure.travis-ci.org/thoughtbot/fake_braintree.svg)](http://travis-ci.org/thoughtbot/fake_braintree)
 
 This library is a way to test [Braintree](http://www.braintreepayments.com/)
 code without hitting Braintree's servers. It uses
