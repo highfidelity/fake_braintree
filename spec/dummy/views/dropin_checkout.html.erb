@@ -6,8 +6,6 @@
   <script src='jquery-2.1.0.js'></script>
 </head>
 <body>
-  <div id='client-token' data-token='<%= @token %>'></div>
-
   <form action='/credit_cards' method='post'>
     <div id='checkout'></div>
     <input id='submit' type='submit'>
@@ -15,7 +13,7 @@
 
   <script>
     jQuery(function() {
-      var token = $('#client-token').data('token');
+      var token = <%= @token.to_json %>.replace(/\n/g, '');
       braintree.setup(token, 'dropin', {container: 'checkout'});
     });
   </script>

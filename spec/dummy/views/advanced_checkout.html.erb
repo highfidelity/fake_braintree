@@ -6,8 +6,6 @@
   <script src='jquery-2.1.0.js'></script>
 </head>
 <body>
-  <div id='client-token' data-token='<%= @token %>'></div>
-
   <div class='form'>
     <input name='number'>
     <input name='expiration-date'>
@@ -18,8 +16,8 @@
 
   <script>
     jQuery(function() {
-      var token = $('#client-token').data('token');
-      var client = new braintree.api.Client({clientToken: token});
+      var token = <%= @token.to_json %>.replace(/\n/g, '');
+      var client = new braintree.api.Client({ clientToken: token });
 
       $('#submit').click(function() {
         var ccInfo = {
@@ -27,7 +25,7 @@
           expirationDate: $('input[name=expiration-date]').val()
         };
         client.tokenizeCard(ccInfo, function (error, nonce) {
-          $.post('/credit_cards', {payment_method_nonce: nonce}, function() {
+          $.post('/credit_cards', { payment_method_nonce: nonce }, function() {
             $('#status').html(nonce ? 'success' : 'failure');
           });
         });

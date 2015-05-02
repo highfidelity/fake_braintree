@@ -25,5 +25,5 @@ Gem::Specification.new do |s|
   s.add_development_dependency 'rake'
   s.add_development_dependency 'rspec', '~> 3.2'
   s.add_development_dependency 'timecop', '~> 0.6'
-  s.add_development_dependency 'selenium-webdriver'
+  s.add_development_dependency 'capybara-webkit'
 end
