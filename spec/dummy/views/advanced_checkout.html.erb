@@ -16,7 +16,7 @@
 
   <script>
     jQuery(function() {
-      var token = <%= @token.to_json %>.replace(/\n/g, '');
+      var token = <%= @token.to_json %>;
       var client = new braintree.api.Client({ clientToken: token });
 
       $('#submit').click(function() {

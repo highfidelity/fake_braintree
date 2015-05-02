@@ -8,7 +8,7 @@ module FakeBraintree
         assetsUrl: root_url,
         authorizationFingerprint: options['customer_id']
       }.to_json
-      Base64.encode64(unencoded_client_token)
+      Base64.strict_encode64(unencoded_client_token)
     end
   end
 end

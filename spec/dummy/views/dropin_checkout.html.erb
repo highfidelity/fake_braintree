@@ -13,7 +13,7 @@
 
   <script>
     jQuery(function() {
-      var token = <%= @token.to_json %>.replace(/\n/g, '');
+      var token = <%= @token.to_json %>;
       braintree.setup(token, 'dropin', {container: 'checkout'});
     });
   </script>

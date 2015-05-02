@@ -14,7 +14,7 @@
 
   <script>
     jQuery(function() {
-      var token = <%= @token.to_json %>.replace(/\n/g, '');
+      var token = <%= @token.to_json %>;
       braintree.setup(token, 'custom', {id: 'checkout'});
     });
   </script>
