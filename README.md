@@ -215,13 +215,10 @@ useful for seeing which URLs Braintree is actually hitting.
 Credits
 -------
 
-![thoughtbot](http://thoughtbot.com/images/tm/logo.png)
-
-Fake Braintree is maintained and funded by [thoughtbot, inc](http://thoughtbot.com/community)
+Fake Braintree is maintained by [High Fidelity](http://highfidelity.com/). It was started and previously maintained
+by the great folks over at [thoughtbot, inc](https://thoughtbot.com/community).
 
 Thank you to all [the contributors](https://github.com/thoughtbot/fake_braintree/contributors)!
-
-The names and logos for thoughtbot are trademarks of thoughtbot, inc.
 
 License
 -------
