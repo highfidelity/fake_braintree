@@ -218,7 +218,7 @@ Credits
 Fake Braintree is maintained by [High Fidelity](http://highfidelity.com/). It was started and previously maintained
 by the great folks over at [thoughtbot, inc](https://thoughtbot.com/community).
 
-Thank you to all [the contributors](https://github.com/thoughtbot/fake_braintree/contributors)!
+Thank you to all [the contributors](https://github.com/highfidelity/fake_braintree/graphs/contributors)!
 
 License
 -------
