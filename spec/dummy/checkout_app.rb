@@ -1,4 +1,5 @@
 require 'sinatra/base'
+require 'tilt/erb'
 require 'fake_braintree/credit_card_serializer'
 
 class CheckoutApp < Sinatra::Base
