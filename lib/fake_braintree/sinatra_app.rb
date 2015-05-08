@@ -294,5 +294,14 @@ module FakeBraintree
       response = { value: token }.to_xml(root: :client_token)
       gzipped_response(200, response)
     end
+
+    get '/config' do
+      headers = {
+        'Content-Encoding' => 'gzip',
+        'Content-Type' => 'application/javascript; charset=utf-8'
+      }
+      response = "#{params['callback']}(#{{ status: 200 }.to_json})"
+      [200, headers, gzip(response)]
+    end
   end
 end

@@ -5,6 +5,7 @@ module FakeBraintree
       unencoded_client_token = {
         clientApiUrl: "#{root_url}/merchants/merchant_id/client_api",
         authUrl: 'http://auth.venmo.dev:9292',
+        configUrl: "#{root_url}/config",
         assetsUrl: root_url,
         authorizationFingerprint: options['customer_id']
       }.to_json
