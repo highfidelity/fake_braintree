@@ -1,8 +1,8 @@
 # New maintainer
 
-[Thoughtbot](https://github.com/thoughtbot) stopped using Braintree but wanted this library to live on. 
+[thoughtbot](https://github.com/thoughtbot) stopped using Braintree but wanted this library to live on.
 
-It was transferred on May 7th, 2015 to [High Fidelity](http://highfidelity.com). 
+It was transferred on May 7th, 2015 to [High Fidelity](http://highfidelity.com).
 
 We hope to soon start tackling the number one outstanding issue - [support for Braintree's v.zero API][issue].
 
