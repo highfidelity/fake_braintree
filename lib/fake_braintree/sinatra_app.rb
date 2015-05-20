@@ -7,12 +7,16 @@ require 'fake_braintree/credit_card'
 require 'fake_braintree/address'
 require 'fake_braintree/payment_method'
 require 'fake_braintree/transaction'
+require 'fake_braintree/client_token'
+require 'fake_braintree/credit_card_serializer'
 
 module FakeBraintree
   class SinatraApp < Sinatra::Base
     set :show_exceptions, false
     set :dump_errors, true
     set :raise_errors, true
+    set :public_folder, File.dirname(__FILE__) + '/braintree_assets'
+    set :protection, except: :frame_options
     disable :logging
 
     include Helpers
@@ -26,6 +30,52 @@ module FakeBraintree
           value
         end
       end
+    end
+
+    # braintree.api.Client.prototype.tokenizeCard()
+    get '/merchants/:merchant_id/client_api/v1/payment_methods/credit_cards' do
+      request_hash = params
+
+      callback = request_hash.delete('callback')
+      nonce = FakeBraintree::PaymentMethod.tokenize_card(request_hash['creditCard'])
+
+      headers = {
+        'Content-Encoding' => 'gzip',
+        'Content-Type' => 'application/javascript; charset=utf-8'
+      }
+      json = {
+        creditCards: [nonce: nonce],
+        status: 201
+      }.to_json
+      response = "#{callback}(#{json})"
+      [200, headers, gzip(response)]
+    end
+
+    # braintree.api.Client.prototype.getCreditCards()
+    get '/merchants/:merchant_id/client_api/v1/payment_methods' do
+      request_hash = params
+
+      callback = request_hash.delete('callback')
+      customer_id = request_hash['authorizationFingerprint']
+      begin
+        customer = Braintree::Customer.find(customer_id)
+        credit_cards = customer.credit_cards.collect do |card|
+          FakeBraintree::CreditCardSerializer.new(card).to_h
+        end
+      rescue Braintree::NotFoundError, ArgumentError
+        credit_cards = []
+      end
+
+      headers = {
+        'Content-Encoding' => 'gzip',
+        'Content-Type' => 'application/javascript; charset=utf-8'
+      }
+      json = {
+        paymentMethods: credit_cards,
+        status: 200
+      }.to_json
+      response = "#{callback}(#{json})"
+      [200, headers, gzip(response)]
     end
 
     # Braintree::Customer.create
@@ -235,6 +285,23 @@ module FakeBraintree
     post '/merchants/:merchant_id/transparent_redirect_requests/:id/confirm' do
       redirect = FakeBraintree.registry.redirects[params[:id]]
       redirect.confirm
+    end
+
+    # Braintree::ClientToken.generate
+    post '/merchants/:merchant_id/client_token' do
+      client_token_hash = hash_from_request_body_with_key('client_token')
+      token = FakeBraintree::ClientToken.generate(client_token_hash)
+      response = { value: token }.to_xml(root: :client_token)
+      gzipped_response(200, response)
+    end
+
+    get '/config' do
+      headers = {
+        'Content-Encoding' => 'gzip',
+        'Content-Type' => 'application/javascript; charset=utf-8'
+      }
+      response = "#{params['callback']}(#{{ status: 200 }.to_json})"
+      [200, headers, gzip(response)]
     end
   end
 end

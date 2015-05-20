@@ -25,6 +25,9 @@ of them (yet).
 ### Address
 * `Braintree::Address.create`
 
+### ClientToken
+* `Braintree::ClientToken.generate`
+
 ### CreditCard
 * `Braintree::CreditCard.create`
 * `Braintree::CreditCard.delete`
@@ -60,6 +63,10 @@ of them (yet).
 ### TransparentRedirect
 * `Braintree::TransparentRedirect.confirm` (only for creating customers)
 * `Braintree::TransparentRedirect.url`
+
+### Javascript SDK
+* `braintree.setup()`
+* `braintree.api.Client.prototype.tokenizeCard()`
 
 ## Quick start
 Require the library and activate it to start the API server:

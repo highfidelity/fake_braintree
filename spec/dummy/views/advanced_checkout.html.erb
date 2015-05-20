@@ -1,0 +1,36 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset='utf-8'>
+  <script src='braintree.js'></script>
+  <script src='jquery-2.1.0.js'></script>
+</head>
+<body>
+  <div class='form'>
+    <input name='number'>
+    <input name='expiration-date'>
+    <input id='submit' type='submit'>
+  </div>
+
+  <div id='status'></div>
+
+  <script>
+    jQuery(function() {
+      var token = <%= @token.to_json %>;
+      var client = new braintree.api.Client({ clientToken: token });
+
+      $('#submit').click(function() {
+        var ccInfo = {
+          number: $('input[name=number]').val(),
+          expirationDate: $('input[name=expiration-date]').val()
+        };
+        client.tokenizeCard(ccInfo, function (error, nonce) {
+          $.post('/credit_cards', { payment_method_nonce: nonce }, function() {
+            $('#status').html(nonce ? 'success' : 'failure');
+          });
+        });
+      });
+    });
+  </script>
+</body>
+</html>
