@@ -7,6 +7,7 @@ describe FakeBraintree::Registry do
   it { should have_hash_accessor_for(:transactions) }
   it { should have_hash_accessor_for(:redirects) }
   it { should have_hash_accessor_for(:credit_cards) }
+  it { should have_hash_accessor_for(:merchant_accounts) }
 end
 
 describe FakeBraintree::Registry, '#clear!' do
@@ -16,6 +17,7 @@ describe FakeBraintree::Registry, '#clear!' do
   it { should clear_hash_when_cleared(:transactions) }
   it { should clear_hash_when_cleared(:redirects) }
   it { should clear_hash_when_cleared(:credit_cards) }
+  it { should clear_hash_when_cleared(:merchant_accounts) }
 end
 
 describe FakeBraintree::Registry, '#failure?' do

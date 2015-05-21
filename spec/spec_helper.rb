@@ -29,6 +29,7 @@ RSpec.configure do |config|
   config.include BraintreeHelpers
   config.include CustomerHelpers
   config.include SubscriptionHelpers
+  config.include MerchantAccountHelpers
   config.include FakeBraintree::Helpers
 
   config.before do
