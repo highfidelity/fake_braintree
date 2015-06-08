@@ -1,2 +1,4 @@
 java_script:
   ignore_file: .javascript_ignore
+ruby:
+  config_file: .ruby-style.yml
