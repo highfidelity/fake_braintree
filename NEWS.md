@@ -9,6 +9,11 @@
 * Update addons/discounts when calling `Braintree::Subscription.cancel` (#84)
 * Support `Braintree::CreditCard.delete`
 
+# 0.7.0
+
+* Add support for Merchant Account API.
+* Update client to 2.9.0 and drop-in to 1.7.0
+
 # 0.6.0
 
 * Remove support for 1.9.2, which is EOL'd. `fake_braintree` now requires
