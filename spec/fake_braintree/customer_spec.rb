@@ -54,6 +54,32 @@ describe 'Braintree::Customer.create' do
     expect(result).to be_success
   end
 
+  it 'creates a credit card from payment method nonce in credit card hash' do
+    nonce = FakeBraintree::PaymentMethod.tokenize_card({
+      number: TEST_CC_NUMBER,
+      expiration_date: '04/2016'
+    })
+    result = Braintree::Customer.create(
+      credit_card: { payment_method_nonce: nonce }
+    )
+
+    credit_cards = Braintree::Customer.find(result.customer.id).credit_cards
+    expect(credit_cards.size).to eq 1
+    expect(credit_cards.first.expiration_date).to eq '04/2016'
+  end
+
+  it 'creates a credit card from payment method nonce' do
+    nonce = FakeBraintree::PaymentMethod.tokenize_card({
+      number: TEST_CC_NUMBER,
+      expiration_date: '04/2016'
+    })
+    result = Braintree::Customer.create('payment_method_nonce' => nonce)
+
+    credit_cards = Braintree::Customer.find(result.customer.id).credit_cards
+    expect(credit_cards.size).to eq 1
+    expect(credit_cards.first.expiration_date).to eq '04/2016'
+  end
+
   it 'does not overwrite a passed customer id' do
     result = Braintree::Customer.create({ 'id' => '123' })
 
