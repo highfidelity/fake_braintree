@@ -45,6 +45,7 @@ of them (yet).
 * `Braintree::PaymentMethod.create`
 * `Braintree::PaymentMethod.find`
 * `Braintree::PaymentMethod.update`
+* `Braintree::PaymentMethod.delete`
 
 ### Subscription
 * `Braintree::Subscription.cancel`

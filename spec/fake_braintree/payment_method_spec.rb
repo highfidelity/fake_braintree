@@ -34,6 +34,26 @@ describe 'Braintree::PaymentMethod.update' do
   end
 end
 
+describe 'Braintree::PaymentMethod.delete' do
+  it 'successfully deletes a payment method' do
+    token = cc_token # creates card
+
+    result = Braintree::PaymentMethod.delete(token)
+
+    expect(result).to eq true
+
+    expect {
+      Braintree::PaymentMethod.find(token)
+    }.to raise_error(Braintree::NotFoundError)
+  end
+
+  it 'raises an error for a nonexistent payment method' do
+    expect {
+      Braintree::PaymentMethod.delete('foo')
+    }.to raise_error(Braintree::NotFoundError)
+  end
+end
+
 describe 'Braintree::PaymentMethod.create' do
   it 'allows creating a credit card without a customer' do
     nonce = FakeBraintree::PaymentMethod.tokenize_card(build_credit_card_hash)
