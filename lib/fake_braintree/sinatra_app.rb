@@ -185,6 +185,14 @@ module FakeBraintree
       CreditCard.new(updates, options).update
     end
 
+    # Braintree::PaymentMethod.delete
+    delete '/merchants/:merchant_id/payment_methods/any/:credit_card_token' do
+      cc_hash     = {}
+      options     = {token: params[:credit_card_token], merchant_id: params[:merchant_id]}
+
+      CreditCard.new(cc_hash, options).delete
+    end
+
     # Braintree::CreditCard.delete
     delete '/merchants/:merchant_id/payment_methods/credit_card/:credit_card_token' do
       cc_hash     = {}
