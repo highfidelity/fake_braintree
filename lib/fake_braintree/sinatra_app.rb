@@ -213,7 +213,8 @@ module FakeBraintree
         else
           payment_method_hash = hash_from_request_body_with_key('payment_method')
           nonce = payment_method_hash.delete('payment_method_nonce')
-          FakeBraintree.registry.payment_methods[nonce].merge(payment_method_hash)
+          h = FakeBraintree.registry.payment_methods[nonce] || {}
+          FakeBraintree.registry.payment_methods[nonce] = h.merge(payment_method_hash)
         end
       options = {merchant_id: params[:merchant_id]}
 
