@@ -185,6 +185,14 @@ module FakeBraintree
       CreditCard.new(updates, options).update
     end
 
+    # Braintree::PaymentMethod.delete
+    delete '/merchants/:merchant_id/payment_methods/any/:credit_card_token' do
+      cc_hash     = {}
+      options     = {token: params[:credit_card_token], merchant_id: params[:merchant_id]}
+
+      CreditCard.new(cc_hash, options).delete
+    end
+
     # Braintree::CreditCard.delete
     delete '/merchants/:merchant_id/payment_methods/credit_card/:credit_card_token' do
       cc_hash     = {}
@@ -205,7 +213,8 @@ module FakeBraintree
         else
           payment_method_hash = hash_from_request_body_with_key('payment_method')
           nonce = payment_method_hash.delete('payment_method_nonce')
-          FakeBraintree.registry.payment_methods[nonce].merge(payment_method_hash)
+          h = FakeBraintree.registry.payment_methods
+          h[nonce] = (h[nonce] || {}).merge(payment_method_hash)
         end
       options = {merchant_id: params[:merchant_id]}
 

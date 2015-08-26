@@ -20,6 +20,10 @@ module FakeBraintree
       if invalid?
         response_for_invalid_card
       else
+        load_payment_method!(
+          @customer_hash.delete('payment_method_nonce'),
+          @customer_hash['credit_card'] ||= {}
+        )
         credit_cards = customer_hash['credit_cards']
         create_customer_with(customer_hash)
         credit_cards.each { |card| add_credit_card_to_registry(card) }
@@ -118,6 +122,11 @@ module FakeBraintree
 
     def generate_credit_cards_from(new_credit_card_hash)
       if new_credit_card_hash.present? && new_credit_card_hash.is_a?(Hash)
+        load_payment_method!(
+          new_credit_card_hash.delete('payment_method_nonce'),
+          new_credit_card_hash
+        )
+
         new_credit_card_hash['bin'] = new_credit_card_hash['number'][0..5]
         new_credit_card_hash['last_4'] = new_credit_card_hash['number'][-4..-1]
         new_credit_card_hash['token']  = credit_card_token(new_credit_card_hash)
@@ -198,6 +207,12 @@ module FakeBraintree
 
     def credit_card_token(credit_card_hash_without_token)
       md5("#{credit_card_hash_without_token['number']}#{@customer_hash['merchant_id']}")
+    end
+
+    def load_payment_method!(nonce, credit_card_hash)
+      return unless nonce
+      payment_method_hash = FakeBraintree.registry.payment_methods[nonce]
+      credit_card_hash.merge!(payment_method_hash)
     end
   end
 end
