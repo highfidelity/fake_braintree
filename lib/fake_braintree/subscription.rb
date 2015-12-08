@@ -87,7 +87,7 @@ module FakeBraintree
     def discounts_or_add_ons(discount_or_add_on)
       return [] unless discount_or_add_on.is_a?(Hash)
 
-      if discount_or_add_on['add']
+      if Array(discount_or_add_on['add']).any?
         discount_or_add_on['add'].map do |hsh|
           {
             'id'       => hsh['inherited_from_id'],
@@ -95,7 +95,7 @@ module FakeBraintree
             'amount'   => hsh['amount']
           }
         end
-      elsif discount_or_add_on['update']
+      elsif Array(discount_or_add_on['update']).any?
         discount_or_add_on['update'].map do |hsh|
           {
             'id'       => hsh['existing_id'],

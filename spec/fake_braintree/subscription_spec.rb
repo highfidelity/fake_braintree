@@ -152,6 +152,17 @@ describe 'Braintree::Subscription.find' do
     expect(discounts.first.quantity).to eq 5
   end
 
+  it 'updates an existing discount if an empty :add array is given' do
+    discount_id = 'abc123'
+    subscription_id = create_subscription(discounts: { add: [{ inherited_from_id: discount_id, quantity: 2 }] }).subscription.id
+    update_subscription(subscription_id, discounts: { add: [], update: [{ existing_id: discount_id, quantity: 5 }] })
+    subscription = Braintree::Subscription.find(subscription_id)
+    discounts = subscription.discounts
+    expect(discounts.size).to eq 1
+    expect(discounts.first.id).to eq discount_id
+    expect(discounts.first.quantity).to eq 5
+  end
+
   it 'finds subscriptions created with custom id' do
     create_subscription(id: 'bob-smiths-subscription')
     expect(Braintree::Subscription.find('bob-smiths-subscription')).to be_a Braintree::Subscription
