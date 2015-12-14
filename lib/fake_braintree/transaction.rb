@@ -12,7 +12,8 @@ module FakeBraintree
         "id" => id,
         "amount" => data["amount"],
         "status" => status,
-        "type" => "sale"
+        "type" => "sale",
+        "created_at" => Time.now
       }
 
       FakeBraintree.registry.transactions[id] = response

@@ -15,6 +15,7 @@ module FakeBraintree
     end
 
     def create
+      @subscription_hash['created_at'] = Time.now
       create_subscription_with(subscription_hash)
       if credit_card = FakeBraintree.registry.credit_cards[payment_method_token]
         credit_card['subscriptions'] ||= []

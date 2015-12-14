@@ -88,6 +88,12 @@ describe 'Braintree::Subscription.create' do
     end
   end
 
+  it "sets the creation time" do
+    subscription = create_subscription.subscription
+
+    creation_time = Time.parse(subscription.created_at)
+    expect(creation_time).to be_within(1).of(Time.now)
+  end
 end
 
 describe 'Braintree::Subscription.find' do

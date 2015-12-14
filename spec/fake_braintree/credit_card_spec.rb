@@ -77,6 +77,13 @@ describe 'Braintree::CreditCard.create' do
     end
   end
 
+  it "sets the creation time" do
+    credit_card = Braintree::CreditCard.create(build_credit_card_hash).credit_card
+
+    creation_time = Time.parse(credit_card.created_at)
+    expect(creation_time).to be_within(1).of(Time.now)
+  end
+
   def build_credit_card_hash
     {
       customer_id: @customer && @customer.id,
