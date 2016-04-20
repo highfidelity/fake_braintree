@@ -28,6 +28,7 @@ module FakeBraintree
         create_customer_with(customer_hash)
         credit_cards.each { |card| add_credit_card_to_registry(card) }
         set_default_credit_card credit_cards.first
+        @customer_hash['created_at'] = Time.now
         response_for_created_customer(customer_hash)
       end
     end

@@ -10,6 +10,7 @@ module FakeBraintree
 
     def create
       @address['id'] = generate_id
+      @address['created_at'] = Time.now
       FakeBraintree.registry.addresses[id] = @address
       customer['addresses'] << @address
       response_for_updated_address

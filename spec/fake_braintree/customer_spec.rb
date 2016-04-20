@@ -114,6 +114,18 @@ describe 'Braintree::Customer.create' do
     expect(billing_address.street_address).to eq '1 E Main St'
     expect(billing_address.postal_code).to eq '60622'
   end
+
+  it "sets the creation time" do
+    customer = Braintree::Customer.create(
+      credit_card: {
+        number: TEST_CC_NUMBER,
+        expiration_date: '04/2016'
+      }
+    ).customer
+
+    creation_time = Time.parse(customer.created_at)
+    expect(creation_time).to be_within(1).of(Time.now)
+  end
 end
 
 describe 'Braintree::Customer.create', 'when passed verify_card: true' do

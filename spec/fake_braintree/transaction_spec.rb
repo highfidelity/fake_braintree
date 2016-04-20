@@ -11,6 +11,16 @@ describe FakeBraintree::SinatraApp do
       expect(result.transaction.type).to eq 'sale'
     end
 
+    it "sets the creation time" do
+      transaction = Braintree::Transaction.sale(
+        payment_method_token: cc_token,
+        amount: 10.00
+      ).transaction
+
+      creation_time = Time.parse(transaction.created_at)
+      expect(creation_time).to be_within(1).of(Time.now)
+    end
+
     context 'when all cards are declined' do
       before { FakeBraintree.decline_all_cards! }
 
@@ -76,6 +86,13 @@ describe FakeBraintree::SinatraApp do
     it 'successfully refunds a transaction' do
       result = Braintree::Transaction.refund(create_id('foobar'), '1')
       expect(result).to be_success
+    end
+
+    it "sets the creation time" do
+      transaction = Braintree::Transaction.refund(create_id('foobar'), '1').transaction
+
+      creation_time = Time.parse(transaction.created_at)
+      expect(creation_time).to be_within(1).of(Time.now)
     end
   end
 end
