@@ -10,6 +10,8 @@ module FakeBraintree
       set_expiration_month_and_year
       set_last_4
       set_unique_number_identifier
+      @hash['debit'] = 'Unknown'
+      @hash['durbin_regulated'] = 'Unknown'
     end
 
     def create
