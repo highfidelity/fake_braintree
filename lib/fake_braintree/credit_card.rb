@@ -10,8 +10,8 @@ module FakeBraintree
       set_expiration_month_and_year
       set_last_4
       set_unique_number_identifier
-      @hash['debit'] = 'Unknown'
-      @hash['durbin_regulated'] = 'Unknown'
+      set_debit
+      set_durbin_regulated
     end
 
     def create
@@ -146,6 +146,35 @@ module FakeBraintree
     def set_unique_number_identifier
       @hash["unique_number_identifier"] = number
     end    
+
+    def set_debit
+      fixture_credit_cards = [
+        '4500600000000061',
+        '378282246310005',
+        '3530111333300000',
+        '6011111111111117',
+        '4217651111111119',
+        '4009348888881881',
+        '4111111111111111',
+        '371449635398431'
+      ]
+
+      if fixture_credit_cards.include? number
+        @hash['debit'] = 'No'
+      else
+        @hash['debit'] = 'Yes'
+      end
+    end
+
+    def set_durbin_regulated
+      fixture_durbin_debit_cards = ['4005519200000004']
+
+      if fixture_durbin_debit_cards.include? number
+        @hash['durbin_regulated'] = 'Yes'
+      else
+        @hash['durbin_regulated'] = 'No'
+      end
+    end
 
     def generate_token
       md5("#{@hash['number']}#{@hash['merchant_id']}")
