@@ -40,7 +40,7 @@ describe 'Braintree::PaymentMethod.delete' do
 
     result = Braintree::PaymentMethod.delete(token)
 
-    expect(result).to eq true
+    expect(result).to be_success
 
     expect {
       Braintree::PaymentMethod.find(token)
