@@ -1,3 +1,49 @@
+# HEAD (unreleased)
+
+* Allow configuring API server port (#73)
+* Require Capybara 2.2.0+ so we can configure the API server port
+* `FakeBraintree` no longer auto-starts when it is required. You must explicitly
+  call `FakeBraintree.activate!`
+* Allow associating a credit card with a subcription when calling
+  `Braintree::Subscription.create` (#80)
+* Update addons/discounts when calling `Braintree::Subscription.cancel` (#84)
+* Support `Braintree::CreditCard.delete`
+
+# 0.7.0
+
+* Add support for Merchant Account API.
+* Update client to 2.9.0 and drop-in to 1.7.0
+
+# 0.6.0
+
+* Remove support for 1.9.2, which is EOL'd. `fake_braintree` now requires
+  Ruby 1.9.3+.
+* Use WEBrick as the Capybara server handler in all cases. Previously we used
+  Thin and fell back to Puma, which caused problems like issue #54.
+* Customers and Subscriptions that were stored with a custom (non-integer) ID
+  can be retrieved (#67)
+* Braintree::Subscription has associated dates thanks to @1st8 (#66):
+  - `next_billing_date` is 1 month from billing period start date
+  - `billing_day_of_month` is the next billing date's mday, but is true to
+    Braintree's [exceptional handling of the 31st day of the
+    month](https://www.braintreepayments.com/docs/ruby/subscriptions/details#attributes_that_need_a_bit_more_explaining)
+  - `billing_period_start_date` is either the provided start date or today
+  - `billing_period_end_date` is the day before the next billing date
+* Save discounts amount when adding them to a Subscription (#72)
+
+# 0.5.0
+
+* Remove unused `i18n` gem dependency (#56).
+* Set `credit_card.card_type`, `credit_card.last_4`, and
+  `credit_card.unique_number_identifier`. Ensure `credit_card.bin` is always
+  set (#47).
+* Support new Braintree credit card API URLs
+* Requires Braintree ~> 2.32 instead of Braintree ~> 2.5.
+
+# 0.4.3
+
+* Add missing quote.
+
 # 0.4.2
 
 * Add support for Puma server for JRuby support (#59). `fake_braintree` will

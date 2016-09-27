@@ -1,4 +1,9 @@
-We love pull requests. Here's a quick guide:
+We love pull requests. We expect users to follow our
+[code of conduct] while submitting code or comments.
+
+[code of conduct]: https://thoughtbot.com/open-source-code-of-conduct
+
+Here's a quick guide:
 
 1. Fork the repo.
 
@@ -12,7 +17,6 @@ a test!
 4. Make the test pass.
 
 5. Push to your fork and submit a pull request.
-
 
 At this point you're waiting on us. We like to at least comment on, if not
 accept, pull requests within three business days (and, typically, one business

@@ -1,31 +1,18 @@
+require 'forwardable'
 require 'capybara'
-require 'capybara/server'
+require 'fake_braintree/sinatra_app'
 
 class FakeBraintree::Server
+  SERVER_HOST = '127.0.0.1'
 
-  def boot
-    with_runner do
-      port = ENV.fetch('GATEWAY_PORT', Capybara.server_port)
-      server = Capybara::Server.new(FakeBraintree::SinatraApp, port)
-      server.boot
-      ENV['GATEWAY_PORT'] = port.to_s
-    end
-  end
+  extend Forwardable
+  def_delegators :@server, :port, :boot
 
-  private
+  def initialize(options = {})
+    app = FakeBraintree::SinatraApp
 
-  def with_runner
-    default_server_process = Capybara.server
-    Capybara.server do |app, port|
-      handler.run(app, Port: port)
-    end
-    yield
-  ensure
-    Capybara.server(&default_server_process)
-  end
-
-  def handler
-      require 'rack/handler/thin'
-      Rack::Handler::Thin
+    port = ENV.fetch('GATEWAY_PORT', Capybara.server_port)
+    ENV['GATEWAY_PORT'] = port.to_s
+    @server = Capybara::Server.new(app, port, SERVER_HOST)
   end
 end

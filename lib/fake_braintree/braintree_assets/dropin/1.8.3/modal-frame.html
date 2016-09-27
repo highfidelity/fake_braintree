@@ -1,0 +1,25 @@
+<!doctype html>
+  <!--[if lte IE 8]><html class="oldie ie8" lang="en"> <![endif]-->
+  <!--[if IE 9]><html class="ie9 modal-root"> <![endif]-->
+  <html class="is-modern modal-root">
+  <head>
+    <title>Modal</title>
+    <meta charset="UTF-8">
+    <link href="/dropin/1.8.3/vendor/normalize.css" rel="stylesheet">
+    <link href="/dropin/1.8.3/braintree-dropin.css" rel="stylesheet">
+    <script src="/dropin/1.8.3/vendor/modernizr.js"></script>
+  </head>
+  <body class="modal-frame">
+    <div id="container"></div>
+    <div class="modal-wrap"></div>
+    <!--[if LT IE  9]><script src="/dropin/1.8.3/vendor/jquery-1.11.0.js"></script><![endif]-->
+    <!--[if gte IE 9]><!--><script src="/dropin/1.8.3/vendor/jquery-2.1.0.js"></script><!--<![endif]-->
+    <script src="/dropin/1.8.3/braintree-dropin-internal.min.js"></script>
+    <script>
+      var modalFrame = new braintree.dropin.ModalFrame({
+        container: document.getElementById("container")
+      });
+      modalFrame.initialize();
+    </script>
+  </body>
+</html>

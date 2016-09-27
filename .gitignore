@@ -4,6 +4,4 @@ Gemfile.lock
 pkg/*
 tmp/
 tags
-
-# bundle install --binstubs=bundler_binstubs
-bundler_binstubs
+.ruby-version

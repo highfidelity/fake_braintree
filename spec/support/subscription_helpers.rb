@@ -7,4 +7,8 @@ module SubscriptionHelpers
 
     Braintree::Subscription.create(options)
   end
+
+  def update_subscription(subscription_id, user_options = {})
+    Braintree::Subscription.update(subscription_id, user_options)
+  end
 end

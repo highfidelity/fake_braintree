@@ -1,3 +1,5 @@
+require 'fake_braintree/helpers'
+
 module FakeBraintree
   class Subscription
     include Helpers
@@ -13,7 +15,12 @@ module FakeBraintree
     end
 
     def create
+      @subscription_hash['created_at'] = Time.now
       create_subscription_with(subscription_hash)
+      if credit_card = FakeBraintree.registry.credit_cards[payment_method_token]
+        credit_card['subscriptions'] ||= []
+        credit_card['subscriptions'] << subscription_hash
+      end
       response_for_created_subscription(subscription_hash)
     end
 
@@ -26,14 +33,26 @@ module FakeBraintree
       end
     end
 
+    def cancel
+      if subscription_exists_in_registry?
+        canceled_subscription = update_existing_subscription('status' => canceled_status)
+        response_for_canceled_subscription(canceled_subscription)
+      else
+        response_for_subscription_not_found
+      end
+    end
+
     private
 
     def subscription_hash
       @subscription_hash.merge(
         'transactions' => [],
-        'add_ons' => added_add_ons,
-        'discounts' => added_discounts,
-        'next_billing_date' => braintree_formatted_date(1.month.from_now)
+        'add_ons' => add_ons,
+        'discounts' => discounts,
+        'next_billing_date' => braintree_formatted_date(next_billing_date),
+        'billing_day_of_month' => billing_day_of_month,
+        'billing_period_start_date' => braintree_formatted_date(billing_period_start_date),
+        'billing_period_end_date' => braintree_formatted_date(billing_period_end_date)
       )
     end
 
@@ -43,7 +62,7 @@ module FakeBraintree
     end
 
     def create_subscription_with(new_subscription_hash)
-      FakeBraintree.registry.subscriptions[new_subscription_hash['id']] = new_subscription_hash
+      FakeBraintree.registry.subscriptions[new_subscription_hash['id'].to_s] = new_subscription_hash
     end
 
     def subscription_from_registry
@@ -58,20 +77,52 @@ module FakeBraintree
       date.strftime('%Y-%m-%d')
     end
 
-    def added_add_ons
-      if @subscription_hash['add_ons'].is_a?(Hash) && @subscription_hash['add_ons']['add']
-        @subscription_hash['add_ons']['add'].map { |add_on| { 'id' => add_on['inherited_from_id'] } }
+    def add_ons
+      discounts_or_add_ons(@subscription_hash['add_ons'])
+    end
+
+    def discounts
+      discounts_or_add_ons(@subscription_hash['discounts'])
+    end
+
+    def discounts_or_add_ons(discount_or_add_on)
+      return [] unless discount_or_add_on.is_a?(Hash)
+
+      if Array(discount_or_add_on['add']).any?
+        discount_or_add_on['add'].map do |hsh|
+          {
+            'id'       => hsh['inherited_from_id'],
+            'quantity' => hsh['quantity'],
+            'amount'   => hsh['amount']
+          }
+        end
+      elsif Array(discount_or_add_on['update']).any?
+        discount_or_add_on['update'].map do |hsh|
+          {
+            'id'       => hsh['existing_id'],
+            'quantity' => hsh['quantity'],
+            'amount'   => hsh['amount']
+          }
+        end
       else
         []
       end
     end
 
-    def added_discounts
-      if @subscription_hash['discounts'].is_a?(Hash) && @subscription_hash['discounts']['add']
-        @subscription_hash['discounts']['add'].map { |discount| { 'id' => discount['inherited_from_id'] } }
-      else
-        []
-      end
+    def next_billing_date
+      billing_period_start_date + 1.month
+    end
+
+    def billing_day_of_month
+      next_billing_date.mday > 28 ? 31 : next_billing_date.mday
+    end
+
+    def billing_period_start_date
+      @billing_period_start_date ||= Date.today
+    end
+
+    def billing_period_end_date
+      next_billing_date - 1.day
     end
 
     def set_subscription_id
@@ -98,6 +149,10 @@ module FakeBraintree
       Braintree::Subscription::Status::Active
     end
 
+    def canceled_status
+      Braintree::Subscription::Status::Canceled
+    end
+
     def response_for_created_subscription(hash)
       gzipped_response(201, hash.to_xml(root: 'subscription'))
     end
@@ -106,8 +161,8 @@ module FakeBraintree
       gzipped_response(404, {})
     end
 
-    def response_for_created_subscription(hash)
-      gzipped_response(201, hash.to_xml(root: 'subscription'))
+    def response_for_canceled_subscription(hash)
+      gzipped_response(200, hash.to_xml(root: 'subscription'))
     end
   end
 end

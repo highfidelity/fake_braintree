@@ -1,0 +1,22 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset='utf-8'>
+  <script src='braintree.js'></script>
+  <script src='jquery-2.1.0.js'></script>
+</head>
+<body>
+  <form id='checkout' action='/credit_cards' method='post'>
+    <input name='number' data-braintree-name='number'>
+    <input name='expiration-date' data-braintree-name='expiration_date'>
+    <input id='submit' type='submit'>
+  </div>
+
+  <script>
+    jQuery(function() {
+      var token = <%= @token.to_json %>;
+      braintree.setup(token, 'custom', {id: 'checkout'});
+    });
+  </script>
+</body>
+</html>

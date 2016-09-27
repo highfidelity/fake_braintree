@@ -1,3 +1,6 @@
+require 'fake_braintree/helpers'
+require 'fake_braintree/valid_credit_cards'
+
 module FakeBraintree
   class CreditCard
     include Helpers
@@ -17,11 +20,12 @@ module FakeBraintree
     def create
       if valid_number? and FakeBraintree.registry.customers.key?(@hash['customer_id'])
         if token.nil?
-          @hash['token'] = generate_token
+          @credit_card['token'] = generate_token
         end
-        FakeBraintree.registry.credit_cards[token] = @hash
-        if customer = FakeBraintree.registry.customers[@hash['customer_id']]
-          customer['credit_cards'] << @hash
+        @credit_card['created_at'] = Time.now
+        FakeBraintree.registry.credit_cards[token] = @credit_card
+        if customer = FakeBraintree.registry.customers[@credit_card['customer_id']]
+          customer['credit_cards'] << @credit_card
           update_default_card
         end
         response_for_updated_card
@@ -39,15 +43,24 @@ module FakeBraintree
       end
     end
 
+    def delete
+      if credit_card_exists_in_registry?
+        delete_credit_card
+        deletion_response
+      else
+        response_for_card_not_found
+      end
+    end
+
     def to_xml
-      @hash.to_xml(root: 'credit_card')
+      @credit_card.to_xml(root: 'credit_card')
     end
 
     def valid_number?
       if FakeBraintree.decline_all_cards?
         false
       elsif FakeBraintree.verify_all_cards
-        FakeBraintree::VALID_CREDIT_CARDS.include?(@hash['number'])
+        FakeBraintree::VALID_CREDIT_CARDS.include?(@credit_card['number'])
       else
         true
       end
@@ -56,23 +69,27 @@ module FakeBraintree
     private
 
     def update_existing_credit_card
-      @hash = credit_card_from_registry.merge!(@hash)
+      @credit_card = credit_card_from_registry.merge!(@credit_card)
       update_default_card
     end
 
-    # When updating a card that has 'default' set to true, make sure
-    # only one card has the flag.
+    # When updating a card that has 'default' set to true, make sure only one
+    # card has the flag.
     def update_default_card
-      if @hash['default']
-        FakeBraintree.registry.customers[@hash['customer_id']]['credit_cards'].each do |card|
+      if @credit_card['default']
+        FakeBraintree.registry.customers[@credit_card['customer_id']]['credit_cards'].each do |card|
           card['default'] = false
         end
-        @hash['default'] = true
+        @credit_card['default'] = true
       end
     end
 
+    def delete_credit_card
+      FakeBraintree.registry.credit_cards.delete(token)
+    end
+
     def response_for_updated_card
-      gzipped_response(200, @hash.to_xml(root: 'credit_card'))
+      gzipped_response(200, @credit_card.to_xml(root: 'credit_card'))
     end
 
     def credit_card_exists_in_registry?
@@ -88,10 +105,15 @@ module FakeBraintree
     end
 
     def response_for_invalid_card
-      gzipped_response(422, FakeBraintree.failure_response.merge(
-          'params' => {credit_card: @hash}
-        ).
-        to_xml(root: 'api_error_response'))
+      body = FakeBraintree.failure_response.merge(
+        'params' => {credit_card: @credit_card}
+      ).to_xml(root: 'api_error_response')
+
+      gzipped_response(422, body)
+    end
+
+    def deletion_response
+      gzipped_response(200, '')
     end
 
     def expiration_month
@@ -103,7 +125,7 @@ module FakeBraintree
     end
 
     def set_up_credit_card(credit_card_hash_from_params, options)
-      @hash = {
+      @credit_card = {
         'token' => options[:token],
         'merchant_id' => options[:merchant_id],
         'customer_id' => options[:customer_id],
@@ -112,8 +134,8 @@ module FakeBraintree
     end
 
     def set_billing_address
-      if @hash["billing_address_id"]
-        @hash["billing_address"] = FakeBraintree.registry.addresses[@hash['billing_address_id']]
+      if @credit_card["billing_address_id"]
+        @credit_card["billing_address"] = FakeBraintree.registry.addresses[@credit_card['billing_address_id']]
       end
     end
 
@@ -127,11 +149,11 @@ module FakeBraintree
 
     def set_expiration_month_and_year
       if expiration_month
-        @hash['expiration_month'] = expiration_month
+        @credit_card['expiration_month'] = expiration_month
       end
 
       if expiration_year
-        @hash['expiration_year'] = expiration_year
+        @credit_card['expiration_year'] = expiration_year
       end
     end
 
@@ -177,16 +199,16 @@ module FakeBraintree
     end
 
     def generate_token
-      md5("#{@hash['number']}#{@hash['merchant_id']}")
+      md5("#{@credit_card['number']}#{@credit_card['merchant_id']}")
     end
 
     def token
-      @hash['token']
+      @credit_card['token']
     end
 
     def expiration_date_parts
-      if @hash.key?('expiration_date')
-        @hash['expiration_date'].split('/')
+      if @credit_card.key?('expiration_date')
+        @credit_card['expiration_date'].split('/')
       else
         []
       end

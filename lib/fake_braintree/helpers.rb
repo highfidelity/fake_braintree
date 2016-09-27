@@ -1,6 +1,5 @@
 require 'digest/md5'
-require 'active_support'
-require 'active_support/core_ext'
+require 'active_support/gzip'
 
 module FakeBraintree
   module Helpers
@@ -8,8 +7,8 @@ module FakeBraintree
       ActiveSupport::Gzip.compress(content)
     end
 
-    def gzipped_response(status_code, uncompressed_content)
-      [status_code, { 'Content-Encoding' => 'gzip' }, gzip(uncompressed_content)]
+    def gzipped_response(status_code, uncompressed_body)
+      [status_code, { 'Content-Encoding' => 'gzip' }, gzip(uncompressed_body)]
     end
 
     def md5(content)

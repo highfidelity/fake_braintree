@@ -1,10 +1,23 @@
 require 'sinatra/base'
+require 'active_support/core_ext/hash/conversions'
+require 'fake_braintree/customer'
+require 'fake_braintree/subscription'
+require 'fake_braintree/redirect'
+require 'fake_braintree/credit_card'
+require 'fake_braintree/address'
+require 'fake_braintree/payment_method'
+require 'fake_braintree/transaction'
+require 'fake_braintree/client_token'
+require 'fake_braintree/credit_card_serializer'
+require 'fake_braintree/merchant_account'
 
 module FakeBraintree
   class SinatraApp < Sinatra::Base
     set :show_exceptions, false
     set :dump_errors, true
     set :raise_errors, true
+    set :public_folder, File.dirname(__FILE__) + '/braintree_assets'
+    set :protection, except: :frame_options
     enable :logging
 
     include Helpers
@@ -18,6 +31,52 @@ module FakeBraintree
           value
         end
       end
+    end
+
+    # braintree.api.Client.prototype.tokenizeCard()
+    get '/merchants/:merchant_id/client_api/v1/payment_methods/credit_cards' do
+      request_hash = params
+
+      callback = request_hash.delete('callback')
+      nonce = FakeBraintree::PaymentMethod.tokenize_card(request_hash['creditCard'])
+
+      headers = {
+        'Content-Encoding' => 'gzip',
+        'Content-Type' => 'application/javascript; charset=utf-8'
+      }
+      json = {
+        creditCards: [nonce: nonce],
+        status: 201
+      }.to_json
+      response = "#{callback}(#{json})"
+      [200, headers, gzip(response)]
+    end
+
+    # braintree.api.Client.prototype.getCreditCards()
+    get '/merchants/:merchant_id/client_api/v1/payment_methods' do
+      request_hash = params
+
+      callback = request_hash.delete('callback')
+      customer_id = request_hash['authorizationFingerprint']
+      begin
+        customer = Braintree::Customer.find(customer_id)
+        credit_cards = customer.credit_cards.collect do |card|
+          FakeBraintree::CreditCardSerializer.new(card).to_h
+        end
+      rescue Braintree::NotFoundError, ArgumentError
+        credit_cards = []
+      end
+
+      headers = {
+        'Content-Encoding' => 'gzip',
+        'Content-Type' => 'application/javascript; charset=utf-8'
+      }
+      json = {
+        paymentMethods: credit_cards,
+        status: 200
+      }.to_json
+      response = "#{callback}(#{json})"
+      [200, headers, gzip(response)]
     end
 
     # Braintree::Customer.create
@@ -84,9 +143,27 @@ module FakeBraintree
 
     # Braintree::Subscription.cancel
     put '/merchants/:merchant_id/subscriptions/:id/cancel' do
-      updates = {'status' => Braintree::Subscription::Status::Canceled}
       options = {id: params[:id], merchant_id: params[:merchant_id]}
-      Subscription.new(updates, options).update
+      Subscription.new({}, options).cancel
+    end
+
+    # Braintree::PaymentMethod.find
+    get '/merchants/:merchant_id/payment_methods/any/:token' do
+      credit_card = FakeBraintree.registry.credit_cards[params[:token]]
+      if credit_card
+        gzipped_response(200, credit_card.to_xml(root: 'credit_card'))
+      else
+        gzipped_response(404, {})
+      end
+    end
+
+    # Braintree::PaymentMethod.update
+    put '/merchants/:merchant_id/payment_methods/any/:token' do
+      credit_card = FakeBraintree.registry.credit_cards[params[:token]]
+      updates     = hash_from_request_body_with_key('payment_method')
+      options     = {token: params[:token], merchant_id: params[:merchant_id]}
+
+      CreditCard.new(updates, options).update
     end
 
     # Braintree::CreditCard.find (old and new client library)
@@ -115,7 +192,18 @@ module FakeBraintree
 
     # Braintree::CreditCard.create
     post '/merchants/:merchant_id/payment_methods' do
-      credit_card_hash = hash_from_request_body_with_key('credit_card')
+      request_hash = Hash.from_xml(request.body)
+      request.body.rewind
+
+      credit_card_hash =
+        if request_hash.key?('credit_card')
+          hash_from_request_body_with_key('credit_card')
+        else
+          payment_method_hash = hash_from_request_body_with_key('payment_method')
+          nonce = payment_method_hash.delete('payment_method_nonce')
+          h = FakeBraintree.registry.payment_methods
+          h[nonce] = (h[nonce] || {}).merge(payment_method_hash)
+        end
       options = {merchant_id: params[:merchant_id]}
 
       if credit_card_hash['options']
@@ -129,7 +217,7 @@ module FakeBraintree
     # Braintree::CreditCard.sale
     post '/merchants/:merchant_id/transactions' do
       if FakeBraintree.decline_all_cards?
-        gzipped_response(422, FakeBraintree.create_failure.to_xml(root: 'api_error_response'))
+        gzipped_response(422, FakeBraintree.create_failure.to_xml(root: "api_error_response"))
       else
         transaction = hash_from_request_body_with_key('transaction')
         card = FakeBraintree.registry.credit_cards[transaction['payment_method_token']]
@@ -169,7 +257,7 @@ module FakeBraintree
       gzipped_response(200, transaction_response.to_xml(root: 'transaction'))
     end
 
-
+    # Braintree:Transaction.submit_for_settlement
     put '/merchants/:merchant_id/transactions/:transaction_id/submit_for_settlement' do
       transaction = FakeBraintree.registry.transactions[params[:transaction_id]]
       transaction_response = {'id' => transaction['id'],
@@ -208,6 +296,47 @@ module FakeBraintree
     post '/merchants/:merchant_id/transparent_redirect_requests/:id/confirm' do
       redirect = FakeBraintree.registry.redirects[params[:id]]
       redirect.confirm
+    end
+
+    # Braintree::ClientToken.generate
+    post '/merchants/:merchant_id/client_token' do
+      client_token_hash = hash_from_request_body_with_key('client_token')
+      token = FakeBraintree::ClientToken.generate(client_token_hash)
+      response = { value: token }.to_xml(root: :client_token)
+      gzipped_response(200, response)
+    end
+
+    get '/config' do
+      headers = {
+        'Content-Encoding' => 'gzip',
+        'Content-Type' => 'application/javascript; charset=utf-8'
+      }
+      response = "#{params['callback']}(#{{ status: 200 }.to_json})"
+      [200, headers, gzip(response)]
+    end
+
+    #Braintree::MerchantAccount.find
+    get '/merchants/:merchant_id/merchant_accounts/:merchant_account_id' do
+      merchant_account = FakeBraintree.registry.merchant_accounts[params[:merchant_account_id]]
+      if merchant_account
+        gzipped_response(200, merchant_account.to_xml(root: 'merchant_account'))
+      else
+        gzipped_response(404, {})
+      end
+    end
+
+    # Braintree::MerchantAccount.update
+    put '/merchants/:merchant_id/merchant_accounts/:merchant_account_id/update_via_api' do
+      merchant_account_hash = hash_from_request_body_with_key('merchant_account')
+      options = {id: params[:merchant_account_id], merchant_id: params[:merchant_id]}
+      MerchantAccount.new(merchant_account_hash, options).update
+    end
+
+    # Braintree::MerchantAccount.create
+    post '/merchants/:merchant_id/merchant_accounts/create_via_api' do
+      merchant_account_hash = hash_from_request_body_with_key('merchant_account')
+      options = {merchant_id: params[:merchant_id]}
+      MerchantAccount.new(merchant_account_hash, options).create
     end
   end
 end

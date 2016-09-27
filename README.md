@@ -1,5 +1,14 @@
-# fake\_braintree, a Braintree fake [![Build Status](https://secure.travis-ci.org/thoughtbot/fake_braintree.png)](http://travis-ci.org/thoughtbot/fake_braintree)
+# New maintainer
 
+[thoughtbot](https://github.com/thoughtbot) stopped using Braintree but wanted this library to live on.
+
+It was transferred on May 7th, 2015 to [High Fidelity](http://highfidelity.com).
+
+We hope to soon start tackling the number one outstanding issue - [support for Braintree's v.zero API][issue].
+
+[issue]: https://github.com/thoughtbot/fake_braintree/issues/61
+
+# fake\_braintree, a Braintree fake [![Build Status](https://secure.travis-ci.org/highfidelity/fake_braintree.svg)](http://travis-ci.org/highfidelity/fake_braintree)
 
 This library is a way to test [Braintree](http://www.braintreepayments.com/)
 code without hitting Braintree's servers. It uses
@@ -7,7 +16,6 @@ code without hitting Braintree's servers. It uses
 to intercept all of the calls from Braintree's Ruby library and returns XML that
 the Braintree library can parse. The whole point is not to hit the Braintree
 API.
-
 
 It supports a lot of Braintree methods, but it does not support every single one
 of them (yet).
@@ -17,8 +25,12 @@ of them (yet).
 ### Address
 * `Braintree::Address.create`
 
+### ClientToken
+* `Braintree::ClientToken.generate`
+
 ### CreditCard
 * `Braintree::CreditCard.create`
+* `Braintree::CreditCard.delete`
 * `Braintree::CreditCard.find`
 * `Braintree::CreditCard.sale`
 * `Braintree::CreditCard.update`
@@ -28,6 +40,12 @@ of them (yet).
 * `Braintree::Customer.delete`
 * `Braintree::Customer.find`
 * `Braintree::Customer.update`
+
+### PaymentMethod
+* `Braintree::PaymentMethod.create`
+* `Braintree::PaymentMethod.find`
+* `Braintree::PaymentMethod.update`
+* `Braintree::PaymentMethod.delete`
 
 ### Subscription
 * `Braintree::Subscription.cancel`
@@ -41,15 +59,25 @@ of them (yet).
 * `Braintree::Transaction.refund`
 * `Braintree::Transaction.sale`
 * `Braintree::Transaction.void`
+* `Braintree::Transaction.submit_for_settlement`
 
 ### TransparentRedirect
 * `Braintree::TransparentRedirect.confirm` (only for creating customers)
 * `Braintree::TransparentRedirect.url`
 
+### Javascript SDK
+* `braintree.setup()`
+* `braintree.api.Client.prototype.tokenizeCard()`
+
 ## Quick start
-Just require the library and you're good to go:
+Require the library and activate it to start the API server:
 
     require 'fake_braintree'
+    FakeBraintree.activate!
+
+To run the server on a specific port, pass in the `:gateway_port` option:
+
+    FakeBraintree.activate!(gateway_port: 1234)
 
 `FakeBraintree.clear!` will clear all data, which you almost certainly want to
 do before each test.
@@ -58,6 +86,7 @@ Full example:
 
     # spec/spec_helper.rb
     require 'fake_braintree'
+    FakeBraintree.activate!
 
     RSpec.configure do |c|
       c.before do
@@ -69,34 +98,26 @@ If you're using Cucumber, add this too:
 
     # features/support/env.rb
     require 'fake_braintree'
+    FakeBraintree.activate!
 
     Before do
       FakeBraintree.clear!
     end
 
-## Spork
+It is advised to run your tests with `js: true` (RSpec) or `@javascript`
+(Cucumber), so that the requests correctly go through `FakeBraintree`. You might
+want to take a look at
+[capybara-webkit](https://github.com/thoughtbot/capybara-webkit).
 
-To use fake\_braintree with Spork, do this:
+## Don't set the Braintree environment
 
-    # Gemfile
-    group :test do
-      gem 'fake_braintree', require: false
-    end
+`fake_braintree` sets `Braintree::Configuration.environment = :development`. If
+your code sets it to anything else (like `:sandbox`), then `fake_braintree` won't
+work.
 
-    # spec/spec_helper.rb
-    Spork.each_run do
-      require 'fake_braintree'
-      # ...other FakeBraintree configuration, for example:
-      # FakeBraintree.verify_all_cards!
-    end
+# Credit Cards
 
-    # features/support/env.rb
-    Spork.each_run do
-      require 'fake_braintree'
-      # ...other FakeBraintree configuration, for example:
-      # FakeBraintree.verify_all_cards!
-    end
-
+* `credit_card.card_type` will always be `"FakeBraintree"`.
 
 ## Verifying credit cards
 
@@ -150,10 +171,13 @@ call it with no arguments.
 
 Full example:
 
-    transaction = FakeBraintree.generate_transaction(amount: '20.00',
-                                                     status: Braintree::Transaction::Status::Settled,
-                                                     subscription_id: 'foobar',
-                                                     created_at: Time.now + 60)
+    transaction = FakeBraintree.generate_transaction(
+      amount: '20.00',
+      status: Braintree::Transaction::Status::Settled,
+      subscription_id: 'foobar',
+      created_at: Time.now + 60
+    )
+
     p transaction
     # {
     #   "status_history" =>
@@ -166,16 +190,43 @@ Full example:
     #   "subscription_id" => "foobar"
     # }
 
+Note that the generated transaction is not saved in `fake_braintree` - the
+method just gives you a hash.
+
+## Adding your own transactions
+
+If you want `fake_braintree` to be aware of a transaction, you can add it to the
+`FakeBraintree.registry.transactions` hash like this:
+
+
+```ruby
+transaction_id = "something"
+example_response = { "id" => transaction_id, "amount" => "10.0", "type" => "credit", "status" => "authorized" }
+FakeBraintree.registry.transactions[transaction_id] = example_response
+```
+
+Now you can do `Braintree::Transaction.find("something")` and it will find that
+transaction.
+
+Not all of the keys in `example_response` are necessary, but you'll probably
+want at least `id` and `amount`, depending on the type of response.
+
+`FakeBraintree.registry.transactions` will be cleared when you call
+`FakeBraintree.clear!`.
+
+
+## Running the tests
+
+During tests, debug-level logs will be sent to `tmp/braintree_log`. This is
+useful for seeing which URLs Braintree is actually hitting.
+
 Credits
 -------
 
-![thoughtbot](http://thoughtbot.com/images/tm/logo.png)
+Fake Braintree is maintained by [High Fidelity](http://highfidelity.com/). It was started and previously maintained
+by the great folks over at [thoughtbot, inc](https://thoughtbot.com/community).
 
-Fake Braintree is maintained and funded by [thoughtbot, inc](http://thoughtbot.com/community)
-
-Thank you to all [the contributors](https://github.com/thoughtbot/fake_braintree/contributors)!
-
-The names and logos for thoughtbot are trademarks of thoughtbot, inc.
+Thank you to all [the contributors](https://github.com/highfidelity/fake_braintree/graphs/contributors)!
 
 License
 -------
