@@ -31,12 +31,12 @@ module FakeBraintree
   end
   
   def self.log_file_path
-    'tmp/log'
+    'fake_braintree.log'
   end
 
   def self.clear_log!
-    FileUtils.mkdir_p(File.dirname(log_file_path))
-    File.new(log_file_path, 'w').close
+    # FileUtils.mkdir_p(File.dirname(log_file_path))
+    # File.new(log_file_path, 'w').close
   end
 
   def self.failure?(card_number)
@@ -110,7 +110,9 @@ module FakeBraintree
     Braintree::Configuration.merchant_id = 'xxx'
     Braintree::Configuration.public_key  = 'xxx'
     Braintree::Configuration.private_key = 'xxx'
-    Braintree::Configuration.logger = Logger.new(log_file_path)
+    logger = Logger.new(STDOUT)
+    logger.level = Logger::DEBUG
+    Braintree::Configuration.logger = logger
   end
 
   def self.boot_server(options = {})
@@ -125,4 +127,3 @@ module FakeBraintree
 end
 
 FakeBraintree.activate!
-Braintree::Configuration.logger = Logger.new(STDOUT)
