@@ -13,6 +13,7 @@ module FakeBraintree
       set_debit
       set_durbin_regulated
       set_prepaid
+      set_issuing_bank
     end
 
     def create
@@ -142,11 +143,11 @@ module FakeBraintree
 
     def number
       @hash['number'].to_s
-    end    
+    end
 
     def set_unique_number_identifier
       @hash["unique_number_identifier"] = number
-    end    
+    end
 
     def set_debit
       fixture_credit_cards = [
@@ -186,6 +187,10 @@ module FakeBraintree
       else
         @hash['prepaid'] = 'No'
       end
+    end
+
+    def set_issuing_bank
+      @hash['issuing_bank'] = 'Fake Bank USA'
     end
 
     def generate_token
