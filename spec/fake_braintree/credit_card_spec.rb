@@ -75,6 +75,14 @@ describe 'Braintree::CreditCard.create' do
       expect(@customer.credit_cards.select(&:default?).length).to eq 1
       expect(@customer.credit_cards.length).to eq 2
     end
+
+    it 'should create a credit card based on the payment method nonce' do
+      result = Braintree::CreditCard.create(build_payment_method_nonce_hash)
+      expect(result).to be_success
+      @customer = Braintree::Customer.find(@customer.id)
+      expect(@customer.credit_cards.last.last_4).to eq '1111'
+      expect(@customer.credit_cards.length).to eq 1
+    end
   end
 
   it "sets the creation time" do
@@ -91,6 +99,19 @@ describe 'Braintree::CreditCard.create' do
       cvv: '123',
       token: 'token',
       expiration_date: '07/2020',
+      billing_address: {
+        postal_code: '94110'
+      },
+      options: {
+        make_default: true
+      }
+    }
+  end
+
+  def build_payment_method_nonce_hash
+    {
+      customer_id: @customer && @customer.id,
+      payment_method_nonce: 'fake-valid-nonce',
       billing_address: {
         postal_code: '94110'
       },
