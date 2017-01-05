@@ -16,20 +16,21 @@ module FakeBraintree
     end
 
     def create
-      if valid_number?
-        if token.nil?
-          @credit_card['token'] = generate_token
-        end
-        @credit_card['created_at'] = Time.now
-        FakeBraintree.registry.credit_cards[token] = @credit_card
-        if customer = FakeBraintree.registry.customers[@credit_card['customer_id']]
-          customer['credit_cards'] << @credit_card
-          update_default_card
-        end
-        response_for_updated_card
-      else
-        response_for_invalid_card
+      return response_for_invalid_card unless valid_number?
+
+      @credit_card['token'] = generate_token if token.nil?
+      @credit_card['created_at'] = Time.now
+      set_payment_method_nonce_data if @credit_card['payment_method_nonce']
+      @credit_card['created_at'] = Time.now
+
+      FakeBraintree.registry.credit_cards[token] = @credit_card
+
+      if customer = FakeBraintree.registry.customers[@credit_card['customer_id']]
+        customer['credit_cards'] << @credit_card
+        update_default_card
       end
+
+      response_for_updated_card
     end
 
     def update
@@ -58,13 +59,22 @@ module FakeBraintree
       if FakeBraintree.decline_all_cards?
         false
       elsif FakeBraintree.verify_all_cards
-        FakeBraintree::VALID_CREDIT_CARDS.include?(@credit_card['number'])
+        FakeBraintree::VALID_CREDIT_CARDS.include?(@credit_card['number']) || @credit_card['payment_method_nonce'] == 'fake-valid-nonce'
       else
         true
       end
     end
 
     private
+
+    def set_payment_method_nonce_data
+      @credit_card['bin'] = '411111'
+      @credit_card['last_4'] = '1111'
+      @credit_card['card_type'] = 'Visa'
+      @credit_card['expiration_month'] = '01'
+      @credit_card['expiration_year'] = '12'
+      @credit_card['unique_number_identifier'] = '123456789'
+    end
 
     def update_existing_credit_card
       @credit_card = credit_card_from_registry.merge!(@credit_card)
