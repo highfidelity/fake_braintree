@@ -17,8 +17,15 @@ module FakeBraintree
 
     def create
       if valid_number?
-        if token.nil?
-          @credit_card['token'] = generate_token
+        @credit_card['token'] = generate_token if token.nil?
+        @credit_card['created_at'] = Time.now
+        if @credit_card['payment_method_nonce']
+          @credit_card['bin'] = '411111'
+          @credit_card['last_4'] = '1111'
+          @credit_card['card_type'] = 'Visa'
+          @credit_card['expiration_month'] = '01'
+          @credit_card['expiration_year'] = '12'
+          @credit_card['unique_number_identifier'] = '123456789' 
         end
         @credit_card['created_at'] = Time.now
         FakeBraintree.registry.credit_cards[token] = @credit_card
@@ -58,7 +65,7 @@ module FakeBraintree
       if FakeBraintree.decline_all_cards?
         false
       elsif FakeBraintree.verify_all_cards
-        FakeBraintree::VALID_CREDIT_CARDS.include?(@credit_card['number'])
+        FakeBraintree::VALID_CREDIT_CARDS.include?(@credit_card['number']) || @credit_card['payment_method_nonce'] == 'fake-valid-nonce'
       else
         true
       end
