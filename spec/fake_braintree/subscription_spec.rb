@@ -21,6 +21,10 @@ describe 'Braintree::Subscription.create' do
     expect(create_subscription('id' => 'custom1').subscription.id).to eq 'custom1'
   end
 
+  it 'supports custom IDs' do
+    create_subscription('id' => 'custom1').subscription.id.should == 'custom1'
+  end
+
   it 'assigns unique IDs to each subscription' do
     cc_token_1 = cc_token
     cc_token_2 = braintree_credit_card_token(TEST_CC_NUMBER.sub('1', '5'), expiration_date)
