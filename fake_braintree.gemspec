@@ -17,7 +17,6 @@ Gem::Specification.new do |s|
   s.require_paths = ['lib']
   s.required_ruby_version = Gem::Requirement.new(">= 1.9.3")
 
-
   s.add_dependency 'activesupport'
   s.add_dependency 'braintree', '~> 2.32'
   s.add_dependency 'capybara', '>= 2.2.0'
