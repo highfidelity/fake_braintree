@@ -18,13 +18,13 @@ Gem::Specification.new do |s|
   s.required_ruby_version = Gem::Requirement.new(">= 2.4.1")
 
 
-  s.add_dependency 'activesupport', '~> 5.0'
-  s.add_dependency 'braintree', '~> 2.61'
+  s.add_dependency 'activesupport'
+  s.add_dependency 'braintree', '~> 2.32'
   s.add_dependency 'capybara', '>= 2.2.0'
   s.add_dependency 'sinatra', '~> 2.0.0.beta2'
 
-  s.add_development_dependency 'rake', '~> 0'
-  s.add_development_dependency 'rspec', '~> 3.5'
-  s.add_development_dependency 'timecop', '~> 0.8.1'
+  s.add_development_dependency 'rake'
+  s.add_development_dependency 'rspec', '~> 3.2'
+  s.add_development_dependency 'timecop', '~> 0.6'
   s.add_development_dependency 'capybara-webkit'
 end
