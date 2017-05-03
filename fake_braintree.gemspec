@@ -20,7 +20,7 @@ Gem::Specification.new do |s|
   s.add_dependency 'activesupport'
   s.add_dependency 'braintree', '~> 2.32'
   s.add_dependency 'capybara', '>= 2.2.0'
-  s.add_dependency 'sinatra'
+  s.add_dependency 'sinatra', '~> 2.0.0.beta2'
 
   s.add_development_dependency 'rake'
   s.add_development_dependency 'rspec', '~> 3.2'
