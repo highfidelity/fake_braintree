@@ -44,6 +44,10 @@ module FakeBraintree
 
     def delete
       if credit_card_exists_in_registry?
+        if customer = FakeBraintree.registry.customers[credit_card_from_registry["customer_id"]]
+          customer["credit_cards"].reject! { |card| card["token"] === token }
+        end
+
         delete_credit_card
         deletion_response
       else
