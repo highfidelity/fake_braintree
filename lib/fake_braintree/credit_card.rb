@@ -1,8 +1,9 @@
 require 'fake_braintree/helpers'
 require 'fake_braintree/valid_credit_cards'
+require 'fake_braintree/payment_method'
 
 module FakeBraintree
-  class CreditCard
+  class CreditCard < PaymentMethod
     include Helpers
 
     def initialize(credit_card_hash_from_params, options)
