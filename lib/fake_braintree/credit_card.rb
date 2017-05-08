@@ -104,7 +104,7 @@ module FakeBraintree
     end
 
     def response_for_invalid_card
-      body = FakeBraintree.failure_response.merge(
+      body = FakeBraintree.failure_response(number).merge(
         'params' => {credit_card: @credit_card}
       ).to_xml(root: 'api_error_response')
 
