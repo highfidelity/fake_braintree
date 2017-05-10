@@ -7,6 +7,10 @@ module FakeBraintree
     include Helpers
 
     def initialize(customer_hash_from_params, options)
+      customer_hash_from_params  ||= {}
+
+      options[:id] = create_id(options[:merchant_id]) if not options.member?(:id)
+
       @customer_hash = {
         'id' => options[:id],
         'merchant_id' => options[:merchant_id],

@@ -24,19 +24,19 @@ module FakeBraintree
     boot_server(port: options.fetch(:gateway_port, nil))
   end
 
-  def self.log_file_path
-    'tmp/log'
-  end
-
   def self.clear!
     self.registry.clear!
     self.decline_all_cards = false
-    clear_log!
+    #clear_log!
+  end
+  
+  def self.log_file_path
+    'fake_braintree.log'
   end
 
   def self.clear_log!
-    FileUtils.mkdir_p(File.dirname(log_file_path))
-    File.new(log_file_path, 'w').close
+    # FileUtils.mkdir_p(File.dirname(log_file_path))
+    # File.new(log_file_path, 'w').close
   end
 
   def self.failure?(card_number)
@@ -97,7 +97,9 @@ module FakeBraintree
       'status_history' => [history_item],
       'subscription_id' => options[:subscription_id],
       'created_at' => created_at,
-      'amount' => options[:amount]
+      'amount' => options[:amount],
+      'tax_amount' => 0,
+      'processor_response_text' => 'ok'
     }
   end
 
@@ -108,7 +110,9 @@ module FakeBraintree
     Braintree::Configuration.merchant_id = 'xxx'
     Braintree::Configuration.public_key  = 'xxx'
     Braintree::Configuration.private_key = 'xxx'
-    Braintree::Configuration.logger = Logger.new(log_file_path)
+    logger = Logger.new(STDOUT)
+    logger.level = Logger::DEBUG
+    Braintree::Configuration.logger = logger
   end
 
   def self.boot_server(options = {})
@@ -121,3 +125,5 @@ module FakeBraintree
     self.registry = Registry.new
   end
 end
+
+FakeBraintree.activate!
