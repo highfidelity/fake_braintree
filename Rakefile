@@ -3,7 +3,6 @@ require 'bundler/gem_tasks'
 require 'rspec/core/rake_task'
 require 'net/http'
 require 'capybara'
-require 'capybara-webkit'
 require 'yaml'
 
 RSpec::Core::RakeTask.new(:spec)
@@ -28,7 +27,7 @@ task :update_dropin do
   puts 'Determining drop-in version from client code'
   uri = URI('https://js.braintreegateway.com/v2/braintree.js')
   js_client = Net::HTTP.get(uri)
-  session = Capybara::Session.new(:webkit, ->{})
+  session = Capybara::Session.new(:chrome_headless, ->{})
   session.execute_script(js_client)
   client_version = session.evaluate_script('braintree.VERSION')
   dropin_version = session.evaluate_script('braintree.dropin.VERSION')
