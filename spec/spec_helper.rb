@@ -4,7 +4,6 @@ Bundler.require
 require 'fake_braintree'
 require 'timecop'
 require 'dummy/checkout_app'
-require 'capybara-webkit'
 
 FakeBraintree.activate!
 
@@ -13,7 +12,6 @@ Dir[File.join(File.dirname(__FILE__), 'support/**/*.rb')].each {|f| require f}
 TEST_CC_NUMBER = %w(4111 1111 1111 1111).join
 
 Capybara.app = CheckoutApp
-Capybara.javascript_driver = :webkit
 
 RSpec.configure do |config|
   config.mock_with :rspec do |mocks|
