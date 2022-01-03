@@ -1,5 +1,6 @@
 require 'digest/md5'
 require 'active_support/gzip'
+require 'securerandom'
 
 module FakeBraintree
   module Helpers
@@ -16,7 +17,7 @@ module FakeBraintree
     end
 
     def create_id(merchant_id)
-      md5("#{merchant_id}#{Time.now.to_f}")
+      SecureRandom.hex
     end
   end
 end
