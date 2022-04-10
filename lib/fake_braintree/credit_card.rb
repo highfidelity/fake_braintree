@@ -1,8 +1,9 @@
 require 'fake_braintree/helpers'
 require 'fake_braintree/valid_credit_cards'
+require 'fake_braintree/payment_method'
 
 module FakeBraintree
-  class CreditCard
+  class CreditCard < PaymentMethod
     include Helpers
 
     def initialize(credit_card_hash_from_params, options)
@@ -43,6 +44,10 @@ module FakeBraintree
 
     def delete
       if credit_card_exists_in_registry?
+        if customer = FakeBraintree.registry.customers[credit_card_from_registry["customer_id"]]
+          customer["credit_cards"].reject! { |card| card["token"] === token }
+        end
+
         delete_credit_card
         deletion_response
       else
@@ -103,7 +108,7 @@ module FakeBraintree
     end
 
     def response_for_invalid_card
-      body = FakeBraintree.failure_response.merge(
+      body = FakeBraintree.failure_response(number).merge(
         'params' => {credit_card: @credit_card}
       ).to_xml(root: 'api_error_response')
 

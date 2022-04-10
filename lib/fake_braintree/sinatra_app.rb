@@ -207,19 +207,16 @@ module FakeBraintree
       request_hash = Hash.from_xml(request.body)
       request.body.rewind
 
-      credit_card_hash =
-        if request_hash.key?('credit_card')
-          hash_from_request_body_with_key('credit_card')
-        else
-          payment_method_hash = hash_from_request_body_with_key('payment_method')
-          nonce = payment_method_hash.delete('payment_method_nonce')
-          h = FakeBraintree.registry.payment_methods
-          h[nonce] = (h[nonce] || {}).merge(payment_method_hash)
-        end
-      options = {merchant_id: params[:merchant_id]}
+      credit_card_hash = request_hash.key?("credit_card") ? hash_from_request_body_with_key("credit_card") : hash_from_request_body_with_key("payment_method")
 
-      if credit_card_hash['options']
-        options.merge!(credit_card_hash.delete('options')).symbolize_keys!
+      if nonce = credit_card_hash.delete("payment_method_nonce")
+        credit_card_hash.merge!(FakeBraintree.registry.payment_methods[nonce] || {})
+      end
+
+      options = { merchant_id: params[:merchant_id] }
+
+      if credit_card_hash["options"]
+        options.merge!(credit_card_hash.delete("options")).symbolize_keys!
       end
 
       CreditCard.new(credit_card_hash, options).create

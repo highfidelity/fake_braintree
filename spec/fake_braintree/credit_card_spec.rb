@@ -65,6 +65,16 @@ describe 'Braintree::CreditCard.create' do
       expect(Braintree::Customer.find(@customer.id).credit_cards.last.billing_address.postal_code).to eq "94110"
     end
 
+    it 'successfully creates a credit card from a payment_method_nonce' do
+      nonce = FakeBraintree::CreditCard.tokenize_card(build_credit_card_hash)
+      result = Braintree::CreditCard.create(payment_method_nonce: nonce, customer_id: @customer.id)
+
+      expect(result).to be_success
+      expect(Braintree::Customer.find(@customer.id).credit_cards.last.token).to eq 'token'
+      expect(Braintree::Customer.find(@customer.id).credit_cards.last).to be_default
+      expect(Braintree::Customer.find(@customer.id).credit_cards.last.billing_address.postal_code).to eq "94110"
+    end
+
     it 'only allows one credit card to be default' do
       result = Braintree::CreditCard.create(build_credit_card_hash)
       expect(result).to be_success
